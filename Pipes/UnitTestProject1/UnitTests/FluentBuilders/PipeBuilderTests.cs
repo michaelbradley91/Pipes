@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Pipes.FluentBuilders;
 
-namespace Pipes.Tests.FluentBuilders
+namespace Pipes.Tests.UnitTests.FluentBuilders
 {
     [TestFixture]
     public class PipeBuilderTests

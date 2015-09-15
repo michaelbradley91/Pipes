@@ -61,10 +61,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="FluentBuilders\PipeBuilderTests.cs" />
-    <Compile Include="FluentBuilders\BasicPipeBuilderTests.cs" />
-    <Compile Include="FluentBuilders\TwoOutletRandomisedPipeBuilderTests.cs" />
-    <Compile Include="FluentBuilders\TwoInletRandomisedPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\FluentBuilders\PipeBuilderTests.cs" />
+    <Compile Include="UnitTests\FluentBuilders\BasicPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\FluentBuilders\TwoOutletRandomisedPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\FluentBuilders\TwoInletRandomisedPipeBuilderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +75,9 @@
       <Project>{e0058e36-63f8-4457-ac50-4fbc203edaea}</Project>
       <Name>Pipes</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IntegrationTests\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
