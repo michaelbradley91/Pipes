@@ -10,7 +10,7 @@ namespace Pipes.Tests.FluentBuilders
         private ITwoOutletRandomisedPipeBuilder twoOutletRandomisedPipeBuilder;
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
             twoOutletRandomisedPipeBuilder = new TwoOutletRandomisedPipeBuilder();
         }

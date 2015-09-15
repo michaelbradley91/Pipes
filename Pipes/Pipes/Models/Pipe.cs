@@ -2,6 +2,7 @@
 {
     public interface IPipe
     {
+        int Capacity { get; }
     }
 
     public class Pipe : IPipe

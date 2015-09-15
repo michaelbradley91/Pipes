@@ -49,7 +49,6 @@
     <Compile Include="FluentBuilders\PipeBuilder.cs" />
     <Compile Include="Models\TwoOutletPipe.cs" />
     <Compile Include="Models\TwoInletPipe.cs" />
-    <Compile Include="Pipes.cs" />
     <Compile Include="Models\Pipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
