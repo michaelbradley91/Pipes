@@ -31,28 +31,26 @@ namespace Pipes.Models
         }
 
         private TwoOutletPipe(double leftProbability)
-            : this()
+            : this(new RandomisingTieHandler(leftProbability))
         {
-            tieHandler = new RandomisingTieHandler(leftProbability);
         }
 
         private TwoOutletPipe(Priority priority)
-            : this()
+            : this(new PrioritisingTieHandler(priority))
         {
-            tieHandler = new PrioritisingTieHandler(priority);
         }
 
         private TwoOutletPipe(Alternated alternated) 
-            : this()
+            : this(new AlternatingTieHandler(alternated))
         {
-            tieHandler = new AlternatingTieHandler(alternated);
         }
 
-        private TwoOutletPipe()
+        private TwoOutletPipe(ITieHandler tieHandler)
         {
             Inlet = new Inlet<TMessageType>();
             LeftOutlet = new Outlet<TMessageType>();
             RightOutlet = new Outlet<TMessageType>();
+            this.tieHandler = tieHandler;
         }
 
         internal static TwoOutletPipe<TMessageType> CreateRandomised(double leftProbability)
@@ -72,7 +70,12 @@ namespace Pipes.Models
 
         internal static TwoOutletPipe<TMessageType> CreateDuplicator()
         {
-            return new TwoOutletPipe<TMessageType>();
+            return new TwoOutletPipe<TMessageType>(null);
+        }
+
+        internal static TwoOutletPipe<TMessageType> Create(ITieHandler tieHandler)
+        {
+            return new TwoOutletPipe<TMessageType>(tieHandler);
         }
     }
 }

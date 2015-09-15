@@ -1,5 +1,6 @@
 ﻿using Pipes.Constants;
 using Pipes.Models;
+using Pipes.Models.TieHandlers;
 
 namespace Pipes.FluentBuilders
 {
@@ -35,6 +36,11 @@ namespace Pipes.FluentBuilders
         public ITwoOutletPipe<TMessageType> Duplicating()
         {
             return TwoOutletPipe<TMessageType>.CreateDuplicator();
+        }
+
+        public ITwoOutletPipe<TMessageType> WithTieHandler(ITieHandler tieHandler)
+        {
+            return TwoOutletPipe<TMessageType>.Create(tieHandler);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Pipes.Constants;
 using Pipes.Models;
+using Pipes.Models.TieHandlers;
 
 namespace Pipes.FluentBuilders
 {
@@ -29,6 +30,11 @@ namespace Pipes.FluentBuilders
         public ITwoInletPipe<TMessageType> Alternated(Alternated alternated = Constants.Alternated.LeftHasPriorityInitially)
         {
             return TwoInletPipe<TMessageType>.CreateAlternated(alternated);
+        }
+
+        public ITwoInletPipe<TMessageType> WithTieHandler(ITieHandler tieHandler)
+        {
+            return TwoInletPipe<TMessageType>.Create(tieHandler);
         }
     }
 }
