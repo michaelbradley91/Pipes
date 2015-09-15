@@ -39,11 +39,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants\Alternating.cs" />
+    <Compile Include="Constants\Priority.cs" />
+    <Compile Include="FluentBuilders\BasicPipeBuilder.cs" />
+    <Compile Include="FluentBuilders\TwoInletRandomisedPipeBuilder.cs" />
+    <Compile Include="FluentBuilders\TwoOutletRandomisedPipeBuilder.cs" />
+    <Compile Include="FluentBuilders\TwoOutletPipeBuilder.cs" />
+    <Compile Include="FluentBuilders\TwoInletPipeBuilder.cs" />
+    <Compile Include="FluentBuilders\PipeBuilder.cs" />
+    <Compile Include="Models\TwoOutletPipe.cs" />
+    <Compile Include="Models\TwoInletPipe.cs" />
+    <Compile Include="Pipes.cs" />
+    <Compile Include="Models\Pipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="FluentBuilders\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
