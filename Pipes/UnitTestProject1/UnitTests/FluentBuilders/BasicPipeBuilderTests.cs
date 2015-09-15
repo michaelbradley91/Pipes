@@ -8,12 +8,12 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
     [TestFixture]
     public class BasicPipeBuilderTests
     {
-        private IBasicPipeBuilder basicPipeBuilder;
+        private IBasicPipeBuilder<int> basicPipeBuilder;
 
         [SetUp]
         public void SetUp()
         {
-            basicPipeBuilder = new BasicPipeBuilder();
+            basicPipeBuilder = new BasicPipeBuilder<int>();
         }
 
         [ExpectedException(typeof(ArgumentOutOfRangeException))]

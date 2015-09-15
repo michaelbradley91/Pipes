@@ -29,30 +29,30 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
         public void NewPipe_ReturnsABasicPipeBuilder()
         {
             // Act
-            var builder = pipeBuilder.NewPipe();
+            var builder = pipeBuilder.NewPipe<int>();
 
             // Assert
-            builder.Should().BeAssignableTo<BasicPipeBuilder>();
+            builder.Should().BeAssignableTo<BasicPipeBuilder<int>>();
         }
 
         [Test]
         public void NewTwoInletPipe_ReturnsATwoInletPipeBuilder()
         {
             // Act
-            var builder = pipeBuilder.NewTwoInletPipe();
+            var builder = pipeBuilder.NewTwoInletPipe<int>();
 
             // Assert
-            builder.Should().BeAssignableTo<TwoInletPipeBuilder>();
+            builder.Should().BeAssignableTo<TwoInletPipeBuilder<int>>();
         }
 
         [Test]
         public void NewTwoOutletPipe_ReturnsATwoOutletPipeBuilder()
         {
             // Act
-            var builder = pipeBuilder.NewTwoOutletPipe();
+            var builder = pipeBuilder.NewTwoOutletPipe<int>();
 
             // Assert
-            builder.Should().BeAssignableTo<TwoOutletPipeBuilder>();
+            builder.Should().BeAssignableTo<TwoOutletPipeBuilder<int>>();
         }
     }
 }

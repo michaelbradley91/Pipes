@@ -3,38 +3,57 @@ using Pipes.Constants;
 
 namespace Pipes.Models.TieHandlers
 {
-    internal class AlternatingTieHandler : ITieHandler
+    public interface IAlternatingTieHandler : ITieHandler
     {
-        private Priority nextPriority; 
+        Priority InitialPriority { get; }
+        Priority NextPriority { get; }
+    }
+
+    public class AlternatingTieHandler : IAlternatingTieHandler
+    {
+        public Priority InitialPriority { get; private set; }
+        public Priority NextPriority { get; private set; }
 
         public AlternatingTieHandler(Alternated alternated)
         {
             switch (alternated)
             {
                 case Alternated.LeftHasPriorityInitially:
-                    nextPriority = Priority.LeftHasPriority;
+                    InitialPriority = Priority.LeftHasPriority;
                     break;
                 case Alternated.RightHasPriorityInitially:
-                    nextPriority = Priority.RightHasPriority;
+                    InitialPriority = Priority.RightHasPriority;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("alternated");
             }
+            NextPriority = InitialPriority;
+        }
+
+        private AlternatingTieHandler(Priority initialPriority, Priority nextPriority)
+        {
+            InitialPriority = initialPriority;
+            NextPriority = nextPriority;
         }
 
         public TieResult ResolveTie()
         {
-            switch (nextPriority)
+            switch (NextPriority)
             {
                 case Priority.LeftHasPriority:
-                    nextPriority = Priority.RightHasPriority;
+                    NextPriority = Priority.RightHasPriority;
                     return TieResult.Left;
                 case Priority.RightHasPriority:
-                    nextPriority = Priority.LeftHasPriority;
+                    NextPriority = Priority.LeftHasPriority;
                     return TieResult.Right;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public ITieHandler DeepCopy()
+        {
+            return new AlternatingTieHandler(InitialPriority, NextPriority);
         }
     }
 }

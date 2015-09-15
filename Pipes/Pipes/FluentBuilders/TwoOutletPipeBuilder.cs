@@ -3,38 +3,38 @@ using Pipes.Models;
 
 namespace Pipes.FluentBuilders
 {
-    public interface ITwoOutletPipeBuilder
+    public interface ITwoOutletPipeBuilder<TMessageType>
     {
-        ITwoOutletPipe Prioritised(Priority priority);
-        ITwoInletRandomisedPipeBuilder Randomised();
-        ITwoOutletPipe Alternated(Alternated alternating = Constants.Alternated.LeftHasPriorityInitially);
-        ITwoOutletPipe Duplicating();
+        ITwoOutletPipe<TMessageType> Prioritised(Priority priority);
+        ITwoOutletRandomisedPipeBuilder<TMessageType> Randomised();
+        ITwoOutletPipe<TMessageType> Alternated(Alternated alternated = Constants.Alternated.LeftHasPriorityInitially);
+        ITwoOutletPipe<TMessageType> Duplicating();
     }
 
-    public class TwoOutletPipeBuilder : ITwoOutletPipeBuilder
+    public class TwoOutletPipeBuilder<TMessageType> : ITwoOutletPipeBuilder<TMessageType>
     {
         internal TwoOutletPipeBuilder()
         {
         }
 
-        public ITwoOutletPipe Prioritised(Priority priority)
+        public ITwoOutletPipe<TMessageType> Prioritised(Priority priority)
         {
-            return new TwoOutletPipe();
+            return TwoOutletPipe<TMessageType>.CreatePrioritised(priority);
         }
 
-        public ITwoInletRandomisedPipeBuilder Randomised()
+        public ITwoOutletRandomisedPipeBuilder<TMessageType> Randomised()
         {
-            return new TwoInletRandomisedPipeBuilder();
+            return new TwoOutletRandomisedPipeBuilder<TMessageType>();
         }
 
-        public ITwoOutletPipe Alternated(Alternated alternating = Constants.Alternated.LeftHasPriorityInitially)
+        public ITwoOutletPipe<TMessageType> Alternated(Alternated alternated = Constants.Alternated.LeftHasPriorityInitially)
         {
-            return new TwoOutletPipe();
+            return TwoOutletPipe<TMessageType>.CreateAlternated(alternated);
         }
 
-        public ITwoOutletPipe Duplicating()
+        public ITwoOutletPipe<TMessageType> Duplicating()
         {
-            return new TwoOutletPipe();
+            return TwoOutletPipe<TMessageType>.CreateDuplicator();
         }
     }
 }

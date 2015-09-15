@@ -1,22 +1,34 @@
-﻿using Pipes.Constants;
+﻿using System;
+using Pipes.Constants;
 using Pipes.Models.TieHandlers;
 
 namespace Pipes.Models
 {
-    public interface ITwoOutletPipe
+    public interface ITwoOutletPipe<TMessageType>
     {
-        IInlet Inlet { get; }
-        IOutlet LeftOutlet { get; }
-        IOutlet RightOutlet { get; }
+        IInlet<TMessageType> Inlet { get; }
+        IOutlet<TMessageType> LeftOutlet { get; }
+        IOutlet<TMessageType> RightOutlet { get; }
     }
 
-    public class TwoOutletPipe : ITwoOutletPipe
+    public class TwoOutletPipe<TMessageType> : ITwoOutletPipe<TMessageType>
     {
-        public IInlet Inlet { get; private set; }
-        public IOutlet LeftOutlet { get; private set; }
-        public IOutlet RightOutlet { get; private set; }
+        public IInlet<TMessageType> Inlet { get; private set; }
+        public IOutlet<TMessageType> LeftOutlet { get; private set; }
+        public IOutlet<TMessageType> RightOutlet { get; private set; }
 
-        private readonly ITieHandler tieHandler; 
+        private readonly ITieHandler tieHandler;
+
+        public bool HasTieHandler()
+        {
+            return tieHandler != null;
+        }
+
+        public ITieHandler GetCopyOfTieHandler()
+        {
+            if (tieHandler == null) throw new InvalidOperationException("The two outlet pipe does not have a tie handler when it is set to duplicate messages received in its inlet");
+            return tieHandler.DeepCopy();
+        }
 
         private TwoOutletPipe(double leftProbability)
             : this()
@@ -36,31 +48,31 @@ namespace Pipes.Models
             tieHandler = new AlternatingTieHandler(alternated);
         }
 
-        internal TwoOutletPipe()
+        private TwoOutletPipe()
         {
-            Inlet = new Inlet();
-            LeftOutlet = new Outlet();
-            RightOutlet = new Outlet();
+            Inlet = new Inlet<TMessageType>();
+            LeftOutlet = new Outlet<TMessageType>();
+            RightOutlet = new Outlet<TMessageType>();
         }
 
-        internal static TwoOutletPipe CreateRandomised(double leftProbability)
+        internal static TwoOutletPipe<TMessageType> CreateRandomised(double leftProbability)
         {
-            return new TwoOutletPipe(leftProbability);
+            return new TwoOutletPipe<TMessageType>(leftProbability);
         }
 
-        internal static TwoOutletPipe CreatePrioritised(Priority priority)
+        internal static TwoOutletPipe<TMessageType> CreatePrioritised(Priority priority)
         {
-            return new TwoOutletPipe(priority);
+            return new TwoOutletPipe<TMessageType>(priority);
         }
 
-        internal static TwoOutletPipe CreateAlternated(Alternated alternated)
+        internal static TwoOutletPipe<TMessageType> CreateAlternated(Alternated alternated)
         {
-            return new TwoOutletPipe(alternated);
+            return new TwoOutletPipe<TMessageType>(alternated);
         }
 
-        internal static TwoOutletPipe CreateDuplicator()
+        internal static TwoOutletPipe<TMessageType> CreateDuplicator()
         {
-            return new TwoOutletPipe();
+            return new TwoOutletPipe<TMessageType>();
         }
     }
 }

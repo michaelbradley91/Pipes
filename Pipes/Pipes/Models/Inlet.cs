@@ -1,10 +1,10 @@
 ﻿namespace Pipes.Models
 {
-    public interface IInlet
+    public interface IInlet<TMessageType>
     {
     }
 
-    public class Inlet : IInlet
+    public class Inlet<TMessageType> : IInlet<TMessageType>
     {
         internal Inlet()
         {

@@ -3,18 +3,23 @@ using Pipes.Constants;
 
 namespace Pipes.Models.TieHandlers
 {
-    internal class PrioritisingTieHandler : ITieHandler
+    public interface IPrioritisingTieHandler : ITieHandler
     {
-        private readonly Priority priority;
+        Priority Priority { get; }
+    }
+
+    public class PrioritisingTieHandler : IPrioritisingTieHandler
+    {
+        public Priority Priority { get; private set; }
 
         public PrioritisingTieHandler(Priority priority)
         {
-            this.priority = priority;
+            Priority = priority;
         }
 
         public TieResult ResolveTie()
         {
-            switch (priority)
+            switch (Priority)
             {
                 case Priority.LeftHasPriority:
                     return TieResult.Left;
@@ -23,6 +28,11 @@ namespace Pipes.Models.TieHandlers
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public ITieHandler DeepCopy()
+        {
+            return new PrioritisingTieHandler(Priority);
         }
     }
 }

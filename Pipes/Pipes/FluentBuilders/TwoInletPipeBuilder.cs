@@ -3,32 +3,32 @@ using Pipes.Models;
 
 namespace Pipes.FluentBuilders
 {
-    public interface ITwoInletPipeBuilder
+    public interface ITwoInletPipeBuilder<TMessageType>
     {
-        ITwoInletPipe Prioritised(Priority priority);
-        ITwoInletRandomisedPipeBuilder Randomised();
-        ITwoInletPipe Alternated(Alternated alternating = Constants.Alternated.LeftHasPriorityInitially);
+        ITwoInletPipe<TMessageType> Prioritised(Priority priority);
+        ITwoInletRandomisedPipeBuilder<TMessageType> Randomised();
+        ITwoInletPipe<TMessageType> Alternated(Alternated alternated = Constants.Alternated.LeftHasPriorityInitially);
     }
 
-    public class TwoInletPipeBuilder : ITwoInletPipeBuilder
+    public class TwoInletPipeBuilder<TMessageType> : ITwoInletPipeBuilder<TMessageType>
     {
         internal TwoInletPipeBuilder()
         {
         }
 
-        public ITwoInletPipe Prioritised(Priority priority)
+        public ITwoInletPipe<TMessageType> Prioritised(Priority priority)
         {
-            return new TwoInletPipe();
+            return TwoInletPipe<TMessageType>.CreatePrioritised(priority);
         }
 
-        public ITwoInletRandomisedPipeBuilder Randomised()
+        public ITwoInletRandomisedPipeBuilder<TMessageType> Randomised()
         {
-            return new TwoInletRandomisedPipeBuilder();
+            return new TwoInletRandomisedPipeBuilder<TMessageType>();
         }
 
-        public ITwoInletPipe Alternated(Alternated alternating = Constants.Alternated.LeftHasPriorityInitially)
+        public ITwoInletPipe<TMessageType> Alternated(Alternated alternated = Constants.Alternated.LeftHasPriorityInitially)
         {
-            return new TwoInletPipe();
+            return TwoInletPipe<TMessageType>.CreateAlternated(alternated);
         }
     }
 }

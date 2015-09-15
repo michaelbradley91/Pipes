@@ -1,6 +1,6 @@
 ﻿namespace Pipes.Constants
 {
-    internal enum TieResult
+    public enum TieResult
     {
         Left,
         Right

@@ -1,10 +1,10 @@
 ﻿namespace Pipes.Models
 {
-    public interface IOutlet
+    public interface IOutlet<TMessageType>
     {
     }
 
-    public class Outlet : IOutlet
+    public class Outlet<TMessageType> : IOutlet<TMessageType>
     {
         internal Outlet()
         {

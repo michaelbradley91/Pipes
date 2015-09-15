@@ -3,28 +3,27 @@ using System;
 
 namespace Pipes.FluentBuilders
 {
-    public interface ITwoInletRandomisedPipeBuilder
+    public interface ITwoInletRandomisedPipeBuilder<TMessageType>
     {
-        ITwoInletPipe WithLeftProbability(double probability);
-        ITwoInletPipe WithRightProbability(double probability);
+        ITwoInletPipe<TMessageType> WithLeftProbability(double probability);
+        ITwoInletPipe<TMessageType> WithRightProbability(double probability);
     }
 
-    public class TwoInletRandomisedPipeBuilder : ITwoInletRandomisedPipeBuilder
+    public class TwoInletRandomisedPipeBuilder<TMessageType> : ITwoInletRandomisedPipeBuilder<TMessageType>
     {
         internal TwoInletRandomisedPipeBuilder()
         {
         }
 
-        public ITwoInletPipe WithLeftProbability(double probability)
+        public ITwoInletPipe<TMessageType> WithLeftProbability(double probability)
         {
             if (probability < 0 || probability > 1) throw new ArgumentOutOfRangeException("probability");
-            return new TwoInletPipe();
+            return TwoInletPipe<TMessageType>.CreateRandomised(probability);
         }
 
-        public ITwoInletPipe WithRightProbability(double probability)
+        public ITwoInletPipe<TMessageType> WithRightProbability(double probability)
         {
-            if (probability < 0 || probability > 1) throw new ArgumentOutOfRangeException("probability");
-            return new TwoInletPipe();
+            return WithLeftProbability(1 - probability);
         }
     }
 }

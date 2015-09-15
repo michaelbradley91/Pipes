@@ -7,12 +7,12 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
     [TestFixture]
     public class TwoOutletRandomisedPipeBuilderTests
     {
-        private ITwoOutletRandomisedPipeBuilder twoOutletRandomisedPipeBuilder;
+        private ITwoOutletRandomisedPipeBuilder<int> twoOutletRandomisedPipeBuilder;
 
         [SetUp]
         public void SetUp()
         {
-            twoOutletRandomisedPipeBuilder = new TwoOutletRandomisedPipeBuilder();
+            twoOutletRandomisedPipeBuilder = new TwoOutletRandomisedPipeBuilder<int>();
         }
 
         [ExpectedException(typeof(ArgumentOutOfRangeException))]

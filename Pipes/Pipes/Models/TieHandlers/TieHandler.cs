@@ -2,8 +2,9 @@
 
 namespace Pipes.Models.TieHandlers
 {
-    internal interface ITieHandler
+    public interface ITieHandler
     {
         TieResult ResolveTie();
+        ITieHandler DeepCopy();
     }
 }

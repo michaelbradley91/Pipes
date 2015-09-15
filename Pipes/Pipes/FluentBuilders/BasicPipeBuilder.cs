@@ -3,27 +3,27 @@ using System;
 
 namespace Pipes.FluentBuilders
 {
-    public interface IBasicPipeBuilder
+    public interface IBasicPipeBuilder<TMessageType>
     {
-        IPipe WithNoCapacity();
-        IPipe WithCapacity(int capacity);
+        IPipe<TMessageType> WithNoCapacity();
+        IPipe<TMessageType> WithCapacity(int capacity);
     }
 
-    public class BasicPipeBuilder : IBasicPipeBuilder
+    public class BasicPipeBuilder<TMessageType> : IBasicPipeBuilder<TMessageType>
     {
         internal BasicPipeBuilder()
         {
         }
 
-        public IPipe WithNoCapacity()
+        public IPipe<TMessageType> WithNoCapacity()
         {
-            return new Pipe(0);
+            return new Pipe<TMessageType>(0);
         }
 
-        public IPipe WithCapacity(int capacity)
+        public IPipe<TMessageType> WithCapacity(int capacity)
         {
             if (capacity < 0) throw new ArgumentOutOfRangeException("capacity");
-            return new Pipe(capacity);
+            return new Pipe<TMessageType>(capacity);
         }
     }
 }
