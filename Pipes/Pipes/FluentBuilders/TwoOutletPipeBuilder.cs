@@ -1,6 +1,6 @@
 ﻿using Pipes.Constants;
 using Pipes.Models;
-using Pipes.Models.TieHandlers;
+using Pipes.Models.TieBreakers;
 
 namespace Pipes.FluentBuilders
 {
@@ -38,9 +38,9 @@ namespace Pipes.FluentBuilders
             return TwoOutletPipe<TMessageType>.CreateDuplicator();
         }
 
-        public ITwoOutletPipe<TMessageType> WithTieHandler(ITieHandler tieHandler)
+        public ITwoOutletPipe<TMessageType> WithTieHandler(ITieBreaker tieBreaker)
         {
-            return TwoOutletPipe<TMessageType>.Create(tieHandler);
+            return TwoOutletPipe<TMessageType>.Create(tieBreaker);
         }
     }
 }

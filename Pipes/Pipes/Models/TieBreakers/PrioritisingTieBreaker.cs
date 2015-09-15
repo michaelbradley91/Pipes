@@ -1,18 +1,18 @@
 ﻿using System;
 using Pipes.Constants;
 
-namespace Pipes.Models.TieHandlers
+namespace Pipes.Models.TieBreakers
 {
-    public interface IPrioritisingTieHandler : ITieHandler
+    public interface IPrioritisingTieBreaker : ITieBreaker
     {
         Priority Priority { get; }
     }
 
-    public class PrioritisingTieHandler : IPrioritisingTieHandler
+    public class PrioritisingTieBreaker : IPrioritisingTieBreaker
     {
         public Priority Priority { get; private set; }
 
-        public PrioritisingTieHandler(Priority priority)
+        public PrioritisingTieBreaker(Priority priority)
         {
             Priority = priority;
         }
@@ -21,18 +21,18 @@ namespace Pipes.Models.TieHandlers
         {
             switch (Priority)
             {
-                case Priority.LeftHasPriority:
+                case Priority.Left:
                     return TieResult.Left;
-                case Priority.RightHasPriority:
+                case Priority.Right:
                     return TieResult.Right;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        public ITieHandler DeepCopy()
+        public ITieBreaker DeepCopy()
         {
-            return new PrioritisingTieHandler(Priority);
+            return new PrioritisingTieBreaker(Priority);
         }
     }
 }

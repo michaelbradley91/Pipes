@@ -1,22 +1,22 @@
 ﻿using System;
 using Pipes.Constants;
 
-namespace Pipes.Models.TieHandlers
+namespace Pipes.Models.TieBreakers
 {
-    public interface IRandomisingTieHandler : ITieHandler
+    public interface IRandomisingTieBreaker : ITieBreaker
     {
         double LeftProbability { get; }
         double RightProbability { get; }
     }
 
-    public class RandomisingTieHandler : IRandomisingTieHandler
+    public class RandomisingTieBreaker : IRandomisingTieBreaker
     {
         public double LeftProbability { get; private set; }
         public double RightProbability { get { return 1 - LeftProbability; } }
 
         private readonly Random randomNumberGenerator;
 
-        public RandomisingTieHandler(double leftProbability)
+        public RandomisingTieBreaker(double leftProbability)
         {
             LeftProbability = leftProbability;
             randomNumberGenerator = new Random();
@@ -29,9 +29,9 @@ namespace Pipes.Models.TieHandlers
             return result < LeftProbability ? TieResult.Left : TieResult.Right;
         }
 
-        public ITieHandler DeepCopy()
+        public ITieBreaker DeepCopy()
         {
-            return new RandomisingTieHandler(LeftProbability);
+            return new RandomisingTieBreaker(LeftProbability);
         }
     }
 }

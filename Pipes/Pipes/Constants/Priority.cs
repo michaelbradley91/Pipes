@@ -2,7 +2,7 @@
 {
     public enum Priority
     {
-        LeftHasPriority,
-        RightHasPriority
+        Left,
+        Right
     }
 }

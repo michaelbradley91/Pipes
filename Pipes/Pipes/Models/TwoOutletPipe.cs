@@ -1,6 +1,6 @@
 ﻿using System;
 using Pipes.Constants;
-using Pipes.Models.TieHandlers;
+using Pipes.Models.TieBreakers;
 
 namespace Pipes.Models
 {
@@ -17,40 +17,40 @@ namespace Pipes.Models
         public IOutlet<TMessageType> LeftOutlet { get; private set; }
         public IOutlet<TMessageType> RightOutlet { get; private set; }
 
-        private readonly ITieHandler tieHandler;
+        private readonly ITieBreaker tieBreaker;
 
-        public bool HasTieHandler()
+        public bool HasTieBreaker()
         {
-            return tieHandler != null;
+            return tieBreaker != null;
         }
 
-        public ITieHandler GetCopyOfTieHandler()
+        public ITieBreaker GetCopyOfTieBreaker()
         {
-            if (tieHandler == null) throw new InvalidOperationException("The two outlet pipe does not have a tie handler when it is set to duplicate messages received in its inlet");
-            return tieHandler.DeepCopy();
+            if (tieBreaker == null) throw new InvalidOperationException("The two outlet pipe does not have a tie handler when it is set to duplicate messages received in its inlet");
+            return tieBreaker.DeepCopy();
         }
 
         private TwoOutletPipe(double leftProbability)
-            : this(new RandomisingTieHandler(leftProbability))
+            : this(new RandomisingTieBreaker(leftProbability))
         {
         }
 
         private TwoOutletPipe(Priority priority)
-            : this(new PrioritisingTieHandler(priority))
+            : this(new PrioritisingTieBreaker(priority))
         {
         }
 
         private TwoOutletPipe(Alternated alternated) 
-            : this(new AlternatingTieHandler(alternated))
+            : this(new AlternatingTieBreaker(alternated))
         {
         }
 
-        private TwoOutletPipe(ITieHandler tieHandler)
+        private TwoOutletPipe(ITieBreaker tieBreaker)
         {
             Inlet = new Inlet<TMessageType>();
             LeftOutlet = new Outlet<TMessageType>();
             RightOutlet = new Outlet<TMessageType>();
-            this.tieHandler = tieHandler;
+            this.tieBreaker = tieBreaker;
         }
 
         internal static TwoOutletPipe<TMessageType> CreateRandomised(double leftProbability)
@@ -73,9 +73,9 @@ namespace Pipes.Models
             return new TwoOutletPipe<TMessageType>(null);
         }
 
-        internal static TwoOutletPipe<TMessageType> Create(ITieHandler tieHandler)
+        internal static TwoOutletPipe<TMessageType> Create(ITieBreaker tieBreaker)
         {
-            return new TwoOutletPipe<TMessageType>(tieHandler);
+            return new TwoOutletPipe<TMessageType>(tieBreaker);
         }
     }
 }

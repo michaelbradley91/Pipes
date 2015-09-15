@@ -1,5 +1,5 @@
 ﻿using Pipes.Constants;
-using Pipes.Models.TieHandlers;
+using Pipes.Models.TieBreakers;
 
 namespace Pipes.Models
 {
@@ -16,34 +16,34 @@ namespace Pipes.Models
         public IInlet<TMessageType> RightInlet { get; private set; }
         public IOutlet<TMessageType> Outlet { get; private set; }
 
-        private readonly ITieHandler tieHandler;
+        private readonly ITieBreaker tieBreaker;
 
-        public ITieHandler GetCopyOfTieHandler()
+        public ITieBreaker GetCopyOfTieBreaker()
         {
-            return tieHandler.DeepCopy();
+            return tieBreaker.DeepCopy();
         }
 
         private TwoInletPipe(double leftProbability)
-            : this(new RandomisingTieHandler(leftProbability))
+            : this(new RandomisingTieBreaker(leftProbability))
         {
         }
 
         private TwoInletPipe(Priority priority)
-            : this(new PrioritisingTieHandler(priority))
+            : this(new PrioritisingTieBreaker(priority))
         {
         }
 
         private TwoInletPipe(Alternated alternated) 
-            : this(new AlternatingTieHandler(alternated))
+            : this(new AlternatingTieBreaker(alternated))
         {
         }
 
-        private TwoInletPipe(ITieHandler tieHandler)
+        private TwoInletPipe(ITieBreaker tieBreaker)
         {
             LeftInlet = new Inlet<TMessageType>();
             RightInlet = new Inlet<TMessageType>();
             Outlet = new Outlet<TMessageType>();
-            this.tieHandler = tieHandler;
+            this.tieBreaker = tieBreaker;
         }
 
         internal static TwoInletPipe<TMessageType> CreateRandomised(double leftProbability)
@@ -61,9 +61,9 @@ namespace Pipes.Models
             return new TwoInletPipe<TMessageType>(alternated);
         }
 
-        internal static TwoInletPipe<TMessageType> Create(ITieHandler tieHandler)
+        internal static TwoInletPipe<TMessageType> Create(ITieBreaker tieBreaker)
         {
-            return new TwoInletPipe<TMessageType>(tieHandler);
+            return new TwoInletPipe<TMessageType>(tieBreaker);
         }
     }
 }

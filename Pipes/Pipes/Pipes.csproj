@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,12 +49,16 @@
     <Compile Include="FluentBuilders\TwoOutletPipeBuilder.cs" />
     <Compile Include="FluentBuilders\TwoInletPipeBuilder.cs" />
     <Compile Include="FluentBuilders\PipeBuilder.cs" />
+    <Compile Include="Helpers\Gate.cs" />
     <Compile Include="Models\Inlet.cs" />
     <Compile Include="Models\Outlet.cs" />
-    <Compile Include="Models\TieHandlers\TieHandler.cs" />
-    <Compile Include="Models\TieHandlers\AlternatingTieHandler.cs" />
-    <Compile Include="Models\TieHandlers\PrioritisingTieHandler.cs" />
-    <Compile Include="Models\TieHandlers\RandomisingTieHandler.cs" />
+    <Compile Include="Models\Resources\ResourceIdentifier.cs" />
+    <Compile Include="Models\Resources\Resource.cs" />
+    <Compile Include="Models\Resources\ResourceGroup.cs" />
+    <Compile Include="Models\TieBreakers\TieBreaker.cs" />
+    <Compile Include="Models\TieBreakers\AlternatingTieBreaker.cs" />
+    <Compile Include="Models\TieBreakers\PrioritisingTieBreaker.cs" />
+    <Compile Include="Models\TieBreakers\RandomisingTieBreaker.cs" />
     <Compile Include="Models\TwoOutletPipe.cs" />
     <Compile Include="Models\TwoInletPipe.cs" />
     <Compile Include="Models\Pipe.cs" />

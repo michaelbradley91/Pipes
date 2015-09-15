@@ -1,6 +1,6 @@
 ﻿using Pipes.Constants;
 using Pipes.Models;
-using Pipes.Models.TieHandlers;
+using Pipes.Models.TieBreakers;
 
 namespace Pipes.FluentBuilders
 {
@@ -32,9 +32,9 @@ namespace Pipes.FluentBuilders
             return TwoInletPipe<TMessageType>.CreateAlternated(alternated);
         }
 
-        public ITwoInletPipe<TMessageType> WithTieHandler(ITieHandler tieHandler)
+        public ITwoInletPipe<TMessageType> WithTieHandler(ITieBreaker tieBreaker)
         {
-            return TwoInletPipe<TMessageType>.Create(tieHandler);
+            return TwoInletPipe<TMessageType>.Create(tieBreaker);
         }
     }
 }

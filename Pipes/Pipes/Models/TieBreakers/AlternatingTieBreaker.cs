@@ -1,28 +1,28 @@
 ﻿using System;
 using Pipes.Constants;
 
-namespace Pipes.Models.TieHandlers
+namespace Pipes.Models.TieBreakers
 {
-    public interface IAlternatingTieHandler : ITieHandler
+    public interface IAlternatingTieBreaker : ITieBreaker
     {
         Priority InitialPriority { get; }
         Priority NextPriority { get; }
     }
 
-    public class AlternatingTieHandler : IAlternatingTieHandler
+    public class AlternatingTieBreaker : IAlternatingTieBreaker
     {
         public Priority InitialPriority { get; private set; }
         public Priority NextPriority { get; private set; }
 
-        public AlternatingTieHandler(Alternated alternated)
+        public AlternatingTieBreaker(Alternated alternated)
         {
             switch (alternated)
             {
                 case Alternated.LeftHasPriorityInitially:
-                    InitialPriority = Priority.LeftHasPriority;
+                    InitialPriority = Priority.Left;
                     break;
                 case Alternated.RightHasPriorityInitially:
-                    InitialPriority = Priority.RightHasPriority;
+                    InitialPriority = Priority.Right;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("alternated");
@@ -30,7 +30,7 @@ namespace Pipes.Models.TieHandlers
             NextPriority = InitialPriority;
         }
 
-        private AlternatingTieHandler(Priority initialPriority, Priority nextPriority)
+        private AlternatingTieBreaker(Priority initialPriority, Priority nextPriority)
         {
             InitialPriority = initialPriority;
             NextPriority = nextPriority;
@@ -40,20 +40,20 @@ namespace Pipes.Models.TieHandlers
         {
             switch (NextPriority)
             {
-                case Priority.LeftHasPriority:
-                    NextPriority = Priority.RightHasPriority;
+                case Priority.Left:
+                    NextPriority = Priority.Right;
                     return TieResult.Left;
-                case Priority.RightHasPriority:
-                    NextPriority = Priority.LeftHasPriority;
+                case Priority.Right:
+                    NextPriority = Priority.Left;
                     return TieResult.Right;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        public ITieHandler DeepCopy()
+        public ITieBreaker DeepCopy()
         {
-            return new AlternatingTieHandler(InitialPriority, NextPriority);
+            return new AlternatingTieBreaker(InitialPriority, NextPriority);
         }
     }
 }
