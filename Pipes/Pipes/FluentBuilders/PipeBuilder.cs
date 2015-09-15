@@ -9,7 +9,9 @@
 
     public class PipeBuilder : IPipeBuilder
     {
-        internal PipeBuilder() {}
+        internal PipeBuilder()
+        {
+        }
 
         public static readonly IPipeBuilder Create = new PipeBuilder();
 

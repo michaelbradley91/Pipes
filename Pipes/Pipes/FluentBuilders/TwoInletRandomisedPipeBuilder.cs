@@ -1,5 +1,5 @@
-﻿using System;
-using Pipes.Models;
+﻿using Pipes.Models;
+using System;
 
 namespace Pipes.FluentBuilders
 {
@@ -11,7 +11,9 @@ namespace Pipes.FluentBuilders
 
     public class TwoInletRandomisedPipeBuilder : ITwoInletRandomisedPipeBuilder
     {
-        internal TwoInletRandomisedPipeBuilder() { }
+        internal TwoInletRandomisedPipeBuilder()
+        {
+        }
 
         public ITwoInletPipe WithLeftProbability(double probability)
         {

@@ -39,14 +39,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Constants\Alternating.cs" />
+    <Compile Include="Constants\Alternated.cs" />
     <Compile Include="Constants\Priority.cs" />
+    <Compile Include="Constants\TieResult.cs" />
     <Compile Include="FluentBuilders\BasicPipeBuilder.cs" />
     <Compile Include="FluentBuilders\TwoInletRandomisedPipeBuilder.cs" />
     <Compile Include="FluentBuilders\TwoOutletRandomisedPipeBuilder.cs" />
     <Compile Include="FluentBuilders\TwoOutletPipeBuilder.cs" />
     <Compile Include="FluentBuilders\TwoInletPipeBuilder.cs" />
     <Compile Include="FluentBuilders\PipeBuilder.cs" />
+    <Compile Include="Models\Inlet.cs" />
+    <Compile Include="Models\Outlet.cs" />
+    <Compile Include="Models\TieHandlers\TieHandler.cs" />
+    <Compile Include="Models\TieHandlers\AlternatingTieHandler.cs" />
+    <Compile Include="Models\TieHandlers\PrioritisingTieHandler.cs" />
+    <Compile Include="Models\TieHandlers\RandomisingTieHandler.cs" />
     <Compile Include="Models\TwoOutletPipe.cs" />
     <Compile Include="Models\TwoInletPipe.cs" />
     <Compile Include="Models\Pipe.cs" />

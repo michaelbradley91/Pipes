@@ -7,13 +7,15 @@ namespace Pipes.FluentBuilders
     {
         ITwoOutletPipe Prioritised(Priority priority);
         ITwoInletRandomisedPipeBuilder Randomised();
-        ITwoOutletPipe Alternating(Alternating alternating = Constants.Alternating.LeftHasPriorityInitially);
+        ITwoOutletPipe Alternated(Alternated alternating = Constants.Alternated.LeftHasPriorityInitially);
         ITwoOutletPipe Duplicating();
     }
 
     public class TwoOutletPipeBuilder : ITwoOutletPipeBuilder
     {
-        internal TwoOutletPipeBuilder() { }
+        internal TwoOutletPipeBuilder()
+        {
+        }
 
         public ITwoOutletPipe Prioritised(Priority priority)
         {
@@ -25,7 +27,7 @@ namespace Pipes.FluentBuilders
             return new TwoInletRandomisedPipeBuilder();
         }
 
-        public ITwoOutletPipe Alternating(Alternating alternating = Constants.Alternating.LeftHasPriorityInitially)
+        public ITwoOutletPipe Alternated(Alternated alternating = Constants.Alternated.LeftHasPriorityInitially)
         {
             return new TwoOutletPipe();
         }

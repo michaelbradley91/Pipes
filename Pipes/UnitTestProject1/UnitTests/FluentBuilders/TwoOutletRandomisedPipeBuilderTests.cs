@@ -1,6 +1,6 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Pipes.FluentBuilders;
+using System;
 
 namespace Pipes.Tests.UnitTests.FluentBuilders
 {

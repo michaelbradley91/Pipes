@@ -1,7 +1,7 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using Pipes.FluentBuilders;
+using System;
 
 namespace Pipes.Tests.UnitTests.FluentBuilders
 {

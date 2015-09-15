@@ -1,6 +1,6 @@
 ﻿namespace Pipes.Constants
 {
-    public enum Alternating
+    public enum Alternated
     {
         LeftHasPriorityInitially,
         RightHasPriorityInitially
