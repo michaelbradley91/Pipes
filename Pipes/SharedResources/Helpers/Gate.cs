@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Pipes.Helpers
+namespace SharedResources.Helpers
 {
     /// <summary>
     /// A gate allows for multiple threads to enter through a gate until a thread closes the gate. When the gate is closed,

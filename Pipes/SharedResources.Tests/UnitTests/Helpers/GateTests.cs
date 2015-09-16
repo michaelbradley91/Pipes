@@ -2,9 +2,9 @@
 using System.Threading;
 using FluentAssertions;
 using NUnit.Framework;
-using Pipes.Helpers;
+using SharedResources.Helpers;
 
-namespace Pipes.Tests.UnitTests.Helpers
+namespace SharedResources.Tests.UnitTests.Helpers
 {
     [TestFixture]
     public class GateTests

@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using Pipes.Models.Resources;
+using SharedResources.SharedResources;
 
-namespace Pipes.Tests.UnitTests.Models.Resources
+namespace SharedResources.Tests.UnitTests.Models.Resources
 {
     [TestFixture]
     public class ResourceTests
@@ -11,11 +11,11 @@ namespace Pipes.Tests.UnitTests.Models.Resources
         public void GetCurrentRootResourceIdentifier_GivenAResourceJustInitialisedWithAResourceIdentifier_ReturnsThatResourceIdentifier()
         {
             // Arrange
-            var resourceIdentifier = ResourceIdentifier.Create();
-            var resource = new Resource(resourceIdentifier);
+            var resourceIdentifier = SharedResourceIdentifier.Create();
+            var resource = new SharedResource(resourceIdentifier);
 
             // Act
-            var root = resource.GetCurrentRootResourceIdentifier();
+            var root = resource.GetCurrentRootSharedResourceIdentifier();
 
             // Assert
             root.Should().Be(resourceIdentifier);
@@ -25,13 +25,13 @@ namespace Pipes.Tests.UnitTests.Models.Resources
         public void GetCurrentRootResourceIdentifier_GivenItsInitialResourceIdentifierHasAParent_ReturnsThatParent()
         {
             // Arrange
-            var child = ResourceIdentifier.Create();
-            var parent = ResourceIdentifier.CreateResourceIdentifierBiggerThan(child);
-            child.SetParentResourceIdentifier(parent);
-            var resource = new Resource(child);
+            var child = SharedResourceIdentifier.Create();
+            var parent = SharedResourceIdentifier.CreateSharedResourceIdentifierBiggerThan(child);
+            child.SetParentSharedResourceIdentifier(parent);
+            var resource = new SharedResource(child);
 
             // Act
-            var root = resource.GetCurrentRootResourceIdentifier();
+            var root = resource.GetCurrentRootSharedResourceIdentifier();
 
             // Assert
             root.Should().Be(parent);
