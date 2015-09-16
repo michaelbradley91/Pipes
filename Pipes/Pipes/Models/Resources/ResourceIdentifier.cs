@@ -16,7 +16,7 @@ namespace Pipes.Models.Resources
         private ResourceIdentifier(BigInteger identifier)
         {
             this.identifier = identifier;
-            guid = new Guid();
+            guid = Guid.NewGuid();
             parent = this;
             acquireSemaphore = new Semaphore(1, 1);
         }

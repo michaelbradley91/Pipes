@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 using Pipes.Models.Resources;
@@ -138,6 +139,65 @@ namespace Pipes.Tests.UnitTests.Models.Resources
         }
 
         [Test]
+        public void FreeResources_GivenTheResourceGroupHasNoResources_DoesNothing()
+        {
+            // Arrange
+            var resourceGroup = ResourceGroup.CreateWithNoAcquiredResources();
+
+            // Act
+            resourceGroup.FreeResources();
+        }
+
+        [Test]
+        public void FreeResources_GivenTheResourceGroupHasMultipleResources_FreesThemAll()
+        {
+            // Arrange
+            var resource1 = new Resource(ResourceIdentifier.Create());
+            var resource2 = new Resource(ResourceIdentifier.Create());
+            var resourceGroup = ResourceGroup.CreateAcquiringResources(resource1, resource2);
+
+            // Act
+            resourceGroup.FreeResources();
+            
+            // Assert
+            resource1.GetCurrentRootResourceIdentifier().IsAcquired().Should().BeFalse();
+            resource2.GetCurrentRootResourceIdentifier().IsAcquired().Should().BeFalse();
+        }
+
+        [Test]
+        public void FreeResources_GivenTheResourceGroupHasResourcesThatHaveBeenConnected_FreesThemAll()
+        {
+            // Arrange
+            var resource1 = new Resource(ResourceIdentifier.Create());
+            var resource2 = new Resource(ResourceIdentifier.Create());
+            var resourceGroup = ResourceGroup.CreateAcquiringResources(resource1, resource2);
+            resourceGroup.ConnectResources(resource1, resource2);
+
+            // Act
+            resourceGroup.FreeResources();
+
+            // Assert
+            resource1.GetCurrentRootResourceIdentifier().IsAcquired().Should().BeFalse();
+            resource2.GetCurrentRootResourceIdentifier().IsAcquired().Should().BeFalse();
+        }
+
+        [Test]
+        public void CreateAcquiringResources_GivenMultipleResourcesWithTheSameResourceIdentifier_CanAcquireThemAll()
+        {
+            // Arrange
+            var resourceIdentifier = ResourceIdentifier.Create();
+            var resource1 = new Resource(resourceIdentifier);
+            var resource2 = new Resource(resourceIdentifier);
+
+            // Act
+            var resourceGroup = ResourceGroup.CreateAcquiringResources(resource1, resource2);
+
+            // Assert
+            resource1.GetCurrentRootResourceIdentifier().IsAcquiredBy(resourceGroup).Should().BeTrue();
+            resource2.GetCurrentRootResourceIdentifier().IsAcquiredBy(resourceGroup).Should().BeTrue();
+        }
+
+        [Test]
         public void CreateAcquiringResources_GivenMultipleResources_AcquiresTheResourcesInOrderOfResourceIdentifierAscending()
         {
             // Arrange
@@ -183,6 +243,118 @@ namespace Pipes.Tests.UnitTests.Models.Resources
             resourceGroup.Should().NotBeNull();
             child.IsAcquiredBy(resourceGroup).Should().BeTrue();
             parent.IsAcquiredBy(resourceGroup).Should().BeTrue();
+        }
+
+        [Test]
+        public void CreateAcquiringResources_GivenTheResourceIdentifierChangesAndThatChangesTheOrderInWhichToAcquireResources_CanStillAcquireResourcesEventually()
+        {
+            // Arrange
+            var child = ResourceIdentifier.Create();
+            var parent = ResourceIdentifier.CreateResourceIdentifierBiggerThan(child);
+            var grandParent = ResourceIdentifier.CreateResourceIdentifierBiggerThan(parent);
+            var childResource = new Resource(child);
+            var parentResource = new Resource(parent);
+            var competingResourceGroup = ResourceGroup.CreateAcquiringResources(childResource, parentResource);
+
+            // Act
+            ResourceGroup resourceGroup = null;
+            var thread = new Thread(() => resourceGroup = ResourceGroup.CreateAcquiringResources(childResource, parentResource));
+            thread.Start();
+            Thread.Sleep(500);
+
+            // Assert
+            child.IsAcquiredBy(competingResourceGroup).Should().BeTrue();
+            parent.IsAcquiredBy(competingResourceGroup).Should().BeTrue();
+
+            // Act
+            child.SetParentResourceIdentifier(grandParent);
+            child.Free(competingResourceGroup);
+            Thread.Sleep(500);
+
+            // Assert
+            child.IsAcquired().Should().BeFalse();
+            parent.IsAcquiredBy(competingResourceGroup).Should().BeTrue();
+            grandParent.IsAcquired().Should().BeFalse();
+
+            // Act
+            grandParent.Acquire(competingResourceGroup);
+            parent.Free(competingResourceGroup);
+            Thread.Sleep(500);
+
+            // Assert
+            grandParent.IsAcquiredBy(competingResourceGroup).Should().BeTrue();
+            parent.IsAcquired().Should().BeTrue();
+
+            // Act
+            grandParent.Free(competingResourceGroup);
+            Thread.Sleep(500);
+
+            // Assert
+            resourceGroup.Should().NotBeNull();
+            child.IsAcquired().Should().BeFalse();
+            parent.IsAcquiredBy(resourceGroup).Should().BeTrue();
+            grandParent.IsAcquiredBy(resourceGroup).Should().BeTrue();
+        }
+
+        [ExpectedException(typeof(ArgumentException))]
+        [Test]
+        public void ConnectResources_WhenGivenAResourceNotInTheResourceGroup_ThrowsAnArgumentException()
+        {
+            // Arrange
+            var resourceGroup = ResourceGroup.CreateWithNoAcquiredResources();
+            var resource1 = new Resource(ResourceIdentifier.Create());
+            var resource2 = new Resource(ResourceIdentifier.Create());
+
+            // Act
+            resourceGroup.ConnectResources(resource1, resource2);
+        }
+
+        [Test]
+        public void ConnectResources_GivenTheSameResourceTwice_DoesNothing()
+        {
+            // Arrange
+            var resource = new Resource(ResourceIdentifier.Create());
+            var resourceGroup = ResourceGroup.CreateAcquiringResources(resource);
+
+            // Act
+            resourceGroup.ConnectResources(resource, resource);
+        }
+
+        [ExpectedException(typeof(InvalidOperationException))]
+        [Test]
+        public void ConnectResources_GivenTheResourceGroupHasFreedItsResources_ThrowsAnInvalidOperationException()
+        {
+            // Arrange
+            var resource = new Resource(ResourceIdentifier.Create());
+            var resourceGroup = ResourceGroup.CreateAcquiringResources(resource);
+            resourceGroup.FreeResources();
+
+            // Act
+            resourceGroup.ConnectResources(resource, resource);
+        }
+
+        [ExpectedException(typeof(InvalidOperationException))]
+        [Test]
+        public void CreateAndAcquireResource_GivenTheResourceGroupHasFreedItsResources_ThrowsAnInvalidOperationException()
+        {
+            // Arrange
+            var resourceGroup = ResourceGroup.CreateWithNoAcquiredResources();
+            resourceGroup.FreeResources();
+
+            // Act
+            resourceGroup.CreateAndAcquireResource();
+        }
+
+        [ExpectedException(typeof(InvalidOperationException))]
+        [Test]
+        public void FreeResources_GivenTheResourceGroupHasFreedItsResources_ThrowsAnInvalidOperationException()
+        {
+            // Arrange
+            var resourceGroup = ResourceGroup.CreateWithNoAcquiredResources();
+            resourceGroup.FreeResources();
+
+            // Act
+            resourceGroup.FreeResources();
         }
     }
 }

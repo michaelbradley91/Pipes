@@ -92,6 +92,7 @@ namespace Pipes.Models.Resources
         {
             CheckResourcesAcquired();
             CheckResourcesAreInGroup(resource1, resource2);
+            if (resource1.Equals(resource2)) return;
 
             var resource1Identifier = resource1.GetCurrentRootResourceIdentifier();
             var resource2Identifier = resource2.GetCurrentRootResourceIdentifier();
@@ -107,9 +108,9 @@ namespace Pipes.Models.Resources
         }
 
         [AssertionMethod]
-        private static void CheckResourcesAreInGroup(params IResource[] resourcesToCheck)
+        private void CheckResourcesAreInGroup(params IResource[] resourcesToCheck)
         {
-            if (resourcesToCheck.Any(resource => !resourcesToCheck.Contains(resource)))
+            if (resourcesToCheck.Any(resource => !resources.Contains(resource)))
             {
                 throw new ArgumentException("Cannot manipulate resources not in this resource group");
             }
@@ -117,8 +118,9 @@ namespace Pipes.Models.Resources
 
         public void FreeResources()
         {
+            CheckResourcesAcquired();
             resourcesAcquired = false;
-            foreach (var resourceIdentifier in resources.Select(r => r.GetCurrentRootResourceIdentifier()))
+            foreach (var resourceIdentifier in resources.Select(r => r.GetCurrentRootResourceIdentifier()).Distinct())
             {
                 resourceIdentifier.Free(this);
             }
@@ -126,7 +128,10 @@ namespace Pipes.Models.Resources
 
         private void CheckResourcesAcquired()
         {
-            if (!resourcesAcquired) throw new InvalidOperationException("You cannot use a resource group after its resources have been freed");
+            if (!resourcesAcquired)
+            {
+                throw new InvalidOperationException("You cannot use a resource group after its resources have been freed");
+            }
         }
     }
 }
