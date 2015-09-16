@@ -21,12 +21,12 @@ namespace Pipes.Models.Resources
         private readonly IList<Resource> resources;
         private bool resourcesAcquired;
 
-        public static ResourceGroup CreateNew()
+        public static ResourceGroup CreateWithNoAcquiredResources()
         {
             return new ResourceGroup(new Resource[] { });
         }
 
-        public static ResourceGroup CreateResourceGroupAcquiringResources(IReadOnlyCollection<Resource> resources)
+        public static ResourceGroup CreateAcquiringResources(params Resource[] resources)
         {
             return new ResourceGroup(resources);
         }
@@ -52,14 +52,13 @@ namespace Pipes.Models.Resources
 
                 if (acquiredResource)
                 {
-                    resourcesToAcquire.Remove(resource);
+                    resourcesToAcquire.RemoveAll(r => r.GetCurrentRootResourceIdentifier().Equals(resource.GetCurrentRootResourceIdentifier()));
                 }
                 else
                 {
                     if (++numberOfFailedAttempts >= NumberOfFailuresAtWhichTheGateShouldBeClosed) ResourceAcquisitionGateway.Close(gatePass);
                 }
             }
-
             ResourceAcquisitionGateway.Leave(gatePass);
         }
 

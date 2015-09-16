@@ -69,6 +69,8 @@
     <Compile Include="UnitTests\FluentBuilders\TwoOutletRandomisedPipeBuilderTests.cs" />
     <Compile Include="UnitTests\FluentBuilders\TwoInletRandomisedPipeBuilderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitTests\Models\Resources\ResourceGroupTests.cs" />
+    <Compile Include="UnitTests\Models\Resources\ResourceTests.cs" />
     <Compile Include="UnitTests\Models\Resources\ResourceIdentifierTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\AlternatingTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\RandomisingTieBreakerTests.cs" />

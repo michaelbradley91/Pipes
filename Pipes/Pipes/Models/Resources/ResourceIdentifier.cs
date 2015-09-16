@@ -53,6 +53,16 @@ namespace Pipes.Models.Resources
             acquireSemaphore.Release();
         }
 
+        public bool IsAcquired()
+        {
+            return acquirer != null;
+        }
+
+        public bool IsAcquiredBy(IResourceGroup resourceGroup)
+        {
+            return acquirer == resourceGroup;
+        }
+
         public void SetParentResourceIdentifier(ResourceIdentifier parentResourceIdentifier)
         {
             if (!ReferenceEquals(parentResourceIdentifier.parent, parentResourceIdentifier))

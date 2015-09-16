@@ -164,8 +164,8 @@ namespace Pipes.Tests.UnitTests.Models.Resources
             // Act
             resourceIdentifier.Acquire(resourceGroup);
 
-            // Assert (if it can be freed, it has been acquired)
-            resourceIdentifier.Free(resourceGroup);
+            // Assert
+            resourceIdentifier.IsAcquiredBy(resourceGroup).Should().BeTrue();
         }
 
         [Test]
@@ -190,14 +190,15 @@ namespace Pipes.Tests.UnitTests.Models.Resources
             
             // Assert
             thread1Finished.Should().BeFalse();
-            
+            resourceIdentifier.IsAcquiredBy(resourceGroup1).Should().BeTrue();
+
             // Act
             resourceIdentifier.Free(resourceGroup1);
             Thread.Sleep(500);
 
             // Assert
             thread1Finished.Should().BeTrue();
-            resourceIdentifier.Free(resourceGroup2);
+            resourceIdentifier.IsAcquiredBy(resourceGroup2).Should().BeTrue();
         }
     }
 }
