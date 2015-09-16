@@ -2,9 +2,7 @@
 {
     internal interface IResource
     {
-        ResourceIdentifier GetCurrentIdentifier();
-        void Acquire();
-        void Free();
+        ResourceIdentifier GetCurrentRootResourceIdentifier();
     }
 
     internal class Resource : IResource
@@ -16,19 +14,9 @@
             this.resourceIdentifier = resourceIdentifier;
         }
 
-        public ResourceIdentifier GetCurrentIdentifier()
+        public ResourceIdentifier GetCurrentRootResourceIdentifier()
         {
-            return resourceIdentifier;
-        }
-
-        public void Acquire()
-        {
-            resourceIdentifier.Acquire();
-        }
-
-        public void Free()
-        {
-            resourceIdentifier.Free();
+            return resourceIdentifier.GetRootResourceIdentifier();
         }
     }
 }

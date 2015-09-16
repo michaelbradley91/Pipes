@@ -11,33 +11,33 @@ namespace Pipes.Helpers
     /// 
     /// Locking only occurs between threads that asked for the gate to be closed, so there is practically speaking no global lock.
     /// </summary>
-    internal interface IGate
+    internal interface IGateway
     {
         /// <summary>
         /// Enter through the gate. Returns a pass to use in future method calls.
         /// A gate pass is not thread safe and should be used by only one thread at once.
         /// </summary>
-        Gate.Pass Enter();
+        Gateway.Pass Enter();
 
         /// <summary>
         /// Leave through the gate. Expires your pass, so you must enter the gate to get a new one.
         /// </summary>
-        void Leave(Gate.Pass pass);
+        void Leave(Gateway.Pass pass);
 
         /// <summary>
         /// Closes the gate until everyone who asked for the gate to be closed, including you, has left through the gate.
         /// </summary>
-        void CloseGate(Gate.Pass pass);
+        void Close(Gateway.Pass pass);
     }
 
-    internal class Gate : IGate
+    internal class Gateway : IGateway
     {
         private bool gateClosed;
         private readonly Semaphore gateSemaphore;
         private int numberOfGateClosers;
         private readonly Semaphore gateControlSemaphore;
 
-        public Gate()
+        public Gateway()
         {
             gateClosed = false;
             gateSemaphore = new Semaphore(1, 1);
@@ -73,7 +73,7 @@ namespace Pipes.Helpers
             pass.Expired = true;
         }
 
-        public void CloseGate(Pass pass)
+        public void Close(Pass pass)
         {
             if (pass.Expired) throw new ArgumentException("You cannot close the gate with an expired gate pass", "pass");
             if (pass.ClosedTheGate) return;

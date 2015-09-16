@@ -26,7 +26,7 @@ namespace Pipes.Models.Resources
             return new ResourceIdentifier(BigInteger.Add(maxIdentifier, BigInteger.One));
         }
 
-        private ResourceIdentifier GetRootResourceIdentifier()
+        public ResourceIdentifier GetRootResourceIdentifier()
         {
             if (ReferenceEquals(parent, this)) return this;
             parent = parent.GetRootResourceIdentifier();
