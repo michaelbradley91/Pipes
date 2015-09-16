@@ -6,14 +6,35 @@ using SharedResources.Helpers;
 
 namespace SharedResources.SharedResources
 {
-    internal interface ISharedResourceGroup
+    /// <summary>
+    /// A shared resource group contains a set of resources which it has acquired - no other thread can acquire these resources
+    /// while this group holds onto them.
+    /// 
+    /// You can have multiple resource groups attempt to acquire the same resources in parallel, but you cannot interact with the same resource *group*
+    /// in multiple threads.
+    /// </summary>
+    public interface ISharedResourceGroup
     {
-        ISharedResource CreateAndAcquireSharedResource();
-        void ConnectSharedResources(ISharedResource resource1, ISharedResource resource2);
+        /// <summary>
+        /// Creates a new shared resource and adds it to this group. The resource is initially acquired by this group, and so
+        /// cannot be acquired by other threads.
+        /// </summary>
+        SharedResource CreateAndAcquireSharedResource();
+
+        /// <summary>
+        /// Connects two resources together. A resource can only be acquired if all resources it is connected to are also acquired.
+        /// Therefore, use this to indicate a set of resources must all be acquired before any of them can be interacted with.
+        /// </summary>
+        void ConnectSharedResources(SharedResource resource1, SharedResource resource2);
+        
+        /// <summary>
+        /// Indicate you are done interacting with the resources in this resource group, and free all resources acquired.
+        /// You will not be able to use this resource group after you have called this method.
+        /// </summary>
         void FreeSharedResources();
     }
 
-    internal class SharedResourceGroup : ISharedResourceGroup
+    public class SharedResourceGroup : ISharedResourceGroup
     {
         private static readonly Gateway SharedResourceAcquisitionGateway = new Gateway();
         private const int NumberOfFailuresAtWhichTheGateShouldBeClosed = 100;
@@ -78,7 +99,7 @@ namespace SharedResources.SharedResources
             return acquiredRootResourceIdentifier;
         }
 
-        public ISharedResource CreateAndAcquireSharedResource()
+        public SharedResource CreateAndAcquireSharedResource()
         {
             CheckSharedResourcesAcquired();
             var resourceIdentifier = SharedResourceIdentifier.CreateSharedResourceIdentifierBiggerThan(sharedResources.Select(r => r.GetCurrentRootSharedResourceIdentifier()).ToArray());
@@ -88,7 +109,7 @@ namespace SharedResources.SharedResources
             return resource;
         }
 
-        public void ConnectSharedResources(ISharedResource resource1, ISharedResource resource2)
+        public void ConnectSharedResources(SharedResource resource1, SharedResource resource2)
         {
             CheckSharedResourcesAcquired();
             CheckSharedResourcesAreInGroup(resource1, resource2);
@@ -108,7 +129,7 @@ namespace SharedResources.SharedResources
         }
 
         [AssertionMethod]
-        private void CheckSharedResourcesAreInGroup(params ISharedResource[] sharedResourcesToCheck)
+        private void CheckSharedResourcesAreInGroup(params SharedResource[] sharedResourcesToCheck)
         {
             if (sharedResourcesToCheck.Any(resource => !sharedResources.Contains(resource)))
             {
