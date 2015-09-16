@@ -92,8 +92,8 @@ namespace Pipes.Helpers
 
         internal class Pass
         {
-            public bool ClosedTheGate;
-            public bool Expired;
+            internal bool ClosedTheGate;
+            internal bool Expired;
         }
     }
 }

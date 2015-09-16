@@ -5,41 +5,51 @@ using System.Threading;
 
 namespace Pipes.Models.Resources
 {
-    internal class ResourceIdentifier
+    internal class ResourceIdentifier : IComparable<ResourceIdentifier>
     {
         private ResourceIdentifier parent;
         private readonly BigInteger identifier;
         private readonly Guid guid;
         private readonly Semaphore acquireSemaphore;
+        private IResourceGroup acquirer;
 
         private ResourceIdentifier(BigInteger identifier)
         {
             this.identifier = identifier;
             guid = new Guid();
             parent = this;
-            acquireSemaphore = new Semaphore(0, 1);
+            acquireSemaphore = new Semaphore(1, 1);
+        }
+
+        public static ResourceIdentifier Create()
+        {
+            return CreateResourceIdentifierBiggerThan();
         }
 
         public static ResourceIdentifier CreateResourceIdentifierBiggerThan(params ResourceIdentifier[] resourceIdentifiers)
         {
-            var maxIdentifier = resourceIdentifiers.Max(r => r.GetRootResourceIdentifier().identifier);
+            if (!resourceIdentifiers.Any()) return new ResourceIdentifier(BigInteger.Zero);
+            var maxIdentifier = resourceIdentifiers.Max(r => r.GetCurrentRootResourceIdentifier().identifier);
             return new ResourceIdentifier(BigInteger.Add(maxIdentifier, BigInteger.One));
         }
 
-        public ResourceIdentifier GetRootResourceIdentifier()
+        public ResourceIdentifier GetCurrentRootResourceIdentifier()
         {
             if (ReferenceEquals(parent, this)) return this;
-            parent = parent.GetRootResourceIdentifier();
+            parent = parent.GetCurrentRootResourceIdentifier();
             return parent;
         }
 
-        public void Acquire()
+        public void Acquire(IResourceGroup resourceGroup)
         {
             acquireSemaphore.WaitOne();
+            acquirer = resourceGroup;
         }
 
-        public void Free()
+        public void Free(IResourceGroup resourceGroup)
         {
+            if (acquirer != resourceGroup) throw new ArgumentException("The resource group given has not acquired this resource and so cannot free it.", "resourceGroup");
+            acquirer = null;
             acquireSemaphore.Release();
         }
 
@@ -59,7 +69,7 @@ namespace Pipes.Models.Resources
         public int CompareTo(ResourceIdentifier other)
         {
             if (ReferenceEquals(other, this)) return 0;
-            var comparison = GetRootResourceIdentifier().identifier.CompareTo(other.GetRootResourceIdentifier().identifier);
+            var comparison = GetCurrentRootResourceIdentifier().identifier.CompareTo(other.GetCurrentRootResourceIdentifier().identifier);
             return comparison != 0 ? comparison : guid.CompareTo(other.guid);
         }
 

@@ -16,7 +16,7 @@
 
         public ResourceIdentifier GetCurrentRootResourceIdentifier()
         {
-            return resourceIdentifier.GetRootResourceIdentifier();
+            return resourceIdentifier.GetCurrentRootResourceIdentifier();
         }
     }
 }
