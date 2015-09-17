@@ -14,8 +14,9 @@ namespace SharedResources.Tests.UnitTests.SharedResources
         public void GetCurrentRootResourceIdentifier_GivenAResourceJustInitialisedWithAResourceIdentifier_ReturnsThatResourceIdentifier()
         {
             // Arrange
-            var resourceIdentifier = SharedResourceIdentifier.Create();
-            var resource = new SharedResource(resourceIdentifier);
+            var resource = new SharedResource();
+            var resourceIdentifier = SharedResourceIdentifier.CreateSharedResourceIdentifierBiggerThan(resource.GetCurrentRootSharedResourceIdentifier());
+            resource.GetCurrentRootSharedResourceIdentifier().SetParentSharedResourceIdentifier(resourceIdentifier);
 
             // Act
             var root = resource.GetCurrentRootSharedResourceIdentifier();
@@ -28,10 +29,11 @@ namespace SharedResources.Tests.UnitTests.SharedResources
         public void GetCurrentRootResourceIdentifier_GivenItsInitialResourceIdentifierHasAParent_ReturnsThatParent()
         {
             // Arrange
-            var child = SharedResourceIdentifier.Create();
+            var resource = new SharedResource();
+            var child = SharedResourceIdentifier.CreateSharedResourceIdentifierBiggerThan(resource.GetCurrentRootSharedResourceIdentifier());
             var parent = SharedResourceIdentifier.CreateSharedResourceIdentifierBiggerThan(child);
+            resource.GetCurrentRootSharedResourceIdentifier().SetParentSharedResourceIdentifier(child);
             child.SetParentSharedResourceIdentifier(parent);
-            var resource = new SharedResource(child);
 
             // Act
             var root = resource.GetCurrentRootSharedResourceIdentifier();
@@ -44,7 +46,7 @@ namespace SharedResources.Tests.UnitTests.SharedResources
         public void DirectlyConnectedSharedResources_IncludesTheResourceItself()
         {
             // Arrange
-            var sharedResource = new SharedResource(SharedResourceIdentifier.Create());
+            var sharedResource = new SharedResource();
 
             // Act
             var directlyConnectedSharedResources = sharedResource.DirectlyConnectedSharedResources;
@@ -58,7 +60,7 @@ namespace SharedResources.Tests.UnitTests.SharedResources
         public void ConnectedSharedResources_IncludesTheResourceItself()
         {
             // Arrange
-            var sharedResource = new SharedResource(SharedResourceIdentifier.Create());
+            var sharedResource = new SharedResource();
 
             // Act
             var directlyConnectedSharedResources = sharedResource.ConnectedSharedResources;
@@ -72,8 +74,8 @@ namespace SharedResources.Tests.UnitTests.SharedResources
         public void DirectlyConnect_GivenASharedResource_ConnectsTheCurrentSharedResourceToThatSharedResource()
         {
             // Arrange
-            var sharedResource1 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource2 = new SharedResource(SharedResourceIdentifier.Create());
+            var sharedResource1 = new SharedResource();
+            var sharedResource2 = new SharedResource();
 
             // Act
             sharedResource1.DirectlyConnect(sharedResource2);
@@ -90,10 +92,10 @@ namespace SharedResources.Tests.UnitTests.SharedResources
         public void DirectlyConnect_WhenAppliedToResourcesInAChain_ConnectsThemAllTogether()
         {
             // Arrange
-            var sharedResource1 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource2 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource3 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource4 = new SharedResource(SharedResourceIdentifier.Create());
+            var sharedResource1 = new SharedResource();
+            var sharedResource2 = new SharedResource();
+            var sharedResource3 = new SharedResource();
+            var sharedResource4 = new SharedResource();
             
             // Act
             sharedResource1.DirectlyConnect(sharedResource2);
@@ -117,7 +119,7 @@ namespace SharedResources.Tests.UnitTests.SharedResources
         public void RemoveDirectConnectionTo_GivenTheResourceItself_ThrowsAnArgumentException()
         {
             // Arrange
-            var sharedResource = new SharedResource(SharedResourceIdentifier.Create());
+            var sharedResource = new SharedResource();
 
             // Act
             sharedResource.RemoveDirectConnectionTo(sharedResource);
@@ -127,8 +129,8 @@ namespace SharedResources.Tests.UnitTests.SharedResources
         public void RemoveDirectConnectionTo_GivenAPairOfConnectedSharedResources_DisconnectsThemBoth()
         {
             // Arrange
-            var sharedResource1 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource2 = new SharedResource(SharedResourceIdentifier.Create());
+            var sharedResource1 = new SharedResource();
+            var sharedResource2 = new SharedResource();
             sharedResource1.DirectlyConnect(sharedResource2);
 
             // Act
@@ -145,10 +147,10 @@ namespace SharedResources.Tests.UnitTests.SharedResources
         public void RemoveDirectConnectionTo_WhenDisconnectingAChainOfSharedResources_BreaksThatChain()
         {
             // Arrange
-            var sharedResource1 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource2 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource3 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource4 = new SharedResource(SharedResourceIdentifier.Create());
+            var sharedResource1 = new SharedResource();
+            var sharedResource2 = new SharedResource();
+            var sharedResource3 = new SharedResource();
+            var sharedResource4 = new SharedResource();
             sharedResource1.DirectlyConnect(sharedResource2);
             sharedResource2.DirectlyConnect(sharedResource3);
             sharedResource3.DirectlyConnect(sharedResource4);
@@ -170,10 +172,10 @@ namespace SharedResources.Tests.UnitTests.SharedResources
         public void ConnectedSharedResources_GivenTheSharedResourcesAreConnectedInACycle_ResolvesTheCycleCorrectly()
         {
             // Arrange
-            var sharedResource1 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource2 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource3 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource4 = new SharedResource(SharedResourceIdentifier.Create());
+            var sharedResource1 = new SharedResource();
+            var sharedResource2 = new SharedResource();
+            var sharedResource3 = new SharedResource();
+            var sharedResource4 = new SharedResource();
             sharedResource1.DirectlyConnect(sharedResource2);
             sharedResource2.DirectlyConnect(sharedResource3);
             sharedResource3.DirectlyConnect(sharedResource4);
@@ -192,8 +194,8 @@ namespace SharedResources.Tests.UnitTests.SharedResources
         public void DirectlyConnect_CalledTwiceForTheSameResource_OnlyConnectsThatResourceOnce()
         {
             // Arrange
-            var sharedResource1 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource2 = new SharedResource(SharedResourceIdentifier.Create());
+            var sharedResource1 = new SharedResource();
+            var sharedResource2 = new SharedResource();
 
             // Act
             sharedResource1.DirectlyConnect(sharedResource2);
@@ -215,8 +217,8 @@ namespace SharedResources.Tests.UnitTests.SharedResources
         public void RemoveDirectConnectionTo_GivenAResourceThisIsNotConnectedTo_DoesNothing()
         {
             // Arrange
-            var sharedResource1 = new SharedResource(SharedResourceIdentifier.Create());
-            var sharedResource2 = new SharedResource(SharedResourceIdentifier.Create());
+            var sharedResource1 = new SharedResource();
+            var sharedResource2 = new SharedResource();
 
             // Act
             sharedResource1.RemoveDirectConnectionTo(sharedResource2);
@@ -231,6 +233,43 @@ namespace SharedResources.Tests.UnitTests.SharedResources
             sharedResource1.DirectlyConnectedSharedResources.Should().Contain(sharedResource1);
             sharedResource2.DirectlyConnectedSharedResources.Should().HaveCount(1);
             sharedResource2.DirectlyConnectedSharedResources.Should().Contain(sharedResource2);
+        }
+
+        [Test]
+        public void ResetRootSharedResourceIdentifier_GivenASharedResourceIdentifier_SetsTheRootToBeThatSharedResourceIdentifier()
+        {
+            // Arrange
+            var sharedResource1 = new SharedResource();
+            var sharedResource2 = new SharedResource();
+            var sharedRoot = SharedResourceIdentifier.CreateSharedResourceIdentifierBiggerThan(sharedResource1.GetCurrentRootSharedResourceIdentifier(), sharedResource2.GetCurrentRootSharedResourceIdentifier());
+            sharedResource1.GetCurrentRootSharedResourceIdentifier().SetParentSharedResourceIdentifier(sharedRoot);
+            sharedResource2.GetCurrentRootSharedResourceIdentifier().SetParentSharedResourceIdentifier(sharedRoot);
+            var newRootForSharedResource1 = SharedResourceIdentifier.CreateSharedResourceIdentifierBiggerThan(sharedRoot);
+            var newRootForSharedResource2 = SharedResourceIdentifier.CreateSharedResourceIdentifierBiggerThan(sharedRoot);
+
+            // Act
+            sharedResource1.ResetRootSharedResourceIdentifier(newRootForSharedResource1);
+            sharedResource2.ResetRootSharedResourceIdentifier(newRootForSharedResource2);
+
+            // Assert
+            sharedResource1.GetCurrentRootSharedResourceIdentifier().Should().Be(newRootForSharedResource1);
+            sharedResource2.GetCurrentRootSharedResourceIdentifier().Should().Be(newRootForSharedResource2);
+            sharedResource1.GetCurrentRootSharedResourceIdentifier().Should().NotBeSameAs(sharedResource2.GetCurrentRootSharedResourceIdentifier());
+        }
+
+        [Test]
+        [SuppressMessage("ReSharper", "UseObjectOrCollectionInitializer")]
+        public void AssociatedObject_RemembersTheObjectAssociatedToThisResource()
+        {
+            // Arrange
+            var sharedResource = new SharedResource();
+            const int associatedObject = 3;
+
+            // Act
+            sharedResource.AssociatedObject = associatedObject;
+
+            // Assert
+            sharedResource.AssociatedObject.Should().Be(associatedObject);
         }
     }
 }

@@ -22,20 +22,24 @@ namespace SharedResources.SharedResources
         SharedResource CreateAndAcquireSharedResource();
 
         /// <summary>
-        /// Connects two resources together. A resource can only be acquired if all resources it is connected to are also acquired.
+        /// Connects two resources together directly. Note that if the two shared resources are already connected indirectly (through other shared resources)
+        /// this will still add the direct connection between the two resources.
+        /// A resource can only be acquired if all resources it is connected to are also acquired.
         /// Therefore, use this to indicate a set of resources must all be acquired before any of them can be interacted with.
         /// </summary>
         void ConnectSharedResources(SharedResource resource1, SharedResource resource2);
 
         /// <summary>
-        /// Disconnect the two shared resources
+        /// Remove any direct connection between these two resources. Note that if resource1 is also indirectly connected to resource2,
+        /// that connection will remain.
         /// </summary>
-        void DisconnectedSharedResources(SharedResource resource1, SharedResource resource2);
+        void DisconnectSharedResources(SharedResource resource1, SharedResource resource2);
 
         /// <summary>
-        /// Disconnects this shared resource from all other shared resources it is connected to
+        /// Returns a readonly collection of the shared resources directly connected to the given resource.
+        /// You can use this in principle to discover the graph making up all your shared resources.
         /// </summary>
-        void IsolateSharedResource(SharedResource resource);
+        IReadOnlyCollection<SharedResource> GetSharedResourcesDirectlyConnectedTo(SharedResource resource);
         
         /// <summary>
         /// Indicate you are done interacting with the resources in this resource group, and free all resources acquired.
@@ -112,8 +116,7 @@ namespace SharedResources.SharedResources
         public SharedResource CreateAndAcquireSharedResource()
         {
             CheckSharedResourcesAcquired();
-            var resourceIdentifier = SharedResourceIdentifier.CreateSharedResourceIdentifierBiggerThan(sharedResources.Select(r => r.GetCurrentRootSharedResourceIdentifier()).ToArray());
-            var resource = new SharedResource(resourceIdentifier);
+            var resource = new SharedResource();
             resource.GetCurrentRootSharedResourceIdentifier().Acquire(this);
             sharedResources.Add(resource);
             return resource;
@@ -123,10 +126,14 @@ namespace SharedResources.SharedResources
         {
             CheckSharedResourcesAcquired();
             CheckSharedResourcesAreInGroup(resource1, resource2);
-            if (resource1.Equals(resource2)) return;
+            if (resource1.Equals(resource2) || resource1.DirectlyConnectedSharedResources.Contains(resource2)) return;
+
+            resource1.DirectlyConnect(resource2);
 
             var resource1Identifier = resource1.GetCurrentRootSharedResourceIdentifier();
             var resource2Identifier = resource2.GetCurrentRootSharedResourceIdentifier();
+            if (resource1Identifier.Equals(resource2Identifier)) return;
+
             var parentResourceIdentifier = SharedResourceIdentifier.CreateSharedResourceIdentifierBiggerThan(resource1Identifier, resource2Identifier);
             parentResourceIdentifier.Acquire(this);
 
@@ -138,14 +145,36 @@ namespace SharedResources.SharedResources
             resource2Identifier.Free(this);
         }
 
-        public void DisconnectedSharedResources(SharedResource resource1, SharedResource resource2)
+        public void DisconnectSharedResources(SharedResource resource1, SharedResource resource2)
         {
-            throw new NotImplementedException();
+            CheckSharedResourcesAcquired();
+            CheckSharedResourcesAreInGroup(resource1, resource2);
+            if (resource1 == resource2) throw new ArgumentException("You cannot disconnect a shared resource form itself");
+            if (!resource1.DirectlyConnectedSharedResources.Contains(resource2)) return;
+
+            resource1.RemoveDirectConnectionTo(resource2);
+            if (resource1.ConnectedSharedResources.Contains(resource2)) return;
+
+            // All resources connected to resource 1 or 2 should have been acquired and have the same root shared resource identifier
+            var originalResourceIdentifier = resource1.GetCurrentRootSharedResourceIdentifier();
+            var newResourceIdentifierForResource1 = SharedResourceIdentifier.CreateSharedResourceIdentifierBiggerThan(originalResourceIdentifier);
+            newResourceIdentifierForResource1.Acquire(this);
+            foreach (var resource in resource1.ConnectedSharedResources)
+            {
+                resource.ResetRootSharedResourceIdentifier(newResourceIdentifierForResource1);
+            }
+            var newResourceIdentifierForResource2 = SharedResourceIdentifier.CreateSharedResourceIdentifierBiggerThan(newResourceIdentifierForResource1);
+            newResourceIdentifierForResource2.Acquire(this);
+            foreach (var resource in resource2.ConnectedSharedResources)
+            {
+                resource.ResetRootSharedResourceIdentifier(newResourceIdentifierForResource2);
+            }
+            originalResourceIdentifier.Free(this);
         }
 
-        public void IsolateSharedResource(SharedResource resource)
+        public IReadOnlyCollection<SharedResource> GetSharedResourcesDirectlyConnectedTo(SharedResource resource)
         {
-            throw new NotImplementedException();
+            return resource.DirectlyConnectedSharedResources;
         }
 
         [AssertionMethod]

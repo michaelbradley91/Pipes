@@ -13,12 +13,30 @@ namespace SharedResources.SharedResources
     public class SharedResource
     {
         private readonly SharedResourceIdentifier sharedResourceIdentifier;
-        private readonly List<SharedResource> directlyConnectedSharedSharedResources; 
+        private readonly List<SharedResource> directlyConnectedSharedSharedResources;
 
-        internal SharedResource(SharedResourceIdentifier sharedResourceIdentifier)
+        private IReadOnlyCollection<SharedResource> connectedSharedResourcesCache;
+        private bool mustRecalculateConnectedSharedResources;
+
+        /// <summary>
+        /// Assign this to any object you wish to associate with this resource. This can be used to "remember" what acquiring this shared resource actually acquires.
+        /// </summary>
+        public object AssociatedObject { get; set; }
+
+        internal SharedResource()
         {
-            this.sharedResourceIdentifier = sharedResourceIdentifier;
+            sharedResourceIdentifier = SharedResourceIdentifier.Create();
             directlyConnectedSharedSharedResources = new List<SharedResource> { this };
+            mustRecalculateConnectedSharedResources = true;
+            connectedSharedResourcesCache = GetConnectedSharedResources();
+        }
+
+        /// <summary>
+        /// Sets the shared resource identifier to be used as the new root. This will cut any existing chain to the root shared resource identifier
+        /// </summary>
+        internal void ResetRootSharedResourceIdentifier(SharedResourceIdentifier newRootSharedResourceIdentifier)
+        {
+            sharedResourceIdentifier.SetParentSharedResourceIdentifier(newRootSharedResourceIdentifier);
         }
 
         internal SharedResourceIdentifier GetCurrentRootSharedResourceIdentifier()
@@ -28,15 +46,31 @@ namespace SharedResources.SharedResources
 
         internal void DirectlyConnect(SharedResource sharedResource)
         {
-            if (!directlyConnectedSharedSharedResources.Contains(sharedResource)) directlyConnectedSharedSharedResources.Add(sharedResource);
-            if (!sharedResource.directlyConnectedSharedSharedResources.Contains(this)) sharedResource.directlyConnectedSharedSharedResources.Add(this);
+            if (!directlyConnectedSharedSharedResources.Contains(sharedResource))
+            {
+                directlyConnectedSharedSharedResources.Add(sharedResource);
+                mustRecalculateConnectedSharedResources = sharedResource.mustRecalculateConnectedSharedResources = true;
+            }
+            if (!sharedResource.directlyConnectedSharedSharedResources.Contains(this))
+            {
+                sharedResource.directlyConnectedSharedSharedResources.Add(this);
+                mustRecalculateConnectedSharedResources = sharedResource.mustRecalculateConnectedSharedResources = true;
+            }
         }
 
         internal void RemoveDirectConnectionTo(SharedResource sharedResource)
         {
             if (sharedResource == this) throw new ArgumentException("You cannot disconnect a resource from itself.", "sharedResource");
-            if (directlyConnectedSharedSharedResources.Contains(sharedResource)) directlyConnectedSharedSharedResources.Remove(sharedResource);
-            if (sharedResource.directlyConnectedSharedSharedResources.Contains(this)) sharedResource.directlyConnectedSharedSharedResources.Remove(this);
+            if (directlyConnectedSharedSharedResources.Contains(sharedResource))
+            {
+                directlyConnectedSharedSharedResources.Remove(sharedResource);
+                mustRecalculateConnectedSharedResources = sharedResource.mustRecalculateConnectedSharedResources = true;
+            }
+            if (sharedResource.directlyConnectedSharedSharedResources.Contains(this))
+            {
+                sharedResource.directlyConnectedSharedSharedResources.Remove(this);
+                mustRecalculateConnectedSharedResources = sharedResource.mustRecalculateConnectedSharedResources = true;
+            }
         }
 
         internal IReadOnlyCollection<SharedResource> DirectlyConnectedSharedResources
@@ -48,22 +82,29 @@ namespace SharedResources.SharedResources
         {
             get
             {
-                var allConnectedSharedResources = new HashSet<SharedResource>();
-                var sharedResourcesToCheck = new Stack<SharedResource>();
-                sharedResourcesToCheck.Push(this);
-                while (sharedResourcesToCheck.Any())
-                {
-                    var nextSharedResourceToCheck = sharedResourcesToCheck.Pop();
-                    foreach (var directlyConnectedResource in nextSharedResourceToCheck.DirectlyConnectedSharedResources)
-                    {
-                        if (allConnectedSharedResources.Contains(directlyConnectedResource)) continue;
-
-                        allConnectedSharedResources.Add(directlyConnectedResource);
-                        sharedResourcesToCheck.Push(directlyConnectedResource);
-                    }
-                }
-                return allConnectedSharedResources.ToList();
+                if (mustRecalculateConnectedSharedResources) connectedSharedResourcesCache = GetConnectedSharedResources();
+                mustRecalculateConnectedSharedResources = false;
+                return connectedSharedResourcesCache;
             }
+        }
+
+        private IReadOnlyCollection<SharedResource> GetConnectedSharedResources()
+        {
+            var allConnectedSharedResources = new HashSet<SharedResource>();
+            var sharedResourcesToCheck = new Stack<SharedResource>();
+            sharedResourcesToCheck.Push(this);
+            while (sharedResourcesToCheck.Any())
+            {
+                var nextSharedResourceToCheck = sharedResourcesToCheck.Pop();
+                foreach (var directlyConnectedResource in nextSharedResourceToCheck.DirectlyConnectedSharedResources)
+                {
+                    if (allConnectedSharedResources.Contains(directlyConnectedResource)) continue;
+
+                    allConnectedSharedResources.Add(directlyConnectedResource);
+                    sharedResourcesToCheck.Push(directlyConnectedResource);
+                }
+            }
+            return allConnectedSharedResources.ToList();
         }
     }
 }
