@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using SharedResources.Helpers;
 
 namespace SharedResources.SharedResources
@@ -177,7 +176,7 @@ namespace SharedResources.SharedResources
             return resource.DirectlyConnectedSharedResources;
         }
 
-        [AssertionMethod]
+        // ReSharper disable once UnusedParameter.Local
         private void CheckSharedResourcesAreInGroup(params SharedResource[] sharedResourcesToCheck)
         {
             if (sharedResourcesToCheck.Any(resource => !sharedResources.Contains(resource)))
