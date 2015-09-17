@@ -26,6 +26,16 @@ namespace SharedResources.SharedResources
         /// Therefore, use this to indicate a set of resources must all be acquired before any of them can be interacted with.
         /// </summary>
         void ConnectSharedResources(SharedResource resource1, SharedResource resource2);
+
+        /// <summary>
+        /// Disconnect the two shared resources
+        /// </summary>
+        void DisconnectedSharedResources(SharedResource resource1, SharedResource resource2);
+
+        /// <summary>
+        /// Disconnects this shared resource from all other shared resources it is connected to
+        /// </summary>
+        void IsolateSharedResource(SharedResource resource);
         
         /// <summary>
         /// Indicate you are done interacting with the resources in this resource group, and free all resources acquired.
@@ -126,6 +136,16 @@ namespace SharedResources.SharedResources
             // We must free these SharedResource identifiers to ensure that we do not hold onto them after the group is freed.
             resource1Identifier.Free(this);
             resource2Identifier.Free(this);
+        }
+
+        public void DisconnectedSharedResources(SharedResource resource1, SharedResource resource2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void IsolateSharedResource(SharedResource resource)
+        {
+            throw new NotImplementedException();
         }
 
         [AssertionMethod]

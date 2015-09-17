@@ -4,7 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SharedResources.SharedResources;
 
-namespace SharedResources.Tests.UnitTests.Models.Resources
+namespace SharedResources.Tests.UnitTests.SharedResources
 {
     [TestFixture]
     public class ResourceGroupTests
