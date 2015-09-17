@@ -33,6 +33,9 @@
     <Reference Include="JetBrains.Annotations">
       <HintPath>..\packages\JetBrains.Annotations.Core.8.2.0.2160\lib\net\JetBrains.Annotations.dll</HintPath>
     </Reference>
+    <Reference Include="SharedResources">
+      <HintPath>..\packages\StickySharedResources.1.0.0\lib\SharedResources.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -43,9 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Button.cs" />
     <Compile Include="Constants\Alternated.cs" />
     <Compile Include="Constants\Priority.cs" />
     <Compile Include="Constants\TieResult.cs" />
+    <Compile Include="ConvolutedSemaphore.cs" />
     <Compile Include="FluentBuilders\BasicPipeBuilder.cs" />
     <Compile Include="FluentBuilders\TwoInletRandomisedPipeBuilder.cs" />
     <Compile Include="FluentBuilders\TwoOutletRandomisedPipeBuilder.cs" />
@@ -62,6 +67,7 @@
     <Compile Include="Models\TwoInletPipe.cs" />
     <Compile Include="Models\Pipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
