@@ -18,11 +18,6 @@ namespace Pipes.Models
 
         private readonly ITieBreaker tieBreaker;
 
-        public ITieBreaker GetCopyOfTieBreaker()
-        {
-            return tieBreaker.DeepCopy();
-        }
-
         private TwoInletPipe(double leftProbability)
             : this(new RandomisingTieBreaker(leftProbability))
         {

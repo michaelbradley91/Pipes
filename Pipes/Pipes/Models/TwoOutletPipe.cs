@@ -1,6 +1,7 @@
 ﻿using System;
 using Pipes.Constants;
 using Pipes.Models.TieBreakers;
+using SharedResources.SharedResources;
 
 namespace Pipes.Models
 {
@@ -18,17 +19,6 @@ namespace Pipes.Models
         public IOutlet<TMessageType> RightOutlet { get; private set; }
 
         private readonly ITieBreaker tieBreaker;
-
-        public bool HasTieBreaker()
-        {
-            return tieBreaker != null;
-        }
-
-        public ITieBreaker GetCopyOfTieBreaker()
-        {
-            if (tieBreaker == null) throw new InvalidOperationException("The two outlet pipe does not have a tie handler when it is set to duplicate messages received in its inlet");
-            return tieBreaker.DeepCopy();
-        }
 
         private TwoOutletPipe(double leftProbability)
             : this(new RandomisingTieBreaker(leftProbability))
