@@ -1,12 +1,13 @@
 ﻿using Pipes.Models;
 using System;
+using Pipes.Models.Pipes;
 
 namespace Pipes.FluentBuilders
 {
     public interface IBasicPipeBuilder<TMessageType>
     {
-        IPipe<TMessageType> WithNoCapacity();
-        IPipe<TMessageType> WithCapacity(int capacity);
+        ISimplePipe<TMessageType> WithNoCapacity();
+        ISimplePipe<TMessageType> WithCapacity(int capacity);
     }
 
     public class BasicPipeBuilder<TMessageType> : IBasicPipeBuilder<TMessageType>
@@ -15,15 +16,15 @@ namespace Pipes.FluentBuilders
         {
         }
 
-        public IPipe<TMessageType> WithNoCapacity()
+        public ISimplePipe<TMessageType> WithNoCapacity()
         {
-            return new Pipe<TMessageType>(0);
+            return new SimpleSimplePipe<TMessageType>(0);
         }
 
-        public IPipe<TMessageType> WithCapacity(int capacity)
+        public ISimplePipe<TMessageType> WithCapacity(int capacity)
         {
             if (capacity < 0) throw new ArgumentOutOfRangeException("capacity");
-            return new Pipe<TMessageType>(capacity);
+            return new SimpleSimplePipe<TMessageType>(capacity);
         }
     }
 }

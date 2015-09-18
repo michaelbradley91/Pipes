@@ -1,5 +1,6 @@
 ﻿using Pipes.Constants;
 using Pipes.Models;
+using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
 
 namespace Pipes.FluentBuilders

@@ -1,5 +1,6 @@
 ﻿using Pipes.Models;
 using System;
+using Pipes.Models.Pipes;
 
 namespace Pipes.FluentBuilders
 {
