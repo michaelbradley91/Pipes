@@ -7,5 +7,8 @@ namespace Pipes.Models.Pipes
     {
         IReadOnlyCollection<Inlet<TMessage>> Inlets { get; }
         IReadOnlyCollection<Outlet<TMessage>> Outlets { get; }
+
+        void TryToSend(WaitingSender<TMessage> sender);
+        void TryToReceive(WaitingReceiver<TMessage> receiver);
     }
 }

@@ -46,5 +46,15 @@ namespace Pipes.Models.Pipes
         {
             get { return new[] {Outlet}; }
         }
+
+        void IPipe<TMessage>.TryToSend(WaitingSender<TMessage> sender)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        void IPipe<TMessage>.TryToReceive(WaitingReceiver<TMessage> receiver)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

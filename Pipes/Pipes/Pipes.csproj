@@ -73,6 +73,8 @@
     <Compile Include="FluentBuilders\PipeBuilder.cs" />
     <Compile Include="Models\Lets\Inlet.cs" />
     <Compile Include="Models\Lets\Let.cs" />
+    <Compile Include="Models\Lets\WaitingReceiver.cs" />
+    <Compile Include="Models\Lets\WaitingSender.cs" />
     <Compile Include="Models\Lets\Outlet.cs" />
     <Compile Include="Models\Pipes\Pipe.cs" />
     <Compile Include="Models\TieBreakers\TieBreaker.cs" />

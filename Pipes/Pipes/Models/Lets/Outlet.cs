@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Pipes.Models.Pipes;
 using SharedResources.SharedResources;
 
@@ -6,10 +9,13 @@ namespace Pipes.Models.Lets
 {
     public class Outlet<TMessage> : Let<TMessage>
     {
-        internal Inlet<TMessage> ConnectedInlet; 
+        internal Inlet<TMessage> ConnectedInlet;
+
+        private readonly IList<WaitingReceiver<TMessage>> waitingReceivers; 
 
         internal Outlet(IPipe<TMessage> pipe, SharedResource resource) : base(pipe, resource)
         {
+            waitingReceivers = new List<WaitingReceiver<TMessage>>();
             ConnectedInlet = null;
         }
 
@@ -19,9 +25,41 @@ namespace Pipes.Models.Lets
         public TMessage Receive()
         {
             Lock();
-            // TODO RESOLVE THE PIPE SYSTEM
+            var waitingReceiver = new WaitingReceiver<TMessage>();
+            if (!waitingReceivers.Any()) Pipe.TryToReceive(waitingReceiver);
+            if (waitingReceiver.MessageReceived)
+            {
+                Unlock();
+                return waitingReceiver.GetMessage();
+            }
+            waitingReceivers.Add(waitingReceiver);
             Unlock();
-            return default(TMessage);
+            return WaitToReceiveMessage(waitingReceiver, s => s.WaitOne(), new ThreadInterruptedException("A message could not be received as the thread was interrupted"));
+        }
+
+        private TMessage WaitToReceiveMessage(WaitingReceiver<TMessage> waitingReceiver, Func<Semaphore, bool> waitFunction, Exception failureException)
+        {
+            try
+            {
+                var messageReceived = waitFunction(waitingReceiver.WaitSemaphore);
+                if (messageReceived) return waitingReceiver.GetMessage();
+                Lock();
+                if (!waitingReceiver.MessageReceived)
+                {
+                    waitingReceivers.Remove(waitingReceiver);
+                    Unlock();
+                    throw failureException;
+                } // else a message has actually been received (a moment later)
+                Unlock();
+                return waitingReceiver.GetMessage();
+            }
+            catch
+            {
+                Lock();
+                if (!waitingReceiver.MessageReceived) waitingReceivers.Remove(waitingReceiver);
+                Unlock();
+                throw;
+            }
         }
 
         /// <summary>
@@ -49,7 +87,7 @@ namespace Pipes.Models.Lets
 
         protected override bool ReadyToConnect()
         {
-            throw new NotImplementedException();
+            return !waitingReceivers.Any() && ConnectedInlet == null;
         }
     }
 }

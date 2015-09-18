@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Pipes.Models.Pipes;
 using SharedResources.SharedResources;
 
@@ -6,10 +9,13 @@ namespace Pipes.Models.Lets
 {
     public class Inlet<TMessage> : Let<TMessage>
     {
-        internal Outlet<TMessage> ConnectedOutlet; 
+        internal Outlet<TMessage> ConnectedOutlet;
+
+        private readonly IList<WaitingSender<TMessage>> waitingSenders;
 
         internal Inlet(IPipe<TMessage> pipe, SharedResource resource) : base(pipe, resource)
         {
+            waitingSenders = new List<WaitingSender<TMessage>>();
             ConnectedOutlet = null;
         }
 
@@ -19,8 +25,40 @@ namespace Pipes.Models.Lets
         public void Send(TMessage message)
         {
             Lock();
-            // TODO RESOLVE THE PIPE SYSTEM
+            var waitingSender = new WaitingSender<TMessage>(message);
+            if (!waitingSenders.Any()) Pipe.TryToSend(waitingSender);
+            if (waitingSender.MessageSent)
+            {
+                Unlock();
+                return;
+            }
+            waitingSenders.Add(waitingSender);
             Unlock();
+            WaitToSendMessage(waitingSender, s => s.WaitOne(), new ThreadInterruptedException("The message could not be sent as the thread was interrupted"));
+        }
+
+        private void WaitToSendMessage(WaitingSender<TMessage> waitingSender, Func<Semaphore, bool> waitFunction, Exception failureException)
+        {
+            try
+            {
+                var messageSent = waitFunction(waitingSender.WaitSemaphore);
+                if (messageSent) return;
+                Lock();
+                if (!waitingSender.MessageSent)
+                {
+                    waitingSenders.Remove(waitingSender);
+                    Unlock();
+                    throw failureException;
+                } // else the message has actually been sent (a moment later)
+                Unlock();
+            }
+            catch
+            {
+                Lock();
+                if (!waitingSender.MessageSent) waitingSenders.Remove(waitingSender);
+                Unlock();
+                throw;
+            }
         }
 
         /// <summary>
@@ -48,7 +86,7 @@ namespace Pipes.Models.Lets
 
         protected override bool ReadyToConnect()
         {
-            throw new NotImplementedException();
+            return !waitingSenders.Any() && ConnectedOutlet == null;
         }
     }
 }

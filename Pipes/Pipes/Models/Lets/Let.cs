@@ -59,6 +59,10 @@ namespace Pipes.Models.Lets
             });
         }
 
+        /// <summary>
+        /// Called when the pipe system is already locked.
+        /// Return true if and only if this "let" can be connected.
+        /// </summary>
         protected abstract bool ReadyToConnect();
 
         protected void Disconnect(Inlet<TMessage> inlet, Outlet<TMessage> outlet)
