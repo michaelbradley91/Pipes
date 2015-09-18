@@ -4,11 +4,11 @@ using SharedResources.SharedResources;
 
 namespace Pipes.Models.Lets
 {
-    public class Inlet<TMessageType> : Let<TMessageType>
+    public class Inlet<TMessage> : Let<TMessage>
     {
-        internal Outlet<TMessageType> ConnectedOutlet; 
+        internal Outlet<TMessage> ConnectedOutlet; 
 
-        internal Inlet(IPipe<TMessageType> pipe, SharedResource resource) : base(pipe, resource)
+        internal Inlet(IPipe<TMessage> pipe, SharedResource resource) : base(pipe, resource)
         {
             ConnectedOutlet = null;
         }
@@ -16,7 +16,7 @@ namespace Pipes.Models.Lets
         /// <summary>
         /// Send a message down the pipe. If the pipe system has insufficient capacity to accept the message, this will block until the message can be sent.
         /// </summary>
-        public void Send(TMessageType message)
+        public void Send(TMessage message)
         {
             Lock();
             // TODO RESOLVE THE PIPE SYSTEM
@@ -29,7 +29,7 @@ namespace Pipes.Models.Lets
         /// an InvalidOperationException. This is quite an expensive check for large pipe systems however, so if you're confident you are not creating cycles, you
         /// can turn it off.
         /// </summary>
-        public void ConnectTo(Outlet<TMessageType> outlet, bool checkForCycles = true)
+        public void ConnectTo(Outlet<TMessage> outlet, bool checkForCycles = true)
         {
             LockWith(outlet);
             Connect(this, outlet, checkForCycles);
@@ -39,7 +39,7 @@ namespace Pipes.Models.Lets
         /// <summary>
         /// Disconnect this outlet from the given inlet. This breaks a pipe system apart.
         /// </summary>
-        public void DisconnectFrom(Outlet<TMessageType> outlet)
+        public void DisconnectFrom(Outlet<TMessage> outlet)
         {
             LockWith(outlet);
             Disconnect(this, outlet);

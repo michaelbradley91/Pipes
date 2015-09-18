@@ -4,25 +4,25 @@ using Pipes.Models.Pipes;
 
 namespace Pipes.FluentBuilders
 {
-    public interface ITwoInletRandomisedPipeBuilder<TMessageType>
+    public interface ITwoInletRandomisedPipeBuilder<TMessage>
     {
-        ITwoInletPipe<TMessageType> WithLeftProbability(double probability);
-        ITwoInletPipe<TMessageType> WithRightProbability(double probability);
+        ITwoInletPipe<TMessage> WithLeftProbability(double probability);
+        ITwoInletPipe<TMessage> WithRightProbability(double probability);
     }
 
-    public class TwoInletRandomisedPipeBuilder<TMessageType> : ITwoInletRandomisedPipeBuilder<TMessageType>
+    public class TwoInletRandomisedPipeBuilder<TMessage> : ITwoInletRandomisedPipeBuilder<TMessage>
     {
         internal TwoInletRandomisedPipeBuilder()
         {
         }
 
-        public ITwoInletPipe<TMessageType> WithLeftProbability(double probability)
+        public ITwoInletPipe<TMessage> WithLeftProbability(double probability)
         {
             if (probability < 0 || probability > 1) throw new ArgumentOutOfRangeException("probability");
-            return TwoInletPipe<TMessageType>.CreateRandomised(probability);
+            return TwoInletPipe<TMessage>.CreateRandomised(probability);
         }
 
-        public ITwoInletPipe<TMessageType> WithRightProbability(double probability)
+        public ITwoInletPipe<TMessage> WithRightProbability(double probability)
         {
             return WithLeftProbability(1 - probability);
         }

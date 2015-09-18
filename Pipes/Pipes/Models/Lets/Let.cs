@@ -5,14 +5,14 @@ using SharedResources.SharedResources;
 
 namespace Pipes.Models.Lets
 {
-    public abstract class Let<TMessageType>
+    public abstract class Let<TMessage>
     {
-        internal readonly IPipe<TMessageType> Pipe;
+        internal readonly IPipe<TMessage> Pipe;
 
         private readonly SharedResource resource;
         private SharedResourceGroup activeResourceGroup;
 
-        internal Let(IPipe<TMessageType> pipe, SharedResource resource)
+        internal Let(IPipe<TMessage> pipe, SharedResource resource)
         {
             this.resource = resource;
             Pipe = pipe;
@@ -26,7 +26,7 @@ namespace Pipes.Models.Lets
             activeResourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(resource);
         }
 
-        protected void LockWith(Let<TMessageType> otherLet)
+        protected void LockWith(Let<TMessage> otherLet)
         {
             activeResourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(resource, otherLet.resource);
         }
@@ -36,7 +36,7 @@ namespace Pipes.Models.Lets
             activeResourceGroup.FreeSharedResources();
         }
 
-        protected void Connect(Inlet<TMessageType> inlet, Outlet<TMessageType> outlet, bool checkForCycles)
+        protected void Connect(Inlet<TMessage> inlet, Outlet<TMessage> outlet, bool checkForCycles)
         {
             Try(() =>
             {
@@ -61,7 +61,7 @@ namespace Pipes.Models.Lets
 
         protected abstract bool ReadyToConnect();
 
-        protected void Disconnect(Inlet<TMessageType> inlet, Outlet<TMessageType> outlet)
+        protected void Disconnect(Inlet<TMessage> inlet, Outlet<TMessage> outlet)
         {
             Try(() =>
             {

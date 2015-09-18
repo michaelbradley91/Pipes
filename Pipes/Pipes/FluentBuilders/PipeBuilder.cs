@@ -2,9 +2,9 @@
 {
     public interface IPipeBuilder
     {
-        IBasicPipeBuilder<TMessageType> NewPipe<TMessageType>();
-        ITwoInletPipeBuilder<TMessageType> NewTwoInletPipe<TMessageType>();
-        ITwoOutletPipeBuilder<TMessageType> NewTwoOutletPipe<TMessageType>();
+        IBasicPipeBuilder<TMessage> NewPipe<TMessage>();
+        ITwoInletPipeBuilder<TMessage> NewTwoInletPipe<TMessage>();
+        ITwoOutletPipeBuilder<TMessage> NewTwoOutletPipe<TMessage>();
     }
 
     public class PipeBuilder : IPipeBuilder
@@ -15,19 +15,19 @@
 
         public static readonly IPipeBuilder Create = new PipeBuilder();
 
-        public IBasicPipeBuilder<TMessageType> NewPipe<TMessageType>()
+        public IBasicPipeBuilder<TMessage> NewPipe<TMessage>()
         {
-            return new BasicPipeBuilder<TMessageType>();
+            return new BasicPipeBuilder<TMessage>();
         }
 
-        public ITwoInletPipeBuilder<TMessageType> NewTwoInletPipe<TMessageType>()
+        public ITwoInletPipeBuilder<TMessage> NewTwoInletPipe<TMessage>()
         {
-            return new TwoInletPipeBuilder<TMessageType>();
+            return new TwoInletPipeBuilder<TMessage>();
         }
 
-        public ITwoOutletPipeBuilder<TMessageType> NewTwoOutletPipe<TMessageType>()
+        public ITwoOutletPipeBuilder<TMessage> NewTwoOutletPipe<TMessage>()
         {
-            return new TwoOutletPipeBuilder<TMessageType>();
+            return new TwoOutletPipeBuilder<TMessage>();
         }
     }
 }

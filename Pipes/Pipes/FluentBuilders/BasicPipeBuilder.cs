@@ -10,21 +10,21 @@ namespace Pipes.FluentBuilders
         ISimplePipe<TMessageType> WithCapacity(int capacity);
     }
 
-    public class BasicPipeBuilder<TMessageType> : IBasicPipeBuilder<TMessageType>
+    public class BasicPipeBuilder<TMessage> : IBasicPipeBuilder<TMessage>
     {
         internal BasicPipeBuilder()
         {
         }
 
-        public ISimplePipe<TMessageType> WithNoCapacity()
+        public ISimplePipe<TMessage> WithNoCapacity()
         {
-            return new SimpleSimplePipe<TMessageType>(0);
+            return new SimpleSimplePipe<TMessage>(0);
         }
 
-        public ISimplePipe<TMessageType> WithCapacity(int capacity)
+        public ISimplePipe<TMessage> WithCapacity(int capacity)
         {
             if (capacity < 0) throw new ArgumentOutOfRangeException("capacity");
-            return new SimpleSimplePipe<TMessageType>(capacity);
+            return new SimpleSimplePipe<TMessage>(capacity);
         }
     }
 }

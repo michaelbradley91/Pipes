@@ -5,37 +5,37 @@ using Pipes.Models.TieBreakers;
 
 namespace Pipes.FluentBuilders
 {
-    public interface ITwoInletPipeBuilder<TMessageType>
+    public interface ITwoInletPipeBuilder<TMessage>
     {
-        ITwoInletPipe<TMessageType> Prioritised(Priority priority);
-        ITwoInletRandomisedPipeBuilder<TMessageType> Randomised();
-        ITwoInletPipe<TMessageType> Alternated(Alternated alternated = Constants.Alternated.LeftHasPriorityInitially);
+        ITwoInletPipe<TMessage> Prioritised(Priority priority);
+        ITwoInletRandomisedPipeBuilder<TMessage> Randomised();
+        ITwoInletPipe<TMessage> Alternated(Alternated alternated = Constants.Alternated.LeftHasPriorityInitially);
     }
 
-    public class TwoInletPipeBuilder<TMessageType> : ITwoInletPipeBuilder<TMessageType>
+    public class TwoInletPipeBuilder<TMessage> : ITwoInletPipeBuilder<TMessage>
     {
         internal TwoInletPipeBuilder()
         {
         }
 
-        public ITwoInletPipe<TMessageType> Prioritised(Priority priority)
+        public ITwoInletPipe<TMessage> Prioritised(Priority priority)
         {
-            return TwoInletPipe<TMessageType>.CreatePrioritised(priority);
+            return TwoInletPipe<TMessage>.CreatePrioritised(priority);
         }
 
-        public ITwoInletRandomisedPipeBuilder<TMessageType> Randomised()
+        public ITwoInletRandomisedPipeBuilder<TMessage> Randomised()
         {
-            return new TwoInletRandomisedPipeBuilder<TMessageType>();
+            return new TwoInletRandomisedPipeBuilder<TMessage>();
         }
 
-        public ITwoInletPipe<TMessageType> Alternated(Alternated alternated = Constants.Alternated.LeftHasPriorityInitially)
+        public ITwoInletPipe<TMessage> Alternated(Alternated alternated = Constants.Alternated.LeftHasPriorityInitially)
         {
-            return TwoInletPipe<TMessageType>.CreateAlternated(alternated);
+            return TwoInletPipe<TMessage>.CreateAlternated(alternated);
         }
 
-        public ITwoInletPipe<TMessageType> WithTieHandler(ITieBreaker tieBreaker)
+        public ITwoInletPipe<TMessage> WithTieHandler(ITieBreaker tieBreaker)
         {
-            return TwoInletPipe<TMessageType>.Create(tieBreaker);
+            return TwoInletPipe<TMessage>.Create(tieBreaker);
         }
     }
 }

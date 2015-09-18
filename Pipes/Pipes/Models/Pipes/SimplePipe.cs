@@ -4,18 +4,18 @@ using SharedResources.SharedResources;
 
 namespace Pipes.Models.Pipes
 {
-    public interface ISimplePipe<TMessageType>
+    public interface ISimplePipe<TMessage>
     {
         int Capacity { get; }
-        Inlet<TMessageType> Inlet { get; }
-        Outlet<TMessageType> Outlet { get; }
+        Inlet<TMessage> Inlet { get; }
+        Outlet<TMessage> Outlet { get; }
     }
 
-    public class SimpleSimplePipe<TMessageType> : ISimplePipe<TMessageType>, IPipe<TMessageType>
+    public class SimpleSimplePipe<TMessage> : ISimplePipe<TMessage>, IPipe<TMessage>
     {
         public int Capacity { get; private set; }
-        public Inlet<TMessageType> Inlet { get; private set; }
-        public Outlet<TMessageType> Outlet { get; private set; }
+        public Inlet<TMessage> Inlet { get; private set; }
+        public Outlet<TMessage> Outlet { get; private set; }
 
         internal SimpleSimplePipe(int capacity)
         {
@@ -31,18 +31,18 @@ namespace Pipes.Models.Pipes
             resourceGroup.ConnectSharedResources(inletResource, pipeResource);
             resourceGroup.ConnectSharedResources(pipeResource, outletResource);
 
-            Inlet = new Inlet<TMessageType>(this, inletResource);
-            Outlet = new Outlet<TMessageType>(this, outletResource);
+            Inlet = new Inlet<TMessage>(this, inletResource);
+            Outlet = new Outlet<TMessage>(this, outletResource);
 
             resourceGroup.FreeSharedResources();
         }
 
-        IReadOnlyCollection<Inlet<TMessageType>> IPipe<TMessageType>.Inlets
+        IReadOnlyCollection<Inlet<TMessage>> IPipe<TMessage>.Inlets
         {
             get { return new[] {Inlet}; } 
         }
 
-        IReadOnlyCollection<Outlet<TMessageType>> IPipe<TMessageType>.Outlets
+        IReadOnlyCollection<Outlet<TMessage>> IPipe<TMessage>.Outlets
         {
             get { return new[] {Outlet}; }
         }

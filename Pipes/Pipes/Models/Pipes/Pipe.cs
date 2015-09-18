@@ -3,9 +3,9 @@ using Pipes.Models.Lets;
 
 namespace Pipes.Models.Pipes
 {
-    internal interface IPipe<TMessageType>
+    internal interface IPipe<TMessage>
     {
-        IReadOnlyCollection<Inlet<TMessageType>> Inlets { get; }
-        IReadOnlyCollection<Outlet<TMessageType>> Outlets { get; }
+        IReadOnlyCollection<Inlet<TMessage>> Inlets { get; }
+        IReadOnlyCollection<Outlet<TMessage>> Outlets { get; }
     }
 }

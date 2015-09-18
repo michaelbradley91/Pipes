@@ -4,11 +4,11 @@ using SharedResources.SharedResources;
 
 namespace Pipes.Models.Lets
 {
-    public class Outlet<TMessageType> : Let<TMessageType>
+    public class Outlet<TMessage> : Let<TMessage>
     {
-        internal Inlet<TMessageType> ConnectedInlet; 
+        internal Inlet<TMessage> ConnectedInlet; 
 
-        internal Outlet(IPipe<TMessageType> pipe, SharedResource resource) : base(pipe, resource)
+        internal Outlet(IPipe<TMessage> pipe, SharedResource resource) : base(pipe, resource)
         {
             ConnectedInlet = null;
         }
@@ -16,12 +16,12 @@ namespace Pipes.Models.Lets
         /// <summary>
         /// Retrieve a message from this outlet. If no message is available, this method will block until one arrives.
         /// </summary>
-        public TMessageType Receive()
+        public TMessage Receive()
         {
             Lock();
             // TODO RESOLVE THE PIPE SYSTEM
             Unlock();
-            return default(TMessageType);
+            return default(TMessage);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Pipes.Models.Lets
         /// an InvalidOperationException. This is quite an expensive check for large pipe systems however, so if you're confident you are not creating cycles, you
         /// can turn it off.
         /// </summary>
-        public void ConnectTo(Inlet<TMessageType> inlet, bool checkForCycles = true)
+        public void ConnectTo(Inlet<TMessage> inlet, bool checkForCycles = true)
         {
             LockWith(inlet);
             Connect(inlet, this, checkForCycles);
@@ -40,7 +40,7 @@ namespace Pipes.Models.Lets
         /// <summary>
         /// Disconnect this outlet from the given inlet. This breaks a pipe system apart.
         /// </summary>
-        public void DisconnectFrom(Inlet<TMessageType> inlet)
+        public void DisconnectFrom(Inlet<TMessage> inlet)
         {
             LockWith(inlet);
             Disconnect(inlet, this);

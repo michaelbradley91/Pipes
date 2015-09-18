@@ -6,18 +6,18 @@ using SharedResources.SharedResources;
 
 namespace Pipes.Models.Pipes
 {
-    public interface ITwoInletPipe<TMessageType>
+    public interface ITwoInletPipe<TMessage>
     {
-        Inlet<TMessageType> LeftInlet { get; }
-        Inlet<TMessageType> RightInlet { get; }
-        Outlet<TMessageType> Outlet { get; }
+        Inlet<TMessage> LeftInlet { get; }
+        Inlet<TMessage> RightInlet { get; }
+        Outlet<TMessage> Outlet { get; }
     }
 
-    public class TwoInletPipe<TMessageType> : ITwoInletPipe<TMessageType>, IPipe<TMessageType>
+    public class TwoInletPipe<TMessage> : ITwoInletPipe<TMessage>, IPipe<TMessage>
     {
-        public Inlet<TMessageType> LeftInlet { get; private set; }
-        public Inlet<TMessageType> RightInlet { get; private set; }
-        public Outlet<TMessageType> Outlet { get; private set; }
+        public Inlet<TMessage> LeftInlet { get; private set; }
+        public Inlet<TMessage> RightInlet { get; private set; }
+        public Outlet<TMessage> Outlet { get; private set; }
 
         private readonly ITieBreaker tieBreaker;
 
@@ -52,39 +52,39 @@ namespace Pipes.Models.Pipes
             resourceGroup.ConnectSharedResources(rightInletResource, pipeResource);
             resourceGroup.ConnectSharedResources(pipeResource, outletResource);
 
-            LeftInlet = new Inlet<TMessageType>(this, leftInletResource);
-            RightInlet = new Inlet<TMessageType>(this, rightInletResource);
-            Outlet = new Outlet<TMessageType>(this, outletResource);
+            LeftInlet = new Inlet<TMessage>(this, leftInletResource);
+            RightInlet = new Inlet<TMessage>(this, rightInletResource);
+            Outlet = new Outlet<TMessage>(this, outletResource);
             
             resourceGroup.FreeSharedResources();
         }
 
-        internal static TwoInletPipe<TMessageType> CreateRandomised(double leftProbability)
+        internal static TwoInletPipe<TMessage> CreateRandomised(double leftProbability)
         {
-            return new TwoInletPipe<TMessageType>(leftProbability);
+            return new TwoInletPipe<TMessage>(leftProbability);
         }
 
-        internal static TwoInletPipe<TMessageType> CreatePrioritised(Priority priority)
+        internal static TwoInletPipe<TMessage> CreatePrioritised(Priority priority)
         {
-            return new TwoInletPipe<TMessageType>(priority);
+            return new TwoInletPipe<TMessage>(priority);
         }
 
-        internal static TwoInletPipe<TMessageType> CreateAlternated(Alternated alternated)
+        internal static TwoInletPipe<TMessage> CreateAlternated(Alternated alternated)
         {
-            return new TwoInletPipe<TMessageType>(alternated);
+            return new TwoInletPipe<TMessage>(alternated);
         }
 
-        internal static TwoInletPipe<TMessageType> Create(ITieBreaker tieBreaker)
+        internal static TwoInletPipe<TMessage> Create(ITieBreaker tieBreaker)
         {
-            return new TwoInletPipe<TMessageType>(tieBreaker);
+            return new TwoInletPipe<TMessage>(tieBreaker);
         }
 
-        IReadOnlyCollection<Inlet<TMessageType>> IPipe<TMessageType>.Inlets
+        IReadOnlyCollection<Inlet<TMessage>> IPipe<TMessage>.Inlets
         {
             get { return new[] {LeftInlet, RightInlet}; }
         }
 
-        IReadOnlyCollection<Outlet<TMessageType>> IPipe<TMessageType>.Outlets
+        IReadOnlyCollection<Outlet<TMessage>> IPipe<TMessage>.Outlets
         {
             get { return new[] {Outlet}; }
         }

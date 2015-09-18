@@ -8,11 +8,11 @@ namespace Pipes.Extensions
 {
     internal static class PipeExtensions
     {
-        public static IVertexAndEdgeListGraph<IPipe<TMessageType>, Edge<IPipe<TMessageType>>> CreateGraphOfPipeSystem<TMessageType>(this IPipe<TMessageType> onePipeInTheSystem)
+        public static IVertexAndEdgeListGraph<IPipe<TMessage>, Edge<IPipe<TMessage>>> CreateGraphOfPipeSystem<TMessage>(this IPipe<TMessage> onePipeInTheSystem)
         {
-            var graph = new AdjacencyGraph<IPipe<TMessageType>, Edge<IPipe<TMessageType>>>(false);
-            var pipesSeen = new HashSet<IPipe<TMessageType>>();
-            var pipesToCheck = new Stack<IPipe<TMessageType>>();
+            var graph = new AdjacencyGraph<IPipe<TMessage>, Edge<IPipe<TMessage>>>(false);
+            var pipesSeen = new HashSet<IPipe<TMessage>>();
+            var pipesToCheck = new Stack<IPipe<TMessage>>();
             pipesToCheck.Push(onePipeInTheSystem);
 
             while (pipesToCheck.Any())
@@ -25,13 +25,13 @@ namespace Pipes.Extensions
                 foreach (var otherPipe in GetPipesYouSendMessagesTo(pipeToCheck))
                 {
                     graph.AddVertex(otherPipe);
-                    graph.AddEdge(new Edge<IPipe<TMessageType>>(pipeToCheck, otherPipe));
+                    graph.AddEdge(new Edge<IPipe<TMessage>>(pipeToCheck, otherPipe));
                 }
 
                 foreach (var otherPipe in GetPipesYouReceiveMessagesFrom(pipeToCheck))
                 {
                     graph.AddVertex(otherPipe);
-                    graph.AddEdge(new Edge<IPipe<TMessageType>>(otherPipe, pipeToCheck));
+                    graph.AddEdge(new Edge<IPipe<TMessage>>(otherPipe, pipeToCheck));
                 }
                 pipesSeen.Add(pipeToCheck);
             }
@@ -39,12 +39,12 @@ namespace Pipes.Extensions
             return graph;
         }
 
-        private static IEnumerable<IPipe<TMessageType>> GetPipesYouSendMessagesTo<TMessageType>(IPipe<TMessageType> pipe)
+        private static IEnumerable<IPipe<TMessage>> GetPipesYouSendMessagesTo<TMessage>(IPipe<TMessage> pipe)
         {
             return pipe.Outlets.Where(outlet => outlet.ConnectedInlet != null).Select(outlet => outlet.ConnectedInlet.Pipe);
         }
 
-        private static IEnumerable<IPipe<TMessageType>> GetPipesYouReceiveMessagesFrom<TMessageType>(IPipe<TMessageType> pipe)
+        private static IEnumerable<IPipe<TMessage>> GetPipesYouReceiveMessagesFrom<TMessage>(IPipe<TMessage> pipe)
         {
             return pipe.Inlets.Where(inlet => inlet.ConnectedOutlet != null).Select(inlet => inlet.ConnectedOutlet.Pipe);
         }

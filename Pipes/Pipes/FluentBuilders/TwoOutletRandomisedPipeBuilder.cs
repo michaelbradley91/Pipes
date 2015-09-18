@@ -4,10 +4,10 @@ using Pipes.Models.Pipes;
 
 namespace Pipes.FluentBuilders
 {
-    public interface ITwoOutletRandomisedPipeBuilder<TMessageType>
+    public interface ITwoOutletRandomisedPipeBuilder<TMessage>
     {
-        ITwoOutletPipe<TMessageType> WithLeftProbability(double probability);
-        ITwoOutletPipe<TMessageType> WithRightProbability(double probability);
+        ITwoOutletPipe<TMessage> WithLeftProbability(double probability);
+        ITwoOutletPipe<TMessage> WithRightProbability(double probability);
     }
 
     public class TwoOutletRandomisedPipeBuilder<TMessageType> : ITwoOutletRandomisedPipeBuilder<TMessageType>

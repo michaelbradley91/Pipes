@@ -5,12 +5,12 @@ using Pipes.Models.TieBreakers;
 
 namespace Pipes.FluentBuilders
 {
-    public interface ITwoOutletPipeBuilder<TMessageType>
+    public interface ITwoOutletPipeBuilder<TMessage>
     {
-        ITwoOutletPipe<TMessageType> Prioritised(Priority priority);
-        ITwoOutletRandomisedPipeBuilder<TMessageType> Randomised();
-        ITwoOutletPipe<TMessageType> Alternated(Alternated alternated = Constants.Alternated.LeftHasPriorityInitially);
-        ITwoOutletPipe<TMessageType> Duplicating();
+        ITwoOutletPipe<TMessage> Prioritised(Priority priority);
+        ITwoOutletRandomisedPipeBuilder<TMessage> Randomised();
+        ITwoOutletPipe<TMessage> Alternated(Alternated alternated = Constants.Alternated.LeftHasPriorityInitially);
+        ITwoOutletPipe<TMessage> Duplicating();
     }
 
     public class TwoOutletPipeBuilder<TMessageType> : ITwoOutletPipeBuilder<TMessageType>
