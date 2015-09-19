@@ -55,7 +55,21 @@ namespace Pipes.Models.Lets
 
                 activeResourceGroup.ConnectSharedResources(inlet.resource, outlet.resource);
 
-                // TODO RESOLVE PIPE SYSTEM
+                while (true)
+                {
+                    var sender = outlet.Pipe.FindSender();
+                    if (sender == null) return;
+
+                    var receiver = inlet.Pipe.FindReceiver();
+                    if (receiver != null)
+                    {
+                        receiver(sender());
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
             });
         }
 
@@ -75,8 +89,6 @@ namespace Pipes.Models.Lets
                 outlet.ConnectedInlet = null;
 
                 activeResourceGroup.DisconnectSharedResources(inlet.resource, outlet.resource);
-
-                // TODO RESOLVE PIPE SYSTEM (if necessary)
             });
         }
 
