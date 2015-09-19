@@ -15,9 +15,7 @@ namespace Pipes.FluentBuilders
 
     public class TwoOutletPipeBuilder<TMessageType> : ITwoOutletPipeBuilder<TMessageType>
     {
-        internal TwoOutletPipeBuilder()
-        {
-        }
+        internal TwoOutletPipeBuilder() { }
 
         public ITwoOutletPipe<TMessageType> Prioritised(Priority priority)
         {

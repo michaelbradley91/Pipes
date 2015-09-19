@@ -65,7 +65,7 @@
     <Compile Include="Constants\TieResult.cs" />
     <Compile Include="Extensions\GraphExtensions.cs" />
     <Compile Include="Extensions\PipeExtensions.cs" />
-    <Compile Include="FluentBuilders\BasicPipeBuilder.cs" />
+    <Compile Include="FluentBuilders\SimplePipeBuilder.cs" />
     <Compile Include="FluentBuilders\TwoInletRandomisedPipeBuilder.cs" />
     <Compile Include="FluentBuilders\TwoOutletRandomisedPipeBuilder.cs" />
     <Compile Include="FluentBuilders\TwoOutletPipeBuilder.cs" />

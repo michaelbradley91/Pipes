@@ -13,14 +13,14 @@ namespace Pipes.Models.Pipes
         Outlet<TMessage> Outlet { get; }
     }
 
-    public class SimpleSimplePipe<TMessage> : ISimplePipe<TMessage>, IPipe<TMessage>
+    public class SimplePipe<TMessage> : ISimplePipe<TMessage>, IPipe<TMessage>
     {
         private readonly Queue<TMessage> storedMessages;
-        public readonly int Capacity;
-        public readonly Inlet<TMessage> Inlet;
-        public readonly Outlet<TMessage> Outlet;
+        public int Capacity { get; private set; }
+        public Inlet<TMessage> Inlet { get; private set; }
+        public Outlet<TMessage> Outlet { get; private set; }
 
-        internal SimpleSimplePipe(int capacity)
+        internal SimplePipe(int capacity)
         {
             Capacity = capacity;
             storedMessages = new Queue<TMessage>();
@@ -55,35 +55,26 @@ namespace Pipes.Models.Pipes
         {
             if (storedMessages.Any())
             {
-                if (HasSpareCapacity())
-                {
-                    // TODO: need to pull other messages down
-                    return message => storedMessages.Enqueue(message);
-                }
+                if (HasSpareCapacity()) return message => storedMessages.Enqueue(message);
+
                 return null;
             }
+
             if (Outlet.ConnectedInlet == null)
             {
-                if (Outlet.HasWaitingReceiver())
-                {
-                    // TODO: need to pull other messages down
-                    return message => Outlet.UseWaitingReceiver(message);
-                }
-                if (HasSpareCapacity())
-                {
-                    // TODO: need to pull other messages down
-                    return message => storedMessages.Enqueue(message);
-                }
+                if (Outlet.HasWaitingReceiver()) return message => Outlet.UseWaitingReceiver(message);
+
+                if (HasSpareCapacity()) return message => storedMessages.Enqueue(message);
+
                 return null;
             }
+
             var nextPipe = Outlet.ConnectedInlet.Pipe;
             var receiver = nextPipe.FindReceiver();
             if (receiver != null) return receiver;
-            if (HasSpareCapacity())
-            {
-                // TODO: need to pull other messages down
-                return message => storedMessages.Enqueue(message);
-            }
+
+            if (HasSpareCapacity()) return message => storedMessages.Enqueue(message);
+
             return null;
         }
 
@@ -91,19 +82,35 @@ namespace Pipes.Models.Pipes
         {
             if (storedMessages.Any())
             {
-                // TODO: need to pull other messages down
-                return () => storedMessages.Dequeue();
+                return () =>
+                {
+                    var message = storedMessages.Dequeue();
+
+                    if (storedMessages.Count == Capacity - 1)
+                    {
+                        if (Inlet.ConnectedOutlet == null)
+                        {
+                            if (Inlet.HasWaitingSender()) storedMessages.Enqueue(Inlet.UseWaitingSender());
+                        }
+                        else
+                        {
+                            var sender = Inlet.ConnectedOutlet.Pipe.FindSender();
+                            if (sender != null) storedMessages.Enqueue(sender());
+                        }
+                    }
+
+                    return message;
+                };
             }
+
             if (Capacity > 0) return null;
+
             if (Inlet.ConnectedOutlet == null)
             {
-                if (Inlet.HasWaitingSender())
-                {
-                    // TODO: need to pull other messages down
-                    return () => Inlet.UseWaitingSender();
-                }
+                if (Inlet.HasWaitingSender()) return () => Inlet.UseWaitingSender();
                 return null;
             }
+
             var previousPipe = Inlet.ConnectedOutlet.Pipe;
             return previousPipe.FindSender();
         }

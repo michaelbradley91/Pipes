@@ -115,34 +115,30 @@ namespace Pipes.Models.Pipes
             }
         }
 
-        Func<TMessage> IPipe<TMessage>.FindSender()
-        {
-            if (Inlet.ConnectedOutlet == null)
-            {
-                if (Inlet.HasWaitingSender())
-                {
-                    // TODO: need to pull other messages down
-                    return () => Inlet.UseWaitingSender();
-                }
-                return null;
-            }
-            var previousPipe = Inlet.ConnectedOutlet.Pipe;
-            return previousPipe.FindSender();
-        }
-
         private static Action<TMessage> FindReceiverFromOutlet(Outlet<TMessage> outlet)
         {
             if (outlet.ConnectedInlet == null)
             {
-                if (outlet.HasWaitingReceiver())
-                {
-                    // TODO: need to pull other messages down
-                    return message => outlet.UseWaitingReceiver(message);
-                }
+                if (outlet.HasWaitingReceiver()) return outlet.UseWaitingReceiver;
+
                 return null;
             }
+
             var nextPipe = outlet.ConnectedInlet.Pipe;
             return nextPipe.FindReceiver();
+        }
+
+        Func<TMessage> IPipe<TMessage>.FindSender()
+        {
+            if (Inlet.ConnectedOutlet == null)
+            {
+                if (Inlet.HasWaitingSender()) return () => Inlet.UseWaitingSender();
+
+                return null;
+            }
+
+            var previousPipe = Inlet.ConnectedOutlet.Pipe;
+            return previousPipe.FindSender();
         }
     }
 }

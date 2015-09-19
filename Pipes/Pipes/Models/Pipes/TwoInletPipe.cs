@@ -94,13 +94,11 @@ namespace Pipes.Models.Pipes
         {
             if (Outlet.ConnectedInlet == null)
             {
-                if (Outlet.HasWaitingReceiver())
-                {
-                    // TODO: need to pull other messages down
-                    return message => Outlet.UseWaitingReceiver(message);
-                }
+                if (Outlet.HasWaitingReceiver()) return message => Outlet.UseWaitingReceiver(message);
+
                 return null;
             }
+
             var nextPipe = Outlet.ConnectedInlet.Pipe;
             return nextPipe.FindReceiver();
         }
@@ -129,13 +127,11 @@ namespace Pipes.Models.Pipes
         {
             if (inlet.ConnectedOutlet == null)
             {
-                if (inlet.HasWaitingSender())
-                {
-                    // TODO: need to pull other messages down
-                    return () => inlet.UseWaitingSender();
-                }
+                if (inlet.HasWaitingSender()) return inlet.UseWaitingSender;
+
                 return null;
             }
+
             var previousPipe = inlet.ConnectedOutlet.Pipe;
             return previousPipe.FindSender();
         }

@@ -32,7 +32,7 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
             var builder = pipeBuilder.NewPipe<int>();
 
             // Assert
-            builder.Should().BeAssignableTo<BasicPipeBuilder<int>>();
+            builder.Should().BeAssignableTo<SimplePipeBuilder<int>>();
         }
 
         [Test]

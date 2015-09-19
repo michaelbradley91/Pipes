@@ -8,26 +8,26 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
     [TestFixture]
     public class BasicPipeBuilderTests
     {
-        private IBasicPipeBuilder<int> basicPipeBuilder;
+        private ISimplePipeBuilder<int> simplePipeBuilder;
 
         [SetUp]
         public void SetUp()
         {
-            basicPipeBuilder = new BasicPipeBuilder<int>();
+            simplePipeBuilder = new SimplePipeBuilder<int>();
         }
 
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         [Test]
         public void WithCapacity_GivenANegativeCapacity_ThrowsAnArgumentOutOfRangeException()
         {
-            basicPipeBuilder.WithCapacity(-5);
+            simplePipeBuilder.WithCapacity(-5);
         }
 
         [Test]
         public void WithNoCapacity_CreatesAPipeWithZeroCapacity()
         {
             // Act
-            var pipe = basicPipeBuilder.WithNoCapacity();
+            var pipe = simplePipeBuilder.WithNoCapacity();
 
             // Assert
             pipe.Capacity.Should().Be(0);
@@ -37,7 +37,7 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
         public void WithCapacity_GivenASpecificCapacity_CreatesAPipeWithThatCapacity()
         {
             // Act
-            var pipe = basicPipeBuilder.WithCapacity(100);
+            var pipe = simplePipeBuilder.WithCapacity(100);
 
             // Assert
             pipe.Capacity.Should().Be(100);
