@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Pipes.Constants;
 using Pipes.Models.Lets;
 using Pipes.Models.TieBreakers;
@@ -89,14 +90,54 @@ namespace Pipes.Models.Pipes
             get { return new[] {Outlet}; }
         }
 
-        void IPipe<TMessage>.TryToSend(WaitingSender<TMessage> sender)
+        Action<TMessage> IPipe<TMessage>.FindReceiver()
         {
-            throw new System.NotImplementedException();
+            if (Outlet.ConnectedInlet == null)
+            {
+                if (Outlet.HasWaitingReceiver())
+                {
+                    // TODO: need to pull other messages down
+                    return message => Outlet.UseWaitingReceiver(message);
+                }
+                return null;
+            }
+            var nextPipe = Outlet.ConnectedInlet.Pipe;
+            return nextPipe.FindReceiver();
         }
 
-        void IPipe<TMessage>.TryToReceive(WaitingReceiver<TMessage> receiver)
+        Func<TMessage> IPipe<TMessage>.FindSender()
         {
-            throw new System.NotImplementedException();
+            var leftSender = FindSenderFromInlet(LeftInlet);
+            var rightSender = FindSenderFromInlet(RightInlet);
+
+            if (leftSender == null) return rightSender;
+            if (rightSender == null) return leftSender;
+
+            var tieResult = tieBreaker.ResolveTie();
+            switch (tieResult)
+            {
+                case TieResult.Left:
+                    return leftSender;
+                case TieResult.Right:
+                    return rightSender;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private static Func<TMessage> FindSenderFromInlet(Inlet<TMessage> inlet)
+        {
+            if (inlet.ConnectedOutlet == null)
+            {
+                if (inlet.HasWaitingSender())
+                {
+                    // TODO: need to pull other messages down
+                    return () => inlet.UseWaitingSender();
+                }
+                return null;
+            }
+            var previousPipe = inlet.ConnectedOutlet.Pipe;
+            return previousPipe.FindSender();
         }
     }
 }

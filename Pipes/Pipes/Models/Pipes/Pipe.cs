@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Pipes.Models.Lets;
 
 namespace Pipes.Models.Pipes
@@ -8,7 +9,7 @@ namespace Pipes.Models.Pipes
         IReadOnlyCollection<Inlet<TMessage>> Inlets { get; }
         IReadOnlyCollection<Outlet<TMessage>> Outlets { get; }
 
-        void TryToSend(WaitingSender<TMessage> sender);
-        void TryToReceive(WaitingReceiver<TMessage> receiver);
+        Action<TMessage> FindReceiver();
+        Func<TMessage> FindSender();
     }
 }

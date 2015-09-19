@@ -9,9 +9,9 @@ namespace Pipes.Models.Lets
 {
     public class Outlet<TMessage> : Let<TMessage>
     {
-        internal Inlet<TMessage> ConnectedInlet;
+        protected internal Inlet<TMessage> ConnectedInlet { get; set; }
 
-        private readonly IList<WaitingReceiver<TMessage>> waitingReceivers; 
+        private readonly IList<WaitingReceiver<TMessage>> waitingReceivers;
 
         internal Outlet(IPipe<TMessage> pipe, SharedResource resource) : base(pipe, resource)
         {
@@ -25,13 +25,23 @@ namespace Pipes.Models.Lets
         public TMessage Receive()
         {
             Lock();
-            var waitingReceiver = new WaitingReceiver<TMessage>();
-            if (!waitingReceivers.Any()) Pipe.TryToReceive(waitingReceiver);
-            if (waitingReceiver.MessageReceived)
+            if (ConnectedInlet != null)
             {
                 Unlock();
-                return waitingReceiver.GetMessage();
+                throw new InvalidOperationException("You cannot receive through a connected outlet.");
             }
+
+            if (!waitingReceivers.Any())
+            {
+                var sender = Pipe.FindSender();
+                if (sender != null)
+                {
+                    var message = sender();
+                    Unlock();
+                    return message;
+                }
+            }
+            var waitingReceiver = new WaitingReceiver<TMessage>();
             waitingReceivers.Add(waitingReceiver);
             Unlock();
             return WaitToReceiveMessage(waitingReceiver, s => s.WaitOne(), new ThreadInterruptedException("A message could not be received as the thread was interrupted"));
@@ -88,6 +98,19 @@ namespace Pipes.Models.Lets
         protected override bool ReadyToConnect()
         {
             return !waitingReceivers.Any() && ConnectedInlet == null;
+        }
+
+        internal bool HasWaitingReceiver()
+        {
+            return waitingReceivers.Any();
+        }
+
+        internal void UseWaitingReceiver(TMessage message)
+        {
+            var waitingReceiver = waitingReceivers.First();
+            waitingReceivers.Remove(waitingReceiver);
+            waitingReceiver.ReceiveMessage(message);
+            waitingReceiver.WaitSemaphore.Release();
         }
     }
 }

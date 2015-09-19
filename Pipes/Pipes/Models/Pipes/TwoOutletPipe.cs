@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Pipes.Constants;
 using Pipes.Models.Lets;
 using Pipes.Models.TieBreakers;
@@ -94,14 +95,54 @@ namespace Pipes.Models.Pipes
             get { return new[] {LeftOutlet, RightOutlet}; }
         }
 
-        void IPipe<TMessage>.TryToSend(WaitingSender<TMessage> sender)
+        Action<TMessage> IPipe<TMessage>.FindReceiver()
         {
-            throw new System.NotImplementedException();
+            var leftReceiver = FindReceiverFromOutlet(LeftOutlet);
+            var rightReceiver = FindReceiverFromOutlet(RightOutlet);
+
+            if (leftReceiver == null) return rightReceiver;
+            if (rightReceiver == null) return leftReceiver;
+
+            var tieResult = tieBreaker.ResolveTie();
+            switch (tieResult)
+            {
+                case TieResult.Left:
+                    return leftReceiver;
+                case TieResult.Right:
+                    return rightReceiver;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
-        void IPipe<TMessage>.TryToReceive(WaitingReceiver<TMessage> receiver)
+        Func<TMessage> IPipe<TMessage>.FindSender()
         {
-            throw new System.NotImplementedException();
+            if (Inlet.ConnectedOutlet == null)
+            {
+                if (Inlet.HasWaitingSender())
+                {
+                    // TODO: need to pull other messages down
+                    return () => Inlet.UseWaitingSender();
+                }
+                return null;
+            }
+            var previousPipe = Inlet.ConnectedOutlet.Pipe;
+            return previousPipe.FindSender();
+        }
+
+        private static Action<TMessage> FindReceiverFromOutlet(Outlet<TMessage> outlet)
+        {
+            if (outlet.ConnectedInlet == null)
+            {
+                if (outlet.HasWaitingReceiver())
+                {
+                    // TODO: need to pull other messages down
+                    return message => outlet.UseWaitingReceiver(message);
+                }
+                return null;
+            }
+            var nextPipe = outlet.ConnectedInlet.Pipe;
+            return nextPipe.FindReceiver();
         }
     }
 }

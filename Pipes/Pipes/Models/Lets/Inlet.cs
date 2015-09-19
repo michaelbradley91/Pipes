@@ -9,7 +9,7 @@ namespace Pipes.Models.Lets
 {
     public class Inlet<TMessage> : Let<TMessage>
     {
-        internal Outlet<TMessage> ConnectedOutlet;
+        internal Outlet<TMessage> ConnectedOutlet { get; set; }
 
         private readonly IList<WaitingSender<TMessage>> waitingSenders;
 
@@ -25,13 +25,23 @@ namespace Pipes.Models.Lets
         public void Send(TMessage message)
         {
             Lock();
-            var waitingSender = new WaitingSender<TMessage>(message);
-            if (!waitingSenders.Any()) Pipe.TryToSend(waitingSender);
-            if (waitingSender.MessageSent)
+            if (ConnectedOutlet != null)
             {
                 Unlock();
-                return;
+                throw new InvalidOperationException("You cannot send through a connected inlet.");
             }
+
+            if (!waitingSenders.Any())
+            {
+                var receiver = Pipe.FindReceiver();
+                if (receiver != null)
+                {
+                    receiver(message);
+                    Unlock();
+                    return;
+                }
+            }
+            var waitingSender = new WaitingSender<TMessage>(message);
             waitingSenders.Add(waitingSender);
             Unlock();
             WaitToSendMessage(waitingSender, s => s.WaitOne(), new ThreadInterruptedException("The message could not be sent as the thread was interrupted"));
@@ -87,6 +97,20 @@ namespace Pipes.Models.Lets
         protected override bool ReadyToConnect()
         {
             return !waitingSenders.Any() && ConnectedOutlet == null;
+        }
+
+        internal bool HasWaitingSender()
+        {
+            return waitingSenders.Any();
+        }
+
+        internal TMessage UseWaitingSender()
+        {
+            var waitingSender = waitingSenders.First();
+            waitingSenders.Remove(waitingSender);
+            waitingSender.RecordMessageSent();
+            waitingSender.WaitSemaphore.Release();
+            return waitingSender.Message;
         }
     }
 }

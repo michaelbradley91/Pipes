@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Pipes.Models.Lets;
 using SharedResources.SharedResources;
 
@@ -13,13 +15,15 @@ namespace Pipes.Models.Pipes
 
     public class SimpleSimplePipe<TMessage> : ISimplePipe<TMessage>, IPipe<TMessage>
     {
-        public int Capacity { get; private set; }
-        public Inlet<TMessage> Inlet { get; private set; }
-        public Outlet<TMessage> Outlet { get; private set; }
+        private readonly Queue<TMessage> storedMessages;
+        public readonly int Capacity;
+        public readonly Inlet<TMessage> Inlet;
+        public readonly Outlet<TMessage> Outlet;
 
         internal SimpleSimplePipe(int capacity)
         {
             Capacity = capacity;
+            storedMessages = new Queue<TMessage>();
 
             var resourceGroup = SharedResourceGroup.CreateWithNoAcquiredSharedResources();
             var inletResource = resourceGroup.CreateAndAcquireSharedResource();
@@ -47,14 +51,66 @@ namespace Pipes.Models.Pipes
             get { return new[] {Outlet}; }
         }
 
-        void IPipe<TMessage>.TryToSend(WaitingSender<TMessage> sender)
+        Action<TMessage> IPipe<TMessage>.FindReceiver()
         {
-            throw new System.NotImplementedException();
+            if (storedMessages.Any())
+            {
+                if (HasSpareCapacity())
+                {
+                    // TODO: need to pull other messages down
+                    return message => storedMessages.Enqueue(message);
+                }
+                return null;
+            }
+            if (Outlet.ConnectedInlet == null)
+            {
+                if (Outlet.HasWaitingReceiver())
+                {
+                    // TODO: need to pull other messages down
+                    return message => Outlet.UseWaitingReceiver(message);
+                }
+                if (HasSpareCapacity())
+                {
+                    // TODO: need to pull other messages down
+                    return message => storedMessages.Enqueue(message);
+                }
+                return null;
+            }
+            var nextPipe = Outlet.ConnectedInlet.Pipe;
+            var receiver = nextPipe.FindReceiver();
+            if (receiver != null) return receiver;
+            if (HasSpareCapacity())
+            {
+                // TODO: need to pull other messages down
+                return message => storedMessages.Enqueue(message);
+            }
+            return null;
         }
 
-        void IPipe<TMessage>.TryToReceive(WaitingReceiver<TMessage> receiver)
+        Func<TMessage> IPipe<TMessage>.FindSender()
         {
-            throw new System.NotImplementedException();
+            if (storedMessages.Any())
+            {
+                // TODO: need to pull other messages down
+                return () => storedMessages.Dequeue();
+            }
+            if (Capacity > 0) return null;
+            if (Inlet.ConnectedOutlet == null)
+            {
+                if (Inlet.HasWaitingSender())
+                {
+                    // TODO: need to pull other messages down
+                    return () => Inlet.UseWaitingSender();
+                }
+                return null;
+            }
+            var previousPipe = Inlet.ConnectedOutlet.Pipe;
+            return previousPipe.FindSender();
+        }
+
+        private bool HasSpareCapacity()
+        {
+            return storedMessages.Count < Capacity;
         }
     }
 }
