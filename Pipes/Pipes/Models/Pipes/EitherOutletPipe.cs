@@ -13,7 +13,7 @@ namespace Pipes.Models.Pipes
     {
         public TTieBreaker TieBreaker { get; private set; }
 
-        protected EitherOutletPipe(TTieBreaker tieBreaker)
+        public EitherOutletPipe(TTieBreaker tieBreaker)
         {
             TieBreaker = tieBreaker;
         }

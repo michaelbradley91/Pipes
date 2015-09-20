@@ -31,7 +31,7 @@ namespace Pipes.Models.Lets
                 throw new InvalidOperationException("You cannot receive through a connected outlet.");
             }
 
-            if (!waitingReceivers.Any())
+            if (!HasWaitingReceiver())
             {
                 var sender = Pipe.FindSender();
                 if (sender != null)
@@ -100,7 +100,7 @@ namespace Pipes.Models.Lets
             return !waitingReceivers.Any() && ConnectedInlet == null;
         }
 
-        internal Action<TMessage> FindReceiver()
+        public Action<TMessage> FindReceiver()
         {
             if (ConnectedInlet != null) return ConnectedInlet.Pipe.FindReceiver();
             if (HasWaitingReceiver()) return UseWaitingReceiver;

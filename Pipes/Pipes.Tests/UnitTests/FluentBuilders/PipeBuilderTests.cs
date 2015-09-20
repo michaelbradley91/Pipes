@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using Pipes.FluentBuilders;
+using Pipes.Builders;
 
 namespace Pipes.Tests.UnitTests.FluentBuilders
 {
@@ -19,40 +19,50 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
         public void Create_ReturnsAPipeBuilder()
         {
             // Act
-            var builder = PipeBuilder.Create;
+            var builder = PipeBuilder.New;
 
             // Assert
             builder.Should().BeAssignableTo<PipeBuilder>();
         }
 
         [Test]
-        public void NewPipe_ReturnsABasicPipeBuilder()
+        public void BasicPipe_ReturnsABasicPipeBuilder()
         {
             // Act
-            var builder = pipeBuilder.NewPipe<int>();
+            var builder = pipeBuilder.BasicPipe<int>();
 
             // Assert
-            builder.Should().BeAssignableTo<SimplePipeBuilder<int>>();
+            builder.Should().BeAssignableTo<IBasicPipeBuilder<int>>();
         }
 
         [Test]
-        public void NewTwoInletPipe_ReturnsATwoInletPipeBuilder()
+        public void CapacityPipe_ReturnsACapacityPipePipeBuilder()
         {
             // Act
-            var builder = pipeBuilder.NewTwoInletPipe<int>();
+            var builder = pipeBuilder.CapacityPipe<int>();
 
             // Assert
-            builder.Should().BeAssignableTo<TwoInletPipeBuilder<int>>();
+            builder.Should().BeAssignableTo<ICapacityPipeBuilder<int>>();
         }
 
         [Test]
-        public void NewTwoOutletPipe_ReturnsATwoOutletPipeBuilder()
+        public void EitherInletPipe_ReturnsAnEitherInletPipeBuilder()
         {
             // Act
-            var builder = pipeBuilder.NewTwoOutletPipe<int>();
+            var builder = pipeBuilder.EitherInletPipe<int>();
 
             // Assert
-            builder.Should().BeAssignableTo<TwoOutletPipeBuilder<int>>();
+            builder.Should().BeAssignableTo<IEitherInletPipeBuilder<int>>();
+        }
+
+        [Test]
+        public void EitherOutletPipe_ReturnsAnEitherOutletPipeBuilder()
+        {
+            // Act
+            var builder = pipeBuilder.EitherOutletPipe<int>();
+
+            // Assert
+            builder.Should().BeAssignableTo<IEitherOutletPipeBuilder<int>>();
         }
     }
 }

@@ -1,43 +1,36 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using Pipes.FluentBuilders;
 using System;
+using Pipes.Builders;
 
 namespace Pipes.Tests.UnitTests.FluentBuilders
 {
     [TestFixture]
-    public class BasicPipeBuilderTests
+    public class CapacityPipeBuilderTests
     {
-        private ISimplePipeBuilder<int> simplePipeBuilder;
+        private ICapacityPipeBuilder<int> capacityPipeBuilder;
 
         [SetUp]
         public void SetUp()
         {
-            simplePipeBuilder = new SimplePipeBuilder<int>();
+            capacityPipeBuilder = new CapacityPipeBuilder<int>();
         }
 
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         [Test]
         public void WithCapacity_GivenANegativeCapacity_ThrowsAnArgumentOutOfRangeException()
         {
-            simplePipeBuilder.WithCapacity(-5);
-        }
-
-        [Test]
-        public void WithNoCapacity_CreatesAPipeWithZeroCapacity()
-        {
-            // Act
-            var pipe = simplePipeBuilder.WithNoCapacity();
-
-            // Assert
-            pipe.Capacity.Should().Be(0);
+            capacityPipeBuilder.WithCapacity(-5);
         }
 
         [Test]
         public void WithCapacity_GivenASpecificCapacity_CreatesAPipeWithThatCapacity()
         {
+            // Arrange
+            capacityPipeBuilder.WithCapacity(100);
+
             // Act
-            var pipe = simplePipeBuilder.WithCapacity(100);
+            var pipe = capacityPipeBuilder.Build();
 
             // Assert
             pipe.Capacity.Should().Be(100);

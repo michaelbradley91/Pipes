@@ -31,7 +31,7 @@ namespace Pipes.Models.Lets
                 throw new InvalidOperationException("You cannot send through a connected inlet.");
             }
 
-            if (!waitingSenders.Any())
+            if (!HasWaitingSender())
             {
                 var receiver = Pipe.FindReceiver();
                 if (receiver != null)
@@ -99,7 +99,7 @@ namespace Pipes.Models.Lets
             return !waitingSenders.Any() && ConnectedOutlet == null;
         }
 
-        internal Func<TMessage> FindSender()
+        public Func<TMessage> FindSender()
         {
             if (ConnectedOutlet != null) return ConnectedOutlet.Pipe.FindSender();
             if (HasWaitingSender()) return UseWaitingSender;

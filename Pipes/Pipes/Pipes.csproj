@@ -60,25 +60,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\EitherOutletPipeBuilder.cs" />
+    <Compile Include="Builders\TieBreakingEitherOutletPipeBuilder.cs" />
+    <Compile Include="Builders\TieBreakingEitherInletPipeBuilder.cs" />
+    <Compile Include="Builders\EitherInletPipeBuilder.cs" />
+    <Compile Include="Builders\CapacityPipeBuilder.cs" />
+    <Compile Include="Builders\BasicPipeBuilder.cs" />
     <Compile Include="Constants\Alternated.cs" />
     <Compile Include="Constants\Priority.cs" />
     <Compile Include="Constants\TieResult.cs" />
     <Compile Include="Extensions\GraphExtensions.cs" />
     <Compile Include="Extensions\PipeExtensions.cs" />
-    <Compile Include="FluentBuilders\SimplePipeBuilder.cs" />
-    <Compile Include="FluentBuilders\TwoInletRandomisedPipeBuilder.cs" />
-    <Compile Include="FluentBuilders\TwoOutletRandomisedPipeBuilder.cs" />
-    <Compile Include="FluentBuilders\TwoOutletPipeBuilder.cs" />
-    <Compile Include="FluentBuilders\TwoInletPipeBuilder.cs" />
-    <Compile Include="FluentBuilders\PipeBuilder.cs" />
+    <Compile Include="Builders\PipeBuilder.cs" />
     <Compile Include="Models\Lets\Inlet.cs" />
     <Compile Include="Models\Lets\Let.cs" />
     <Compile Include="Models\Lets\WaitingReceiver.cs" />
     <Compile Include="Models\Lets\WaitingSender.cs" />
     <Compile Include="Models\Lets\Outlet.cs" />
-    <Compile Include="Models\Pipes\RandomisingEitherInletPipe.cs" />
-    <Compile Include="Models\Pipes\PrioritisingEitherInletPipe.cs" />
-    <Compile Include="Models\Pipes\AlternatingEitherInletPipe.cs" />
+    <Compile Include="Models\Pipes\BasicPipe.cs" />
     <Compile Include="Models\Pipes\EitherOutletPipe.cs" />
     <Compile Include="Models\Pipes\Pipe.cs" />
     <Compile Include="Models\Pipes\SimplePipe.cs" />
