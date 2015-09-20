@@ -1,46 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using Pipes.Constants;
 using Pipes.Models.Lets;
-using Pipes.Models.TieBreakers;
 using SharedResources.SharedResources;
 
 namespace Pipes.Models.Pipes
 {
-    public interface ITwoOutletPipe<TMessage>
+    public interface ITwoOutletPipe<TMessage> : IPipe<TMessage>
     {
         Inlet<TMessage> Inlet { get; }
         Outlet<TMessage> LeftOutlet { get; }
         Outlet<TMessage> RightOutlet { get; }
     }
 
-    public class TwoOutletPipe<TMessage> : ITwoOutletPipe<TMessage>, IPipe<TMessage>
+    public abstract class TwoOutletPipe<TMessage> : ITwoOutletPipe<TMessage>
     {
         public Inlet<TMessage> Inlet { get; private set; }
         public Outlet<TMessage> LeftOutlet { get; private set; }
         public Outlet<TMessage> RightOutlet { get; private set; }
 
-        private readonly ITieBreaker tieBreaker;
-
-        private TwoOutletPipe(double leftProbability)
-            : this(new RandomisingTieBreaker(leftProbability))
+        protected TwoOutletPipe()
         {
-        }
-
-        private TwoOutletPipe(Priority priority)
-            : this(new PrioritisingTieBreaker(priority))
-        {
-        }
-
-        private TwoOutletPipe(Alternated alternated) 
-            : this(new AlternatingTieBreaker(alternated))
-        {
-        }
-
-        private TwoOutletPipe(ITieBreaker tieBreaker)
-        {
-            this.tieBreaker = tieBreaker;
-
             var resourceGroup = SharedResourceGroup.CreateWithNoAcquiredSharedResources();
             var inletResource = resourceGroup.CreateAndAcquireSharedResource();
             var leftOutletResource = resourceGroup.CreateAndAcquireSharedResource();
@@ -59,32 +38,6 @@ namespace Pipes.Models.Pipes
 
             resourceGroup.FreeSharedResources();
         }
-
-        internal static TwoOutletPipe<TMessage> CreateRandomised(double leftProbability)
-        {
-            return new TwoOutletPipe<TMessage>(leftProbability);
-        }
-
-        internal static TwoOutletPipe<TMessage> CreatePrioritised(Priority priority)
-        {
-            return new TwoOutletPipe<TMessage>(priority);
-        }
-
-        internal static TwoOutletPipe<TMessage> CreateAlternated(Alternated alternated)
-        {
-            return new TwoOutletPipe<TMessage>(alternated);
-        }
-
-        internal static TwoOutletPipe<TMessage> CreateDuplicator()
-        {
-            return new TwoOutletPipe<TMessage>(null);
-        }
-
-        internal static TwoOutletPipe<TMessage> Create(ITieBreaker tieBreaker)
-        {
-            return new TwoOutletPipe<TMessage>(tieBreaker);
-        }
-
         IReadOnlyCollection<Inlet<TMessage>> IPipe<TMessage>.Inlets
         {
             get { return new[] {Inlet}; }
@@ -95,29 +48,7 @@ namespace Pipes.Models.Pipes
             get { return new[] {LeftOutlet, RightOutlet}; }
         }
 
-        Action<TMessage> IPipe<TMessage>.FindReceiver()
-        {
-            var leftReceiver = LeftOutlet.FindReceiver();
-            var rightReceiver = RightOutlet.FindReceiver();
-
-            if (leftReceiver == null) return rightReceiver;
-            if (rightReceiver == null) return leftReceiver;
-
-            var tieResult = tieBreaker.ResolveTie();
-            switch (tieResult)
-            {
-                case TieResult.Left:
-                    return leftReceiver;
-                case TieResult.Right:
-                    return rightReceiver;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        Func<TMessage> IPipe<TMessage>.FindSender()
-        {
-            return Inlet.FindSender();
-        }
+        public abstract Action<TMessage> FindReceiver();
+        public abstract Func<TMessage> FindSender();
     }
 }

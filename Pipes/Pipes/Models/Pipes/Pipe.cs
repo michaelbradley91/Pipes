@@ -4,7 +4,7 @@ using Pipes.Models.Lets;
 
 namespace Pipes.Models.Pipes
 {
-    internal interface IPipe<TMessage>
+    public interface IPipe<TMessage>
     {
         IReadOnlyCollection<Inlet<TMessage>> Inlets { get; }
         IReadOnlyCollection<Outlet<TMessage>> Outlets { get; }

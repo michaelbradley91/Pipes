@@ -1,57 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Pipes.Models.Lets;
-using SharedResources.SharedResources;
 
 namespace Pipes.Models.Pipes
 {
-    public interface ISimplePipe<TMessage>
+    public interface ICapacityPipe<TMessage> : ISimplePipe<TMessage>
     {
         int Capacity { get; }
-        Inlet<TMessage> Inlet { get; }
-        Outlet<TMessage> Outlet { get; }
     }
 
-    public class SimplePipe<TMessage> : ISimplePipe<TMessage>, IPipe<TMessage>
+    public class CapacityPipe<TMessage> : SimplePipe<TMessage>, ICapacityPipe<TMessage>
     {
         private readonly Queue<TMessage> storedMessages;
         public int Capacity { get; private set; }
-        public Inlet<TMessage> Inlet { get; private set; }
-        public Outlet<TMessage> Outlet { get; private set; }
 
-        internal SimplePipe(int capacity)
+        internal CapacityPipe(int capacity)
         {
             Capacity = capacity;
             storedMessages = new Queue<TMessage>();
-
-            var resourceGroup = SharedResourceGroup.CreateWithNoAcquiredSharedResources();
-            var inletResource = resourceGroup.CreateAndAcquireSharedResource();
-            var outletResource = resourceGroup.CreateAndAcquireSharedResource();
-            var pipeResource = resourceGroup.CreateAndAcquireSharedResource();
-
-            pipeResource.AssociatedObject = this;
-
-            resourceGroup.ConnectSharedResources(inletResource, pipeResource);
-            resourceGroup.ConnectSharedResources(pipeResource, outletResource);
-
-            Inlet = new Inlet<TMessage>(this, inletResource);
-            Outlet = new Outlet<TMessage>(this, outletResource);
-
-            resourceGroup.FreeSharedResources();
         }
 
-        IReadOnlyCollection<Inlet<TMessage>> IPipe<TMessage>.Inlets
-        {
-            get { return new[] {Inlet}; } 
-        }
-
-        IReadOnlyCollection<Outlet<TMessage>> IPipe<TMessage>.Outlets
-        {
-            get { return new[] {Outlet}; }
-        }
-
-        Action<TMessage> IPipe<TMessage>.FindReceiver()
+        public override Action<TMessage> FindReceiver()
         {
             if (storedMessages.Any())
             {
@@ -67,7 +36,7 @@ namespace Pipes.Models.Pipes
             return null;
         }
 
-        Func<TMessage> IPipe<TMessage>.FindSender()
+        public override Func<TMessage> FindSender()
         {
             if (storedMessages.Any())
             {

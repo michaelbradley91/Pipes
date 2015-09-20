@@ -5,8 +5,8 @@ namespace Pipes.FluentBuilders
 {
     public interface ISimplePipeBuilder<TMessageType>
     {
-        ISimplePipe<TMessageType> WithNoCapacity();
-        ISimplePipe<TMessageType> WithCapacity(int capacity);
+        ICapacityPipe<TMessageType> WithNoCapacity();
+        ICapacityPipe<TMessageType> WithCapacity(int capacity);
     }
 
     public class SimplePipeBuilder<TMessage> : ISimplePipeBuilder<TMessage>
@@ -15,15 +15,15 @@ namespace Pipes.FluentBuilders
         {
         }
 
-        public ISimplePipe<TMessage> WithNoCapacity()
+        public ICapacityPipe<TMessage> WithNoCapacity()
         {
-            return new SimplePipe<TMessage>(0);
+            return new CapacityPipe<TMessage>(0);
         }
 
-        public ISimplePipe<TMessage> WithCapacity(int capacity)
+        public ICapacityPipe<TMessage> WithCapacity(int capacity)
         {
             if (capacity < 0) throw new ArgumentOutOfRangeException("capacity");
-            return new SimplePipe<TMessage>(capacity);
+            return new CapacityPipe<TMessage>(capacity);
         }
     }
 }
