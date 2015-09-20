@@ -2,6 +2,7 @@
 {
     public interface IPipeBuilder
     {
+        IBasicPipeBuilder<TMessage> Build<TMessage>();
         IBasicPipeBuilder<TMessage> BasicPipe<TMessage>();
         ICapacityPipeBuilder<TMessage> CapacityPipe<TMessage>();
         IEitherInletPipeBuilder<TMessage> EitherInletPipe<TMessage>();
@@ -11,6 +12,11 @@
     public class PipeBuilder : IPipeBuilder
     {
         public static readonly IPipeBuilder New = new PipeBuilder();
+
+        public IBasicPipeBuilder<TMessage> Build<TMessage>()
+        {
+            return new BasicPipeBuilder<TMessage>();
+        }
 
         public IBasicPipeBuilder<TMessage> BasicPipe<TMessage>()
         {
