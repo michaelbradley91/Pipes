@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Pipes.Models;
 using Pipes.Models.Pipes;
 using QuickGraph;
 
 namespace Pipes.Extensions
 {
-    internal static class PipeExtensions
+    public static class PipeExtensions
     {
         public static IVertexAndEdgeListGraph<IPipe<TMessage>, Edge<IPipe<TMessage>>> CreateGraphOfPipeSystem<TMessage>(this IPipe<TMessage> onePipeInTheSystem)
         {
@@ -20,33 +19,30 @@ namespace Pipes.Extensions
                 var pipeToCheck = pipesToCheck.Pop();
                 if (pipesSeen.Contains(pipeToCheck)) continue;
 
+                var sendsTo = GetPipesYouSendMessagesTo(pipeToCheck);
+                var receivesFrom = GetPipesYouReceiveMessagesFrom(pipeToCheck);
+
+                foreach (var pipe in sendsTo) pipesToCheck.Push(pipe);
+                foreach (var pipe in receivesFrom) pipesToCheck.Push(pipe);
+
                 graph.AddVertex(pipeToCheck);
+                graph.AddVerticesAndEdgeRange(sendsTo.Select(p => new Edge<IPipe<TMessage>>(pipeToCheck, p)));
+                graph.AddVerticesAndEdgeRange(receivesFrom.Select(p => new Edge<IPipe<TMessage>>(p, pipeToCheck)));
 
-                foreach (var otherPipe in GetPipesYouSendMessagesTo(pipeToCheck))
-                {
-                    graph.AddVertex(otherPipe);
-                    graph.AddEdge(new Edge<IPipe<TMessage>>(pipeToCheck, otherPipe));
-                }
-
-                foreach (var otherPipe in GetPipesYouReceiveMessagesFrom(pipeToCheck))
-                {
-                    graph.AddVertex(otherPipe);
-                    graph.AddEdge(new Edge<IPipe<TMessage>>(otherPipe, pipeToCheck));
-                }
                 pipesSeen.Add(pipeToCheck);
             }
 
             return graph;
         }
 
-        private static IEnumerable<IPipe<TMessage>> GetPipesYouSendMessagesTo<TMessage>(IPipe<TMessage> pipe)
+        private static IReadOnlyCollection<IPipe<TMessage>> GetPipesYouSendMessagesTo<TMessage>(IPipe<TMessage> pipe)
         {
-            return pipe.Outlets.Where(outlet => outlet.ConnectedInlet != null).Select(outlet => outlet.ConnectedInlet.Pipe);
+            return pipe.Outlets.Where(outlet => outlet.ConnectedInlet != null).Select(outlet => outlet.ConnectedInlet.Pipe).ToList();
         }
 
-        private static IEnumerable<IPipe<TMessage>> GetPipesYouReceiveMessagesFrom<TMessage>(IPipe<TMessage> pipe)
+        private static IReadOnlyCollection<IPipe<TMessage>> GetPipesYouReceiveMessagesFrom<TMessage>(IPipe<TMessage> pipe)
         {
-            return pipe.Inlets.Where(inlet => inlet.ConnectedOutlet != null).Select(inlet => inlet.ConnectedOutlet.Pipe);
+            return pipe.Inlets.Where(inlet => inlet.ConnectedOutlet != null).Select(inlet => inlet.ConnectedOutlet.Pipe).ToList();
         }
     }
 }

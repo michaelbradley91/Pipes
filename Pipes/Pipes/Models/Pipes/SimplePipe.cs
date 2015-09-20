@@ -30,6 +30,8 @@ namespace Pipes.Models.Pipes
 
             Inlet = new Inlet<TMessage>(this, inletResource);
             Outlet = new Outlet<TMessage>(this, outletResource);
+
+            resourceGroup.FreeSharedResources();
         }
 
         public IReadOnlyCollection<Inlet<TMessage>> Inlets

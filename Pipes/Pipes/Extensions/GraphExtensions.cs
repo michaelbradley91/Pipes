@@ -9,6 +9,8 @@ namespace Pipes.Extensions
     {
         public static bool ContainsCycle<TVertex>(this IVertexAndEdgeListGraph<TVertex, Edge<TVertex>> graph)
         {
+            if (graph.Edges.Any(e => e.IsSelfEdge<TVertex, Edge<TVertex>>())) return true;
+
             IDictionary<TVertex, int> components;
             graph.StronglyConnectedComponents(out components);
             return components.Select(c => c.Value).Distinct().Count() != graph.Vertices.Count();
