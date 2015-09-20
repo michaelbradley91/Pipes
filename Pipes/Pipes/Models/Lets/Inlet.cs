@@ -24,6 +24,28 @@ namespace Pipes.Models.Lets
         /// </summary>
         public void Send(TMessage message)
         {
+            Send(message, s => s.WaitOne(), new ThreadInterruptedException("The message could not be sent as the thread was interrupted"));
+        }
+
+        /// <summary>
+        /// Send a message down the pipe. If the pipe system has insufficient capacity to accept the message, this will wait for up to approximately the 
+        /// specified timeout to send the message. If the timeout is exceeded, this will throw a timeout exception.
+        /// </summary>
+        public void Send(TMessage message, TimeSpan timeout)
+        {
+            Send(message, s => s.WaitOne(timeout), new TimeoutException("The message could not be sent within the specified timeout"));
+        }
+
+        /// <summary>
+        /// Send a message down the pipe. If the pipe system has insufficient capacity to accept the message, this will throw an invalid operation exception.
+        /// </summary>
+        public void SendImmediately(TMessage message)
+        {
+            Send(message, s => s.WaitOne(0), new InvalidOperationException("The message could not be sent immediately as the pipe system was not ready to receive a message"));
+        }
+
+        private void Send(TMessage message, Func<Semaphore, bool> waitFunction, Exception failureException)
+        {
             Lock();
             if (ConnectedOutlet != null)
             {
@@ -44,7 +66,7 @@ namespace Pipes.Models.Lets
             var waitingSender = new WaitingSender<TMessage>(message);
             waitingSenders.Add(waitingSender);
             Unlock();
-            WaitToSendMessage(waitingSender, s => s.WaitOne(), new ThreadInterruptedException("The message could not be sent as the thread was interrupted"));
+            WaitToSendMessage(waitingSender, waitFunction, failureException);
         }
 
         private void WaitToSendMessage(WaitingSender<TMessage> waitingSender, Func<Semaphore, bool> waitFunction, Exception failureException)

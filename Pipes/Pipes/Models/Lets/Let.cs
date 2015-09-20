@@ -12,7 +12,7 @@ namespace Pipes.Models.Lets
         private readonly SharedResource resource;
         private SharedResourceGroup activeResourceGroup;
 
-        internal Let(IPipe<TMessage> pipe, SharedResource resource)
+        protected Let(IPipe<TMessage> pipe, SharedResource resource)
         {
             this.resource = resource;
             Pipe = pipe;

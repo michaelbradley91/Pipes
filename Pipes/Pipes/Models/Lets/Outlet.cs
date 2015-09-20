@@ -20,9 +20,31 @@ namespace Pipes.Models.Lets
         }
 
         /// <summary>
-        /// Retrieve a message from this outlet. If no message is available, this method will block until one arrives.
+        /// Retrieve a message from this pipe. If no message is available, this method will block until one arrives.
         /// </summary>
         public TMessage Receive()
+        {
+            return Receive(s => s.WaitOne(), new ThreadInterruptedException("A message could not be received as the thread was interrupted"));
+        }
+
+        /// <summary>
+        /// Retrieve a message from this pipe. If no message is available, this will wait for up to approximately the 
+        /// specified timeout to retrieve a message. If the timeout is exceeded, this will throw a timeout exception.
+        /// </summary>
+        public TMessage Receive(TimeSpan timeout)
+        {
+            return Receive(s => s.WaitOne(timeout), new TimeoutException("A message could not be received within the specified timeout"));
+        }
+
+        /// <summary>
+        /// Retrieve a message from this pipe. If no message is available, this will throw an invalid operation exception.
+        /// </summary>
+        public TMessage ReceiveImmediately()
+        {
+            return Receive(s => s.WaitOne(0), new InvalidOperationException("A message could not be received immediately as the pipe system did not have a message ready"));
+        }
+        
+        public TMessage Receive(Func<Semaphore, bool> waitFunction, Exception failureException)
         {
             Lock();
             if (ConnectedInlet != null)
