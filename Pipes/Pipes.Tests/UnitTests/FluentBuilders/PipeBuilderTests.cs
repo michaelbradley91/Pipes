@@ -1,22 +1,15 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using Pipes.Builders;
+using Pipes.Models.Pipes;
 
 namespace Pipes.Tests.UnitTests.FluentBuilders
 {
     [TestFixture]
     public class PipeBuilderTests
     {
-        private IPipeBuilder pipeBuilder;
-
-        [SetUp]
-        public void SetUp()
-        {
-            pipeBuilder = new PipeBuilder();
-        }
-
         [Test]
-        public void Create_ReturnsAPipeBuilder()
+        public void New_ReturnsAPipeBuilder()
         {
             // Act
             var builder = PipeBuilder.New;
@@ -26,10 +19,20 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
         }
 
         [Test]
+        public void Build_ReturnsABasicPipeBuilder()
+        {
+            // Act
+            var basicPipe = PipeBuilder.New.Build<int>();
+
+            // Assert
+            basicPipe.GetType().Should().BeAssignableTo<IBasicPipe<int>>();
+        }
+
+        [Test]
         public void BasicPipe_ReturnsABasicPipeBuilder()
         {
             // Act
-            var builder = pipeBuilder.BasicPipe<int>();
+            var builder = PipeBuilder.New.BasicPipe<int>();
 
             // Assert
             builder.Should().BeAssignableTo<IBasicPipeBuilder<int>>();
@@ -39,7 +42,7 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
         public void CapacityPipe_ReturnsACapacityPipePipeBuilder()
         {
             // Act
-            var builder = pipeBuilder.CapacityPipe<int>();
+            var builder = PipeBuilder.New.CapacityPipe<int>();
 
             // Assert
             builder.Should().BeAssignableTo<ICapacityPipeBuilder<int>>();
@@ -49,7 +52,7 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
         public void EitherInletPipe_ReturnsAnEitherInletPipeBuilder()
         {
             // Act
-            var builder = pipeBuilder.EitherInletPipe<int>();
+            var builder = PipeBuilder.New.EitherInletPipe<int>();
 
             // Assert
             builder.Should().BeAssignableTo<IEitherInletPipeBuilder<int>>();
@@ -59,7 +62,7 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
         public void EitherOutletPipe_ReturnsAnEitherOutletPipeBuilder()
         {
             // Act
-            var builder = pipeBuilder.EitherOutletPipe<int>();
+            var builder = PipeBuilder.New.EitherOutletPipe<int>();
 
             // Assert
             builder.Should().BeAssignableTo<IEitherOutletPipeBuilder<int>>();

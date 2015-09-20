@@ -64,6 +64,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="UnitTests\FluentBuilders\BasicPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\FluentBuilders\TieBreakingEitherInletPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\FluentBuilders\TieBreakingEitherOutletPipeBuilderTests.cs" />
     <Compile Include="UnitTests\FluentBuilders\PipeBuilderTests.cs" />
     <Compile Include="UnitTests\FluentBuilders\CapacityPipeBuilderTests.cs" />
     <Compile Include="UnitTests\FluentBuilders\EitherOutletPipeBuilderTests.cs" />
