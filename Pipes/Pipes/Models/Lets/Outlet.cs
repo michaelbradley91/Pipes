@@ -100,12 +100,19 @@ namespace Pipes.Models.Lets
             return !waitingReceivers.Any() && ConnectedInlet == null;
         }
 
-        internal bool HasWaitingReceiver()
+        internal Action<TMessage> FindReceiver()
+        {
+            if (ConnectedInlet != null) return ConnectedInlet.Pipe.FindReceiver();
+            if (HasWaitingReceiver()) return UseWaitingReceiver;
+            return null;
+        }
+
+        private bool HasWaitingReceiver()
         {
             return waitingReceivers.Any();
         }
 
-        internal void UseWaitingReceiver(TMessage message)
+        private void UseWaitingReceiver(TMessage message)
         {
             var waitingReceiver = waitingReceivers.First();
             waitingReceivers.Remove(waitingReceiver);

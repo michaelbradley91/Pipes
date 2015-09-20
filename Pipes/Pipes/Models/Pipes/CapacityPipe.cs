@@ -56,25 +56,14 @@ namespace Pipes.Models.Pipes
             if (storedMessages.Any())
             {
                 if (HasSpareCapacity()) return message => storedMessages.Enqueue(message);
-
-                return null;
             }
-
-            if (Outlet.ConnectedInlet == null)
+            else
             {
-                if (Outlet.HasWaitingReceiver()) return message => Outlet.UseWaitingReceiver(message);
+                var receiver = Outlet.FindReceiver();
+                if (receiver != null) return receiver;
 
                 if (HasSpareCapacity()) return message => storedMessages.Enqueue(message);
-
-                return null;
             }
-
-            var nextPipe = Outlet.ConnectedInlet.Pipe;
-            var receiver = nextPipe.FindReceiver();
-            if (receiver != null) return receiver;
-
-            if (HasSpareCapacity()) return message => storedMessages.Enqueue(message);
-
             return null;
         }
 
@@ -88,31 +77,15 @@ namespace Pipes.Models.Pipes
 
                     if (storedMessages.Count == Capacity - 1)
                     {
-                        if (Inlet.ConnectedOutlet == null)
-                        {
-                            if (Inlet.HasWaitingSender()) storedMessages.Enqueue(Inlet.UseWaitingSender());
-                        }
-                        else
-                        {
-                            var sender = Inlet.ConnectedOutlet.Pipe.FindSender();
-                            if (sender != null) storedMessages.Enqueue(sender());
-                        }
+                        var sender = Inlet.FindSender();
+                        if (sender != null) storedMessages.Enqueue(sender());
                     }
 
                     return message;
                 };
             }
 
-            if (Capacity > 0) return null;
-
-            if (Inlet.ConnectedOutlet == null)
-            {
-                if (Inlet.HasWaitingSender()) return () => Inlet.UseWaitingSender();
-                return null;
-            }
-
-            var previousPipe = Inlet.ConnectedOutlet.Pipe;
-            return previousPipe.FindSender();
+            return Capacity > 0 ? null : Inlet.FindSender();
         }
 
         private bool HasSpareCapacity()

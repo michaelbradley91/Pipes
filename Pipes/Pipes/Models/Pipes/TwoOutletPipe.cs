@@ -97,8 +97,8 @@ namespace Pipes.Models.Pipes
 
         Action<TMessage> IPipe<TMessage>.FindReceiver()
         {
-            var leftReceiver = FindReceiverFromOutlet(LeftOutlet);
-            var rightReceiver = FindReceiverFromOutlet(RightOutlet);
+            var leftReceiver = LeftOutlet.FindReceiver();
+            var rightReceiver = RightOutlet.FindReceiver();
 
             if (leftReceiver == null) return rightReceiver;
             if (rightReceiver == null) return leftReceiver;
@@ -115,30 +115,9 @@ namespace Pipes.Models.Pipes
             }
         }
 
-        private static Action<TMessage> FindReceiverFromOutlet(Outlet<TMessage> outlet)
-        {
-            if (outlet.ConnectedInlet == null)
-            {
-                if (outlet.HasWaitingReceiver()) return outlet.UseWaitingReceiver;
-
-                return null;
-            }
-
-            var nextPipe = outlet.ConnectedInlet.Pipe;
-            return nextPipe.FindReceiver();
-        }
-
         Func<TMessage> IPipe<TMessage>.FindSender()
         {
-            if (Inlet.ConnectedOutlet == null)
-            {
-                if (Inlet.HasWaitingSender()) return () => Inlet.UseWaitingSender();
-
-                return null;
-            }
-
-            var previousPipe = Inlet.ConnectedOutlet.Pipe;
-            return previousPipe.FindSender();
+            return Inlet.FindSender();
         }
     }
 }

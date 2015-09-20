@@ -92,21 +92,13 @@ namespace Pipes.Models.Pipes
 
         Action<TMessage> IPipe<TMessage>.FindReceiver()
         {
-            if (Outlet.ConnectedInlet == null)
-            {
-                if (Outlet.HasWaitingReceiver()) return message => Outlet.UseWaitingReceiver(message);
-
-                return null;
-            }
-
-            var nextPipe = Outlet.ConnectedInlet.Pipe;
-            return nextPipe.FindReceiver();
+            return Outlet.FindReceiver();
         }
 
         Func<TMessage> IPipe<TMessage>.FindSender()
         {
-            var leftSender = FindSenderFromInlet(LeftInlet);
-            var rightSender = FindSenderFromInlet(RightInlet);
+            var leftSender = LeftInlet.FindSender();
+            var rightSender = RightInlet.FindSender();
 
             if (leftSender == null) return rightSender;
             if (rightSender == null) return leftSender;
@@ -121,19 +113,6 @@ namespace Pipes.Models.Pipes
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        private static Func<TMessage> FindSenderFromInlet(Inlet<TMessage> inlet)
-        {
-            if (inlet.ConnectedOutlet == null)
-            {
-                if (inlet.HasWaitingSender()) return inlet.UseWaitingSender;
-
-                return null;
-            }
-
-            var previousPipe = inlet.ConnectedOutlet.Pipe;
-            return previousPipe.FindSender();
         }
     }
 }

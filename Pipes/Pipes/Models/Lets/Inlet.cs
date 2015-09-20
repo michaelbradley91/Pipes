@@ -99,12 +99,19 @@ namespace Pipes.Models.Lets
             return !waitingSenders.Any() && ConnectedOutlet == null;
         }
 
-        internal bool HasWaitingSender()
+        internal Func<TMessage> FindSender()
+        {
+            if (ConnectedOutlet != null) return ConnectedOutlet.Pipe.FindSender();
+            if (HasWaitingSender()) return UseWaitingSender;
+            return null;
+        }
+
+        private bool HasWaitingSender()
         {
             return waitingSenders.Any();
         }
 
-        internal TMessage UseWaitingSender()
+        private TMessage UseWaitingSender()
         {
             var waitingSender = waitingSenders.First();
             waitingSenders.Remove(waitingSender);

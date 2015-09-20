@@ -83,7 +83,7 @@
     <Compile Include="Models\TieBreakers\RandomisingTieBreaker.cs" />
     <Compile Include="Models\Pipes\TwoOutletPipe.cs" />
     <Compile Include="Models\Pipes\TwoInletPipe.cs" />
-    <Compile Include="Models\Pipes\SimplePipe.cs" />
+    <Compile Include="Models\Pipes\CapacityPipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
