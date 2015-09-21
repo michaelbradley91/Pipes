@@ -33,6 +33,7 @@ namespace Pipes.Models.Lets
         /// </summary>
         public TMessage Receive(TimeSpan timeout)
         {
+            if (timeout.CompareTo(TimeSpan.Zero) < 0) throw new ArgumentOutOfRangeException("timeout", "The timespan cannot be negative");
             return Receive(s => s.WaitOne(timeout), new TimeoutException("A message could not be received within the specified timeout"));
         }
 
@@ -66,7 +67,7 @@ namespace Pipes.Models.Lets
             var waitingReceiver = new WaitingReceiver<TMessage>();
             waitingReceivers.Add(waitingReceiver);
             Unlock();
-            return WaitToReceiveMessage(waitingReceiver, s => s.WaitOne(), new ThreadInterruptedException("A message could not be received as the thread was interrupted"));
+            return WaitToReceiveMessage(waitingReceiver, waitFunction, failureException);
         }
 
         private TMessage WaitToReceiveMessage(WaitingReceiver<TMessage> waitingReceiver, Func<Semaphore, bool> waitFunction, Exception failureException)
@@ -108,12 +109,13 @@ namespace Pipes.Models.Lets
         }
 
         /// <summary>
-        /// Disconnect this outlet from the given inlet. This breaks a pipe system apart.
+        /// Disconnect this outlet from its inlet.
         /// </summary>
-        public void DisconnectFrom(Inlet<TMessage> inlet)
+        public void Disconnect()
         {
-            LockWith(inlet);
-            Disconnect(inlet, this);
+            if (ConnectedInlet == null) throw new InvalidOperationException("You cannot disconnect an outlet unless it is already connected");
+            LockWith(ConnectedInlet);
+            Disconnect(ConnectedInlet, this);
             Unlock();
         }
 

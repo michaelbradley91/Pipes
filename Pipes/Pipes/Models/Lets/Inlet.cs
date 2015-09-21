@@ -33,6 +33,7 @@ namespace Pipes.Models.Lets
         /// </summary>
         public void Send(TMessage message, TimeSpan timeout)
         {
+            if (timeout.CompareTo(TimeSpan.Zero) < 0) throw new ArgumentOutOfRangeException("timeout", "The timespan cannot be negative");
             Send(message, s => s.WaitOne(timeout), new TimeoutException("The message could not be sent within the specified timeout"));
         }
 
@@ -107,12 +108,13 @@ namespace Pipes.Models.Lets
         }
 
         /// <summary>
-        /// Disconnect this outlet from the given inlet. This breaks a pipe system apart.
+        /// Disconnect this outlet from its connected inlet.
         /// </summary>
-        public void DisconnectFrom(Outlet<TMessage> outlet)
+        public void Disconnect()
         {
-            LockWith(outlet);
-            Disconnect(this, outlet);
+            if (ConnectedOutlet == null) throw new InvalidOperationException("You cannot disconnect an inlet unless it is already connected");
+            LockWith(ConnectedOutlet);
+            Disconnect(this, ConnectedOutlet);
             Unlock();
         }
 

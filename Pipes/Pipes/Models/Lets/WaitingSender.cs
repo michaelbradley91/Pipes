@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 namespace Pipes.Models.Lets
 {
@@ -18,6 +19,7 @@ namespace Pipes.Models.Lets
 
         public void RecordMessageSent()
         {
+            if (MessageSent) throw new InvalidOperationException("You cannot record a message as sent more than once");
             MessageSent = true;
         }
     }

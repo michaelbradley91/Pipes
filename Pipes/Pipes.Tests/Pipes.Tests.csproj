@@ -60,6 +60,10 @@
     <Reference Include="QuickGraph.Serialization">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
     </Reference>
+    <Reference Include="SharedResources, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\StickySharedResources.1.0.0\lib\SharedResources.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -87,6 +91,9 @@
     <Compile Include="UnitTests\FluentBuilders\EitherOutletPipeBuilderTests.cs" />
     <Compile Include="UnitTests\FluentBuilders\EitherInletPipeBuilderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitTests\Models\Lets\OutletTests.cs" />
+    <Compile Include="UnitTests\Models\Lets\InletTests.cs" />
+    <Compile Include="UnitTests\Models\Lets\WaitingSenderTests.cs" />
     <Compile Include="UnitTests\Models\Lets\WaitingReceiverTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\AlternatingTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\RandomisingTieBreakerTests.cs" />
