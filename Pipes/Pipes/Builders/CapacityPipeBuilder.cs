@@ -6,7 +6,7 @@ namespace Pipes.Builders
     public interface ICapacityPipeBuilder<TMessage>
     {
         ICapacityPipe<TMessage> Build();
-        void WithCapacity(int capacity);
+        ICapacityPipeBuilder<TMessage> WithCapacity(int capacity);
     }
 
     public class CapacityPipeBuilder<TMessage> : ICapacityPipeBuilder<TMessage>
@@ -18,10 +18,11 @@ namespace Pipes.Builders
             return new CapacityPipe<TMessage>(pipeCapacity);
         }
 
-        public void WithCapacity(int capacity)
+        public ICapacityPipeBuilder<TMessage> WithCapacity(int capacity)
         {
             if (capacity < 0) throw new ArgumentOutOfRangeException("capacity", "The pipeCapacity of a pipeCapacity pipe cannot be negative");
             pipeCapacity = capacity;
+            return this;
         }
     }
 }

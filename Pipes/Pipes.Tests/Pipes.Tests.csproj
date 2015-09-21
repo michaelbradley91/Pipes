@@ -81,20 +81,27 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Helpers\PipeHelpers.cs" />
+    <Compile Include="Helpers\OutletHelpers.cs" />
+    <Compile Include="Helpers\InletHelpers.cs" />
+    <Compile Include="Helpers\SharedResourceHelpers.cs" />
+    <Compile Include="IntegrationTests\Models\Pipes\ConnectTests.cs" />
     <Compile Include="UnitTests\Extensions\PipeExtensionsTests.cs" />
     <Compile Include="UnitTests\Extensions\GraphExtensionsTests.cs" />
-    <Compile Include="UnitTests\FluentBuilders\BasicPipeBuilderTests.cs" />
-    <Compile Include="UnitTests\FluentBuilders\TieBreakingEitherInletPipeBuilderTests.cs" />
-    <Compile Include="UnitTests\FluentBuilders\TieBreakingEitherOutletPipeBuilderTests.cs" />
-    <Compile Include="UnitTests\FluentBuilders\PipeBuilderTests.cs" />
-    <Compile Include="UnitTests\FluentBuilders\CapacityPipeBuilderTests.cs" />
-    <Compile Include="UnitTests\FluentBuilders\EitherOutletPipeBuilderTests.cs" />
-    <Compile Include="UnitTests\FluentBuilders\EitherInletPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\BasicPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\TieBreakingEitherInletPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\TieBreakingEitherOutletPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\PipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\CapacityPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\EitherOutletPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\EitherInletPipeBuilderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTests\Models\Lets\OutletTests.cs" />
     <Compile Include="UnitTests\Models\Lets\InletTests.cs" />
     <Compile Include="UnitTests\Models\Lets\WaitingSenderTests.cs" />
     <Compile Include="UnitTests\Models\Lets\WaitingReceiverTests.cs" />
+    <Compile Include="UnitTests\Models\Pipes\CapacityPipeTests.cs" />
+    <Compile Include="UnitTests\Models\Pipes\BasicPipeTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\AlternatingTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\RandomisingTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\PrioritisingTieBreakerTests.cs" />
@@ -108,9 +115,7 @@
       <Name>Pipes</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="IntegrationTests\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
