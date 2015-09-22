@@ -5,6 +5,5 @@ namespace Pipes.Models.TieBreakers
     public interface ITieBreaker
     {
         TieResult ResolveTie();
-        ITieBreaker DeepCopy();
     }
 }

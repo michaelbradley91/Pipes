@@ -22,20 +22,6 @@ namespace Pipes.Tests.UnitTests.Models.TieBreakers
             tieBreaker.RightProbability.Should().Be(1 - leftProbability);
         }
 
-        [Test]
-        public void DeepCopy_CopiesTheLeftAndRightProbabilitiesCorrectly()
-        {
-            // Arrange
-            var tieBreaker = new RandomisingTieBreaker(0.24);
-
-            // Act
-            var copy = (RandomisingTieBreaker)tieBreaker.DeepCopy();
-
-            // Assert
-            copy.LeftProbability.Should().Be(tieBreaker.LeftProbability);
-            copy.RightProbability.Should().Be(tieBreaker.RightProbability);
-        }
-
         // This test is not guaranteed to succeed but is extremely likely to
         [Test]
         public void ResolveTie_SplitsTheResultsApproximatelyByExpectation()

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
 using Pipes.Builders;
-using Pipes.Constants;
 
 namespace Pipes.Tests.IntegrationTests.Models.Pipes
 {

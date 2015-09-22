@@ -28,10 +28,5 @@ namespace Pipes.Models.TieBreakers
             // 1.0 is not a possible result of next double, but 0.0 is.
             return result < LeftProbability ? TieResult.Left : TieResult.Right;
         }
-
-        public ITieBreaker DeepCopy()
-        {
-            return new RandomisingTieBreaker(LeftProbability);
-        }
     }
 }

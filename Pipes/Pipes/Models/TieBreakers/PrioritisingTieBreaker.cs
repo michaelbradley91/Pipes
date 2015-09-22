@@ -29,10 +29,5 @@ namespace Pipes.Models.TieBreakers
                     throw new ArgumentOutOfRangeException();
             }
         }
-
-        public ITieBreaker DeepCopy()
-        {
-            return new PrioritisingTieBreaker(Priority);
-        }
     }
 }

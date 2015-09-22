@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using FluentAssertions;
-using Moq;
 using NUnit.Framework;
 using Pipes.Builders;
 using Pipes.Models.Pipes;
@@ -14,7 +13,6 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
     public class CapacityPipeTests
     {
         private ICapacityPipe<int> capacityZeroPipe;
-        private ICapacityPipe<int> capacityOnePipe;
         private ICapacityPipe<int> capacityTwoPipe;
         private ICapacityPipe<int> capacityThreePipe;
         
@@ -22,7 +20,6 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void SetUp()
         {
             capacityZeroPipe = PipeBuilder.New.CapacityPipe<int>().WithCapacity(0).Build();
-            capacityOnePipe = PipeBuilder.New.CapacityPipe<int>().WithCapacity(1).Build();
             capacityTwoPipe = PipeBuilder.New.CapacityPipe<int>().WithCapacity(2).Build();
             capacityThreePipe = PipeBuilder.New.CapacityPipe<int>().WithCapacity(3).Build();
         }

@@ -30,12 +30,6 @@ namespace Pipes.Models.TieBreakers
             NextPriority = InitialPriority;
         }
 
-        private AlternatingTieBreaker(Priority initialPriority, Priority nextPriority)
-        {
-            InitialPriority = initialPriority;
-            NextPriority = nextPriority;
-        }
-
         public TieResult ResolveTie()
         {
             switch (NextPriority)
@@ -49,11 +43,6 @@ namespace Pipes.Models.TieBreakers
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        public ITieBreaker DeepCopy()
-        {
-            return new AlternatingTieBreaker(InitialPriority, NextPriority);
         }
     }
 }

@@ -29,23 +29,10 @@ namespace Pipes.Tests.UnitTests.Models.TieBreakers
         }
 
         [Test]
-        public void DeepCopy_CopiesThePriorityCorrectly()
-        {
-            // Arrange
-            var tieBreaker = new PrioritisingTieBreaker(Priority.Left);
-
-            // Act
-            var copy = (PrioritisingTieBreaker)tieBreaker.DeepCopy();
-
-            // Assert
-            copy.Priority.Should().Be(Priority.Left);
-        }
-
-        [Test]
         public void ResolveTie_AlwaysResolvesToThePrioritisedSide()
         {
             // Arrange
-            var tieBreaker = new PrioritisingTieBreaker(Priority.Left);
+            var tieBreaker = new PrioritisingTieBreaker(Priority.Right);
 
             // Act
             var firstResult = tieBreaker.ResolveTie();
@@ -53,9 +40,9 @@ namespace Pipes.Tests.UnitTests.Models.TieBreakers
             var thirdResult = tieBreaker.ResolveTie();
 
             // Assert
-            firstResult.Should().Be(TieResult.Left);
-            secondResult.Should().Be(TieResult.Left);
-            thirdResult.Should().Be(TieResult.Left);
+            firstResult.Should().Be(TieResult.Right);
+            secondResult.Should().Be(TieResult.Right);
+            thirdResult.Should().Be(TieResult.Right);
         }
     }
 }

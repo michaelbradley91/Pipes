@@ -31,20 +31,6 @@ namespace Pipes.Tests.UnitTests.Models.TieBreakers
         }
 
         [Test]
-        public void DeepCopy_CopiesTheNextAndInitialPriorityCorrectly()
-        {
-            // Arrange
-            var tieBreaker = new AlternatingTieBreaker(Alternated.RightHasPriorityInitially);
-
-            // Act
-            var copy = (AlternatingTieBreaker)tieBreaker.DeepCopy();
-
-            // Assert
-            copy.InitialPriority.Should().Be(tieBreaker.InitialPriority);
-            copy.NextPriority.Should().Be(tieBreaker.NextPriority);
-        }
-
-        [Test]
         public void ResolveTie_AlternatesThePriorityCorrectly()
         {
             // Arrange
