@@ -1,4 +1,8 @@
-﻿using Pipes.Models.Pipes;
+﻿using System;
+using Pipes.Helpers;
+using Pipes.Models.Lets;
+using Pipes.Models.Pipes;
+using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
@@ -11,7 +15,15 @@ namespace Pipes.Builders
     {
         public IBasicPipe<TMessage> Build()
         {
-            return new BasicPipe<TMessage>();
+            BasicPipe<TMessage>[] pipe = {null};
+            var lazyPipe = new Lazy<IPipe<TMessage>>(() => pipe[0]);
+            
+            var inlet = new Inlet<TMessage>(lazyPipe, SharedResourceHelpers.CreateSharedResource());
+            var outlet = new Outlet<TMessage>(lazyPipe, SharedResourceHelpers.CreateSharedResource());
+
+            pipe[0] = new BasicPipe<TMessage>(inlet, outlet);
+
+            return pipe[0];
         }
     }
 }

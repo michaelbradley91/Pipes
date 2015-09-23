@@ -6,8 +6,8 @@ namespace Pipes.Models.Pipes
 {
     public interface IPipe<TMessage>
     {
-        IReadOnlyCollection<Inlet<TMessage>> Inlets { get; }
-        IReadOnlyCollection<Outlet<TMessage>> Outlets { get; }
+        IReadOnlyCollection<IInlet<TMessage>> Inlets { get; }
+        IReadOnlyCollection<IOutlet<TMessage>> Outlets { get; }
 
         Action<TMessage> FindReceiver();
         Func<TMessage> FindSender();

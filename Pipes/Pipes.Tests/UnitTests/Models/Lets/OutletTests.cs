@@ -12,7 +12,7 @@ namespace Pipes.Tests.UnitTests.Models.Lets
     public class OutletTests
     {
         private IBasicPipe<int> pipe;
-        private Inlet<int> inlet;
+        private IInlet<int> inlet;
         private Outlet<int> outlet;
         
         [SetUp]
@@ -20,7 +20,7 @@ namespace Pipes.Tests.UnitTests.Models.Lets
         {
             pipe = PipeBuilder.New.BasicPipe<int>().Build();
             inlet = pipe.Inlet;
-            outlet = pipe.Outlet;
+            outlet = (Outlet<int>) pipe.Outlet;
         }
 
         [Test]

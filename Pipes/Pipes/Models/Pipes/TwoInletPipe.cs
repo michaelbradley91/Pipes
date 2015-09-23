@@ -7,44 +7,41 @@ namespace Pipes.Models.Pipes
 {
     public interface ITwoInletPipe<TMessage> : IPipe<TMessage>
     {
-        Inlet<TMessage> LeftInlet { get; }
-        Inlet<TMessage> RightInlet { get; }
-        Outlet<TMessage> Outlet { get; }
+        IInlet<TMessage> LeftInlet { get; }
+        IInlet<TMessage> RightInlet { get; }
+        IOutlet<TMessage> Outlet { get; }
     }
 
     public abstract class TwoInletPipe<TMessage> : ITwoInletPipe<TMessage>
     {
-        public Inlet<TMessage> LeftInlet { get; private set; }
-        public Inlet<TMessage> RightInlet { get; private set; }
-        public Outlet<TMessage> Outlet { get; private set; }
+        public IInlet<TMessage> LeftInlet { get; private set; }
+        public IInlet<TMessage> RightInlet { get; private set; }
+        public IOutlet<TMessage> Outlet { get; private set; }
 
-        protected TwoInletPipe()
+        protected TwoInletPipe(IInlet<TMessage> leftInlet, IInlet<TMessage> rightInlet, IOutlet<TMessage> outlet)
         {
-            var resourceGroup = SharedResourceGroup.CreateWithNoAcquiredSharedResources();
-            var leftInletResource = resourceGroup.CreateAndAcquireSharedResource();
-            var rightInletResource = resourceGroup.CreateAndAcquireSharedResource();
-            var outletResource = resourceGroup.CreateAndAcquireSharedResource();
+            LeftInlet = leftInlet;
+            RightInlet = rightInlet;
+            Outlet = outlet;
+
+            var resourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(LeftInlet.SharedResource, RightInlet.SharedResource, Outlet.SharedResource);
             var pipeResource = resourceGroup.CreateAndAcquireSharedResource();
 
             pipeResource.AssociatedObject = this;
 
-            resourceGroup.ConnectSharedResources(leftInletResource, pipeResource);
-            resourceGroup.ConnectSharedResources(rightInletResource, pipeResource);
-            resourceGroup.ConnectSharedResources(pipeResource, outletResource);
-
-            LeftInlet = new Inlet<TMessage>(this, leftInletResource);
-            RightInlet = new Inlet<TMessage>(this, rightInletResource);
-            Outlet = new Outlet<TMessage>(this, outletResource);
+            resourceGroup.ConnectSharedResources(LeftInlet.SharedResource, pipeResource);
+            resourceGroup.ConnectSharedResources(RightInlet.SharedResource, pipeResource);
+            resourceGroup.ConnectSharedResources(pipeResource, Outlet.SharedResource);
             
             resourceGroup.FreeSharedResources();
         }
 
-        public IReadOnlyCollection<Inlet<TMessage>> Inlets
+        public IReadOnlyCollection<IInlet<TMessage>> Inlets
         {
             get { return new[] {LeftInlet, RightInlet}; }
         }
 
-        public IReadOnlyCollection<Outlet<TMessage>> Outlets
+        public IReadOnlyCollection<IOutlet<TMessage>> Outlets
         {
             get { return new[] {Outlet}; }
         }

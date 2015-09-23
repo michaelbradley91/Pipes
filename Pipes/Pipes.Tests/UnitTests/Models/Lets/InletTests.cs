@@ -13,13 +13,13 @@ namespace Pipes.Tests.UnitTests.Models.Lets
     {
         private IBasicPipe<int> pipe;
         private Inlet<int> inlet;
-        private Outlet<int> outlet;
+        private IOutlet<int> outlet;
         
         [SetUp]
         public void SetUp()
         {
             pipe = PipeBuilder.New.BasicPipe<int>().Build();
-            inlet = pipe.Inlet;
+            inlet = (Inlet<int>) pipe.Inlet;
             outlet = pipe.Outlet;
         }
 

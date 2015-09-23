@@ -7,39 +7,79 @@ using SharedResources.SharedResources;
 
 namespace Pipes.Models.Lets
 {
-    public class Inlet<TMessage> : Let<TMessage>
+    public interface IInlet<TMessage> : ILet<TMessage>
     {
-        internal Outlet<TMessage> ConnectedOutlet { get; set; }
-
-        private readonly IList<WaitingSender<TMessage>> waitingSenders;
-
-        internal Inlet(IPipe<TMessage> pipe, SharedResource resource) : base(pipe, resource)
-        {
-            waitingSenders = new List<WaitingSender<TMessage>>();
-            ConnectedOutlet = null;
-        }
-
         /// <summary>
         /// Send a message down the pipe. If the pipe system has insufficient capacity to accept the message, this will block until the message can be sent.
         /// </summary>
-        public void Send(TMessage message)
-        {
-            Send(message, s => s.WaitOne(), new ThreadInterruptedException("The message could not be sent as the thread was interrupted"));
-        }
+        void Send(TMessage message);
 
         /// <summary>
         /// Send a message down the pipe. If the pipe system has insufficient capacity to accept the message, this will wait for up to approximately the 
         /// specified timeout to send the message. If the timeout is exceeded, this will throw a timeout exception.
         /// </summary>
+        void Send(TMessage message, TimeSpan timeout);
+
+        /// <summary>
+        /// Send a message down the pipe. If the pipe system has insufficient capacity to accept the message, this will throw an invalid operation exception.
+        /// </summary>
+        void SendImmediately(TMessage message);
+
+        /// <summary>
+        /// Connect this outlet to an inlet. This helps you to build up a pipe system!
+        /// By default, the method will also check to see if you would create a cycle by doing this. If so, it will refuse to connect to the given inlet and throw
+        /// an InvalidOperationException. This is quite an expensive check for large pipe systems however, so if you're confident you are not creating cycles, you
+        /// can turn it off.
+        /// 
+        /// (This method will also connect the outlet to this inlet)
+        /// </summary>
+        void ConnectTo(IOutlet<TMessage> outlet, bool checkForCycles = true);
+
+        /// <summary>
+        /// Returns true if and only if this inlet can be connected to an outlet.
+        /// This should only be called by a thread which has acquired this inlet's resource.
+        /// This method must never throw an exception.
+        /// </summary>
+        bool CanConnect();
+
+        /// <summary>
+        /// The outlet this inlet is connected to. The setter should only be used in conjunction with other methods on this interface,
+        /// and only when the outlet's resource has been acquired.
+        /// </summary>
+        IOutlet<TMessage> ConnectedOutlet { get; set; }
+
+        /// <summary>
+        /// Disconnect this inlet from its connected outlet.
+        /// 
+        /// (This method will also disconnect the outlet from this inlet)
+        /// </summary>
+        void Disconnect();
+
+        Func<TMessage> FindSender();
+    }
+
+    public class Inlet<TMessage> : Let<TMessage>, IInlet<TMessage>
+    {
+        public IOutlet<TMessage> ConnectedOutlet { get; set; }
+
+        private readonly IList<WaitingSender<TMessage>> waitingSenders;
+
+        internal Inlet(Lazy<IPipe<TMessage>> pipe, SharedResource sharedResource) : base(pipe, sharedResource)
+        {
+            waitingSenders = new List<WaitingSender<TMessage>>();
+            ConnectedOutlet = null;
+        }
+        public void Send(TMessage message)
+        {
+            Send(message, s => s.WaitOne(), new ThreadInterruptedException("The message could not be sent as the thread was interrupted"));
+        }
+
         public void Send(TMessage message, TimeSpan timeout)
         {
             if (timeout.CompareTo(TimeSpan.Zero) < 0) throw new ArgumentOutOfRangeException("timeout", "The timespan cannot be negative");
             Send(message, s => s.WaitOne(timeout), new TimeoutException("The message could not be sent within the specified timeout"));
         }
 
-        /// <summary>
-        /// Send a message down the pipe. If the pipe system has insufficient capacity to accept the message, this will throw an invalid operation exception.
-        /// </summary>
         public void SendImmediately(TMessage message)
         {
             Send(message, s => s.WaitOne(0), new InvalidOperationException("The message could not be sent immediately as the pipe system was not ready to receive a message"));
@@ -94,22 +134,13 @@ namespace Pipes.Models.Lets
             }
         }
 
-        /// <summary>
-        /// Connect this outlet to an inlet. This helps you to build up a pipe system!
-        /// By default, the method will also check to see if you would create a cycle by doing this. If so, it will refuse to connect to the given inlet and throw
-        /// an InvalidOperationException. This is quite an expensive check for large pipe systems however, so if you're confident you are not creating cycles, you
-        /// can turn it off.
-        /// </summary>
-        public void ConnectTo(Outlet<TMessage> outlet, bool checkForCycles = true)
+        public void ConnectTo(IOutlet<TMessage> outlet, bool checkForCycles = true)
         {
             LockWith(outlet);
             Connect(this, outlet, checkForCycles);
             Unlock();
         }
 
-        /// <summary>
-        /// Disconnect this outlet from its connected inlet.
-        /// </summary>
         public void Disconnect()
         {
             if (ConnectedOutlet == null) throw new InvalidOperationException("You cannot disconnect an inlet unless it is already connected");
@@ -118,7 +149,7 @@ namespace Pipes.Models.Lets
             Unlock();
         }
 
-        protected override bool ReadyToConnect()
+        public bool CanConnect()
         {
             return !waitingSenders.Any() && ConnectedOutlet == null;
         }

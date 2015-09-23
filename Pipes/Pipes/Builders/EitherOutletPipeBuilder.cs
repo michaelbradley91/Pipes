@@ -18,7 +18,7 @@ namespace Pipes.Builders
     {
         public IEitherOutletPipe<IPrioritisingTieBreaker, TMessage> Build()
         {
-            return new EitherOutletPipe<IPrioritisingTieBreaker, TMessage>(new PrioritisingTieBreaker(Priority.Left));
+            return new TieBreakingEitherOutletPipeBuilder<IPrioritisingTieBreaker, TMessage>(new PrioritisingTieBreaker(Priority.Left)).Build();
         }
 
         public ITieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> WithTieBreaker<TTieBreaker>(TTieBreaker tieBreaker) where TTieBreaker : ITieBreaker

@@ -5,30 +5,38 @@ using SharedResources.SharedResources;
 
 namespace Pipes.Models.Lets
 {
-    public abstract class Let<TMessage>
+    public interface ILet<TMessage>
     {
-        internal readonly IPipe<TMessage> Pipe;
+        IPipe<TMessage> Pipe { get; } 
+        
+        SharedResource SharedResource { get; }
+    }
 
-        private readonly SharedResource resource;
+    public abstract class Let<TMessage> : ILet<TMessage>
+    {
+        public IPipe<TMessage> Pipe { get { return pipe.Value; } }
+        public SharedResource SharedResource { get; private set; }
+
+        private readonly Lazy<IPipe<TMessage>> pipe;
         private SharedResourceGroup activeResourceGroup;
 
-        protected Let(IPipe<TMessage> pipe, SharedResource resource)
+        protected Let(Lazy<IPipe<TMessage>> pipe, SharedResource sharedResource)
         {
-            this.resource = resource;
-            Pipe = pipe;
+            SharedResource = sharedResource;
+            this.pipe = pipe;
 
-            resource.AssociatedObject = this;
+            sharedResource.AssociatedObject = this;
             activeResourceGroup = null;
         }
 
         protected void Lock()
         {
-            activeResourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(resource);
+            activeResourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(SharedResource);
         }
 
-        protected void LockWith(Let<TMessage> otherLet)
+        protected void LockWith(ILet<TMessage> otherLet)
         {
-            activeResourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(resource, otherLet.resource);
+            activeResourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(SharedResource, otherLet.SharedResource);
         }
 
         protected void Unlock()
@@ -36,12 +44,12 @@ namespace Pipes.Models.Lets
             activeResourceGroup.FreeSharedResources();
         }
 
-        protected void Connect(Inlet<TMessage> inlet, Outlet<TMessage> outlet, bool checkForCycles)
+        protected void Connect(IInlet<TMessage> inlet, IOutlet<TMessage> outlet, bool checkForCycles)
         {
             Try(() =>
             {
-                if (!inlet.ReadyToConnect()) throw new InvalidOperationException("The inlet was not ready to connect.");
-                if (!outlet.ReadyToConnect()) throw new InvalidOperationException("The outlet was not ready to connect.");
+                if (!inlet.CanConnect()) throw new InvalidOperationException("The inlet was not ready to connect.");
+                if (!outlet.CanConnect()) throw new InvalidOperationException("The outlet was not ready to connect.");
 
                 inlet.ConnectedOutlet = outlet;
                 outlet.ConnectedInlet = inlet;
@@ -53,7 +61,7 @@ namespace Pipes.Models.Lets
                     throw new InvalidOperationException("Connecting these pipes creates a cycle.");
                 }
 
-                activeResourceGroup.ConnectSharedResources(inlet.resource, outlet.resource);
+                activeResourceGroup.ConnectSharedResources(inlet.SharedResource, outlet.SharedResource);
 
                 while (true)
                 {
@@ -73,13 +81,7 @@ namespace Pipes.Models.Lets
             });
         }
 
-        /// <summary>
-        /// Called when the pipe system is already locked.
-        /// Return true if and only if this "let" can be connected.
-        /// </summary>
-        protected abstract bool ReadyToConnect();
-
-        protected void Disconnect(Inlet<TMessage> inlet, Outlet<TMessage> outlet)
+        protected void Disconnect(IInlet<TMessage> inlet, IOutlet<TMessage> outlet)
         {
             Try(() =>
             {
@@ -88,7 +90,7 @@ namespace Pipes.Models.Lets
                 inlet.ConnectedOutlet = null;
                 outlet.ConnectedInlet = null;
 
-                activeResourceGroup.DisconnectSharedResources(inlet.resource, outlet.resource);
+                activeResourceGroup.DisconnectSharedResources(inlet.SharedResource, outlet.SharedResource);
             });
         }
 

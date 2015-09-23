@@ -1,5 +1,8 @@
 ﻿using System;
+using Pipes.Helpers;
+using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
+using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
@@ -15,7 +18,15 @@ namespace Pipes.Builders
 
         public ICapacityPipe<TMessage> Build()
         {
-            return new CapacityPipe<TMessage>(pipeCapacity);
+            CapacityPipe<TMessage>[] pipe = { null };
+            var lazyPipe = new Lazy<IPipe<TMessage>>(() => pipe[0]);
+
+            var inlet = new Inlet<TMessage>(lazyPipe, SharedResourceHelpers.CreateSharedResource());
+            var outlet = new Outlet<TMessage>(lazyPipe, SharedResourceHelpers.CreateSharedResource());
+
+            pipe[0] = new CapacityPipe<TMessage>(inlet, outlet, pipeCapacity);
+
+            return pipe[0];
         }
 
         public ICapacityPipeBuilder<TMessage> WithCapacity(int capacity)

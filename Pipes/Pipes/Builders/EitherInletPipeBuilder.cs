@@ -1,5 +1,7 @@
 ﻿using System;
 using Pipes.Constants;
+using Pipes.Helpers;
+using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
 
@@ -18,7 +20,7 @@ namespace Pipes.Builders
     {
         public IEitherInletPipe<IPrioritisingTieBreaker, TMessage> Build()
         {
-            return new EitherInletPipe<IPrioritisingTieBreaker, TMessage>(new PrioritisingTieBreaker(Priority.Left));
+            return new TieBreakingEitherInletPipeBuilder<IPrioritisingTieBreaker, TMessage>(new PrioritisingTieBreaker(Priority.Left)).Build();
         }
 
         public ITieBreakingEitherInletPipeBuilder<TTieBreaker, TMessage> WithTieBreaker<TTieBreaker>(TTieBreaker tieBreaker) where TTieBreaker : ITieBreaker

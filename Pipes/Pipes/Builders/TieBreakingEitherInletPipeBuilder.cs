@@ -1,4 +1,7 @@
-﻿using Pipes.Models.Pipes;
+﻿using System;
+using Pipes.Helpers;
+using Pipes.Models.Lets;
+using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
 
 namespace Pipes.Builders
@@ -19,7 +22,16 @@ namespace Pipes.Builders
 
         public IEitherInletPipe<TTieBreaker, TMessage> Build()
         {
-            return new EitherInletPipe<TTieBreaker, TMessage>(tieBreaker);
+            EitherInletPipe<TTieBreaker, TMessage>[] pipe = { null };
+            var lazyPipe = new Lazy<IPipe<TMessage>>(() => pipe[0]);
+
+            var leftInlet = new Inlet<TMessage>(lazyPipe, SharedResourceHelpers.CreateSharedResource());
+            var rightInlet = new Inlet<TMessage>(lazyPipe, SharedResourceHelpers.CreateSharedResource());
+            var outlet = new Outlet<TMessage>(lazyPipe, SharedResourceHelpers.CreateSharedResource());
+
+            pipe[0] = new EitherInletPipe<TTieBreaker, TMessage>(leftInlet, rightInlet, outlet, tieBreaker);
+
+            return pipe[0];
         }
     }
 }

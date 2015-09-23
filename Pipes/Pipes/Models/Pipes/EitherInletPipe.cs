@@ -1,5 +1,6 @@
 ﻿using System;
 using Pipes.Constants;
+using Pipes.Models.Lets;
 using Pipes.Models.TieBreakers;
 
 namespace Pipes.Models.Pipes
@@ -13,7 +14,8 @@ namespace Pipes.Models.Pipes
     {
         public TTieBreaker TieBreaker { get; private set; }
 
-        public EitherInletPipe(TTieBreaker tieBreaker)
+        public EitherInletPipe(IInlet<TMessage> leftInlet, IInlet<TMessage> rightInlet, IOutlet<TMessage> outlet, TTieBreaker tieBreaker)
+            : base(leftInlet, rightInlet, outlet)
         {
             TieBreaker = tieBreaker;
         }

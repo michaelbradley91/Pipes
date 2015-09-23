@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Pipes.Models.Lets;
 
 namespace Pipes.Models.Pipes
 {
-    public interface ICapacityPipe<TMessage> : ISimplePipe<TMessage>
+    public interface ICapacityPipe<TMessage> : IStraightPipe<TMessage>
     {
         int Capacity { get; }
     }
 
-    public class CapacityPipe<TMessage> : SimplePipe<TMessage>, ICapacityPipe<TMessage>
+    public class CapacityPipe<TMessage> : StraightPipe<TMessage>, ICapacityPipe<TMessage>
     {
         private readonly Queue<TMessage> storedMessages;
         public int Capacity { get; private set; }
 
-        internal CapacityPipe(int capacity)
+        public CapacityPipe(IInlet<TMessage> inlet, IOutlet<TMessage> outlet, int capacity)
+            : base(inlet, outlet)
         {
             Capacity = capacity;
             storedMessages = new Queue<TMessage>();
