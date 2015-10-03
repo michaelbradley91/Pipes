@@ -7,8 +7,14 @@ namespace Pipes.Models.Lets
 {
     public interface ILet<TMessage>
     {
+        /// <summary>
+        /// The pipe this in/outlet is a part of
+        /// </summary>
         IPipe<TMessage> Pipe { get; } 
         
+        /// <summary>
+        /// The shared resource held by this in/outlet.
+        /// </summary>
         SharedResource SharedResource { get; }
     }
 

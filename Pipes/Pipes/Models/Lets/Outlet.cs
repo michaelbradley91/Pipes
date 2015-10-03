@@ -27,7 +27,7 @@ namespace Pipes.Models.Lets
 
         /// <summary>
         /// Connect this outlet to an inlet. This helps you to build up a pipe system!
-        /// By default, the method will also check to see if you would create a cycle by doing this. If so, it will refuse to connect to the given inlet and throw
+        /// By default, this will also check to see if you would create a cycle by doing this. If so, it will refuse to connect to the given inlet and throw
         /// an InvalidOperationException. This is quite an expensive check for large pipe systems however, so if you're confident you are not creating cycles, you
         /// can turn it off.
         /// 
@@ -38,7 +38,7 @@ namespace Pipes.Models.Lets
         /// <summary>
         /// Returns true if and only if this outlet can be connected to an inlet.
         /// This should only be called by a thread which has acquired this outlet's resource.
-        /// This method must never throw an exception.
+        /// This method must not intentionally throw an exception.
         /// </summary>
         bool CanConnect();
 
@@ -55,6 +55,11 @@ namespace Pipes.Models.Lets
         /// </summary>
         void Disconnect();
 
+        /// <summary>
+        /// Returns null if there is nothing ready to receive a message from this outlet.
+        /// This should only be called when the outlet's shared resource has been acquired.
+        /// Evaluating this action will send a message to a the receiver.
+        /// </summary>
         Action<TMessage> FindReceiver();
     }
 
