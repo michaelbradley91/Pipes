@@ -2,29 +2,53 @@
 using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
-using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
     public interface ICapacityPipeBuilder<TMessage>
     {
-        ICapacityPipe<TMessage> Build();
+        /// <summary>
+        /// A function that, given the pipe, will produce the inlet to be used by that pipe.
+        /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
+        /// the pipe in the inlet's constructor.
+        /// </summary>
+        Func<Lazy<IPipe<TMessage>>, IInlet<TMessage>> Inlet { get; set; }
+
+        /// <summary>
+        /// A function that, given the pipe, will produce the outlet to be used by that pipe.
+        /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
+        /// the pipe in the inlet's constructor.
+        /// </summary>
+        Func<Lazy<IPipe<TMessage>>, IOutlet<TMessage>> Outlet { get; set; }
+
+        int Capacity { get; set; }
+
         ICapacityPipeBuilder<TMessage> WithCapacity(int capacity);
+
+        ICapacityPipe<TMessage> Build();
     }
 
     public class CapacityPipeBuilder<TMessage> : ICapacityPipeBuilder<TMessage>
     {
-        private int pipeCapacity;
+        public Func<Lazy<IPipe<TMessage>>, IInlet<TMessage>> Inlet { get; set; }
+        public Func<Lazy<IPipe<TMessage>>, IOutlet<TMessage>> Outlet { get; set; }
+        public int Capacity { get; set; }
+
+        public CapacityPipeBuilder()
+        {
+            Inlet = p => new Inlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
+            Outlet = p => new Outlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
+        }   
 
         public ICapacityPipe<TMessage> Build()
         {
             CapacityPipe<TMessage>[] pipe = { null };
             var lazyPipe = new Lazy<IPipe<TMessage>>(() => pipe[0]);
 
-            var inlet = new Inlet<TMessage>(lazyPipe, SharedResourceHelpers.CreateSharedResource());
-            var outlet = new Outlet<TMessage>(lazyPipe, SharedResourceHelpers.CreateSharedResource());
+            var inlet = Inlet(lazyPipe);
+            var outlet = Outlet(lazyPipe);
 
-            pipe[0] = new CapacityPipe<TMessage>(inlet, outlet, pipeCapacity);
+            pipe[0] = new CapacityPipe<TMessage>(inlet, outlet, Capacity);
 
             return pipe[0];
         }
@@ -32,7 +56,7 @@ namespace Pipes.Builders
         public ICapacityPipeBuilder<TMessage> WithCapacity(int capacity)
         {
             if (capacity < 0) throw new ArgumentOutOfRangeException("capacity", "The pipeCapacity of a pipeCapacity pipe cannot be negative");
-            pipeCapacity = capacity;
+            Capacity = capacity;
             return this;
         }
     }

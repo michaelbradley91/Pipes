@@ -4,7 +4,6 @@ namespace Pipes.Builders
 {
     public interface IPipeBuilder
     {
-        IBasicPipe<TMessage> Build<TMessage>();
         IBasicPipeBuilder<TMessage> BasicPipe<TMessage>();
         ICapacityPipeBuilder<TMessage> CapacityPipe<TMessage>();
         IEitherInletPipeBuilder<TMessage> EitherInletPipe<TMessage>();
@@ -14,11 +13,6 @@ namespace Pipes.Builders
     public class PipeBuilder : IPipeBuilder
     {
         public static readonly IPipeBuilder New = new PipeBuilder();
-
-        public IBasicPipe<TMessage> Build<TMessage>()
-        {
-            return new BasicPipeBuilder<TMessage>().Build();
-        }
 
         public IBasicPipeBuilder<TMessage> BasicPipe<TMessage>()
         {

@@ -2,24 +2,46 @@
 using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
-using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
     public interface IBasicPipeBuilder<TMessage>
     {
+        /// <summary>
+        /// A function that, given the pipe, will produce the inlet to be used by that pipe.
+        /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
+        /// the pipe in the inlet's constructor.
+        /// </summary>
+        Func<Lazy<IPipe<TMessage>>, IInlet<TMessage>> Inlet { get; set; }
+
+        /// <summary>
+        /// A function that, given the pipe, will produce the outlet to be used by that pipe.
+        /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
+        /// the pipe in the inlet's constructor.
+        /// </summary>
+        Func<Lazy<IPipe<TMessage>>, IOutlet<TMessage>> Outlet { get; set; }
+
         IBasicPipe<TMessage> Build();
     }
 
     public class BasicPipeBuilder<TMessage> : IBasicPipeBuilder<TMessage>
     {
+        public Func<Lazy<IPipe<TMessage>>, IInlet<TMessage>> Inlet { get; set; }
+        public Func<Lazy<IPipe<TMessage>>, IOutlet<TMessage>> Outlet { get; set; }
+
+        public BasicPipeBuilder()
+        {
+            Inlet = p => new Inlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
+            Outlet = p => new Outlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
+        }  
+
         public IBasicPipe<TMessage> Build()
         {
             BasicPipe<TMessage>[] pipe = {null};
             var lazyPipe = new Lazy<IPipe<TMessage>>(() => pipe[0]);
             
-            var inlet = new Inlet<TMessage>(lazyPipe, SharedResourceHelpers.CreateSharedResource());
-            var outlet = new Outlet<TMessage>(lazyPipe, SharedResourceHelpers.CreateSharedResource());
+            var inlet = Inlet(lazyPipe);
+            var outlet = Outlet(lazyPipe);
 
             pipe[0] = new BasicPipe<TMessage>(inlet, outlet);
 

@@ -19,16 +19,6 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
         }
 
         [Test]
-        public void Build_ReturnsABasicPipeBuilder()
-        {
-            // Act
-            var basicPipe = PipeBuilder.New.Build<int>();
-
-            // Assert
-            basicPipe.GetType().Should().BeAssignableTo<IBasicPipe<int>>();
-        }
-
-        [Test]
         public void BasicPipe_ReturnsABasicPipeBuilder()
         {
             // Act
