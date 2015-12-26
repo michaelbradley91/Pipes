@@ -12,7 +12,7 @@ namespace Pipes.Models.Pipes
         IOutlet<TMessage> RightOutlet { get; }
     }
 
-    public abstract class TwoOutletPipe<TMessage> : ITwoOutletPipe<TMessage>
+    public abstract class TwoOutletPipe<TMessage> : Pipe<TMessage>, ITwoOutletPipe<TMessage>
     {
         public IInlet<TMessage> Inlet { get; }
         public IOutlet<TMessage> LeftOutlet { get; }
@@ -36,11 +36,7 @@ namespace Pipes.Models.Pipes
             resourceGroup.FreeSharedResources();
         }
 
-        IReadOnlyCollection<IInlet<TMessage>> IPipe<TMessage>.Inlets => new[] {Inlet};
-
-        IReadOnlyCollection<IOutlet<TMessage>> IPipe<TMessage>.Outlets => new[] {LeftOutlet, RightOutlet};
-
-        public abstract Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage);
-        public abstract Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage);
+        public override IReadOnlyCollection<IInlet<TMessage>> Inlets => new[] {Inlet};
+        public override IReadOnlyCollection<IOutlet<TMessage>> Outlets => new[] {LeftOutlet, RightOutlet};
     }
 }

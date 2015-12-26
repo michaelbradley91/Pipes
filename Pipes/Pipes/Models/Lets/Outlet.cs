@@ -43,7 +43,7 @@ namespace Pipes.Models.Lets
         bool CanConnect();
 
         /// <summary>
-        /// The outlet this inlet is connected to. The setter should only be used in conjunction with other methods on this interface,
+        /// The inlet this outlet is connected to. The setter should only be used in conjunction with other methods on this interface,
         /// and only when the outlet's resource has been acquired.
         /// </summary>
         IInlet<TMessage> ConnectedInlet { get; set; }

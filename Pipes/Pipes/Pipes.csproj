@@ -73,6 +73,7 @@
     <Compile Include="Extensions\PipeExtensions.cs" />
     <Compile Include="Builders\PipeBuilder.cs" />
     <Compile Include="Helpers\SharedResourceHelpers.cs" />
+    <Compile Include="Models\Graphs\PipeGraphVertex.cs" />
     <Compile Include="Models\Lets\Inlet.cs" />
     <Compile Include="Models\Lets\Let.cs" />
     <Compile Include="Models\Lets\WaitingReceiver.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Models\Pipes\TwoOutletPipe.cs" />
     <Compile Include="Models\Pipes\TwoInletPipe.cs" />
     <Compile Include="Models\Pipes\CapacityPipe.cs" />
+    <Compile Include="Models\Utilities\Either.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

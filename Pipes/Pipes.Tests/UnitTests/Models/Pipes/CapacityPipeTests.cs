@@ -127,7 +127,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             capacityZeroPipe.FindReceiver(capacityZeroPipe.Inlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindReceiver(mockInlet));
+            mockPipe.Verify(p => p.FindReceiver(mockInlet, true));
         }
 
         [Test]
@@ -143,7 +143,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             capacityZeroPipe.FindSender(capacityZeroPipe.Outlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindSender(mockOutlet));
+            mockPipe.Verify(p => p.FindSender(mockOutlet, true));
         }
 
         [Test]
@@ -192,7 +192,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
 
             capacityThreePipe.Outlet.ConnectTo(mockInlet);
             var expectedReceiver = new Action<int>(m => { });
-            mockPipe.Setup(p => p.FindReceiver(mockInlet)).Returns(expectedReceiver);
+            mockPipe.Setup(p => p.FindReceiver(mockInlet, true)).Returns(expectedReceiver);
 
             // Act
             var actualReceiver = capacityThreePipe.FindReceiver(capacityThreePipe.Inlet);

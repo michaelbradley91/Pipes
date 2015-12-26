@@ -457,6 +457,20 @@ namespace Pipes.Tests.UnitTests.Models.Lets
 
         [ExpectedException(typeof(InvalidOperationException))]
         [Test]
+        public void ConnectTo_WhenConnectingPipeToCreateANonTree_ThrowsAnInvalidOperationException()
+        {
+            // Arrange
+            var pipe1 = PipeBuilder.New.EitherOutletPipe<int>().Build();
+            var pipe2 = PipeBuilder.New.EitherInletPipe<int>().Build();
+
+            pipe1.LeftOutlet.ConnectTo(pipe2.LeftInlet);
+
+            // Act
+            pipe1.RightOutlet.ConnectTo(pipe2.RightInlet);
+        }
+
+        [ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void Disconnect_GivenTheInletIsNotConnected_ThrowsAnInvalidOperationException()
         {
             // Act

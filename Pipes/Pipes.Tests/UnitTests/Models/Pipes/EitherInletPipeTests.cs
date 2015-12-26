@@ -154,7 +154,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             eitherInletPipe.FindReceiver(eitherInletPipe.LeftInlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindReceiver(mockInlet));
+            mockPipe.Verify(p => p.FindReceiver(mockInlet, true));
         }
 
         [Test]
@@ -170,7 +170,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             eitherInletPipe.FindSender(eitherInletPipe.Outlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindSender(mockOutlet));
+            mockPipe.Verify(p => p.FindSender(mockOutlet, true));
         }
 
         [Test]
@@ -186,7 +186,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             eitherInletPipe.FindSender(eitherInletPipe.Outlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindSender(mockOutlet));
+            mockPipe.Verify(p => p.FindSender(mockOutlet, true));
         }
 
         [Test]
@@ -204,8 +204,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
 
             Func<int> leftSender = () => 3;
             Func<int> rightSender = () => 4;
-            mockLeftPipe.Setup(p => p.FindSender(mockLeftPipeOutlet)).Returns(leftSender);
-            mockRightPipe.Setup(p => p.FindSender(mockRightPipeOutlet)).Returns(rightSender);
+            mockLeftPipe.Setup(p => p.FindSender(mockLeftPipeOutlet, true)).Returns(leftSender);
+            mockRightPipe.Setup(p => p.FindSender(mockRightPipeOutlet, true)).Returns(rightSender);
 
             tieBreaker.Setup(t => t.ResolveTie()).Returns(TieResult.Left);
 
@@ -231,8 +231,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
 
             Func<int> leftSender = () => 3;
             Func<int> rightSender = () => 4;
-            mockLeftPipe.Setup(p => p.FindSender(mockLeftPipeOutlet)).Returns(leftSender);
-            mockRightPipe.Setup(p => p.FindSender(mockRightPipeOutlet)).Returns(rightSender);
+            mockLeftPipe.Setup(p => p.FindSender(mockLeftPipeOutlet, true)).Returns(leftSender);
+            mockRightPipe.Setup(p => p.FindSender(mockRightPipeOutlet, true)).Returns(rightSender);
 
             tieBreaker.Setup(t => t.ResolveTie()).Returns(TieResult.Right);
 

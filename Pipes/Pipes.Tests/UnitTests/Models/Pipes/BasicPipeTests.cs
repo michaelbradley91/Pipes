@@ -123,7 +123,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             
 
             // Assert
-            mockPipe.Verify(p => p.FindReceiver(mockInlet));
+            mockPipe.Verify(p => p.FindReceiver(mockInlet, true));
         }
 
         [Test]
@@ -139,7 +139,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             basicPipe.FindSender(basicPipe.Outlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindSender(mockOutlet));
+            mockPipe.Verify(p => p.FindSender(mockOutlet, true));
         }
     }
 }

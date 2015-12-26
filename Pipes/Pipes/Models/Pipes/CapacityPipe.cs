@@ -22,7 +22,7 @@ namespace Pipes.Models.Pipes
             storedMessages = new Queue<TMessage>();
         }
 
-        public override Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage)
+        protected override Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage)
         {
             if (storedMessages.Any())
             {
@@ -38,7 +38,7 @@ namespace Pipes.Models.Pipes
             return null;
         }
 
-        public override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage)
+        protected override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage)
         {
             if (storedMessages.Any())
             {

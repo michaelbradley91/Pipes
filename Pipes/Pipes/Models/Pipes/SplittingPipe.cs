@@ -14,7 +14,7 @@ namespace Pipes.Models.Pipes
         {
         }
 
-        public override Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage)
+        protected override Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage)
         {
             var leftReceiver = LeftOutlet.FindReceiver();
             var rightReceiver = RightOutlet.FindReceiver();
@@ -29,7 +29,7 @@ namespace Pipes.Models.Pipes
             };
         }
 
-        public override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage)
+        protected override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage)
         {
             var sender = Inlet.FindSender();
             if (sender == null) return null;

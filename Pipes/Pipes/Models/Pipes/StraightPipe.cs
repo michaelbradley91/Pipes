@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Pipes.Models.Lets;
 using SharedResources.SharedResources;
 
@@ -11,7 +10,7 @@ namespace Pipes.Models.Pipes
         IOutlet<TMessage> Outlet { get; }
     }
 
-    public abstract class StraightPipe<TMessage> : IStraightPipe<TMessage>
+    public abstract class StraightPipe<TMessage> : Pipe<TMessage>, IStraightPipe<TMessage>
     {
         public IInlet<TMessage> Inlet { get; }
         public IOutlet<TMessage> Outlet { get; }
@@ -32,11 +31,8 @@ namespace Pipes.Models.Pipes
             resourceGroup.FreeSharedResources();
         }
 
-        public IReadOnlyCollection<IInlet<TMessage>> Inlets => new[] {Inlet};
+        public override IReadOnlyCollection<IInlet<TMessage>> Inlets => new[] {Inlet};
 
-        public IReadOnlyCollection<IOutlet<TMessage>> Outlets => new[] {Outlet};
-
-        public abstract Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage);
-        public abstract Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage);
+        public override IReadOnlyCollection<IOutlet<TMessage>> Outlets => new[] {Outlet};
     }
 }

@@ -20,12 +20,12 @@ namespace Pipes.Models.Pipes
             TieBreaker = tieBreaker;
         }
 
-        public override Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage)
+        protected override Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage)
         {
             return Outlet.FindReceiver();
         }
 
-        public override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage)
+        protected override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage)
         {
             var leftSender = LeftInlet.FindSender();
             var rightSender = RightInlet.FindSender();
