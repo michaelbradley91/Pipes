@@ -85,6 +85,7 @@
     <Compile Include="Helpers\OutletHelpers.cs" />
     <Compile Include="Helpers\InletHelpers.cs" />
     <Compile Include="Helpers\SharedResourceHelpers.cs" />
+    <Compile Include="IntegrationTests\Examples\BarrierExample.cs" />
     <Compile Include="IntegrationTests\Models\Pipes\ConnectTests.cs" />
     <Compile Include="UnitTests\Extensions\PipeExtensionsTests.cs" />
     <Compile Include="UnitTests\Extensions\GraphExtensionsTests.cs" />
