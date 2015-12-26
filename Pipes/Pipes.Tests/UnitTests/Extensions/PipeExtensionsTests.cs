@@ -300,5 +300,21 @@ namespace Pipes.Tests.UnitTests.Extensions
             graph.Edges.Count(e => e.Source.Equals(PipeGraphVertex<int>.Create(twoOutletPipe.LeftOutlet)) && e.Target.Equals(PipeGraphVertex<int>.Create(twoInletPipe.LeftInlet))).Should().Be(1);
             graph.Edges.Count(e => e.Source.Equals(PipeGraphVertex<int>.Create(twoOutletPipe.RightOutlet)) && e.Target.Equals(PipeGraphVertex<int>.Create(twoInletPipe.RightInlet))).Should().Be(1);
         }
+
+        [Test]
+        public void CreateGraphOfPipeSystem_GivenTheInletOutletOrPipeOfTheSamePipe_ReturnsTheSameGraph()
+        {
+            // Arrange
+            var basicPipe = PipeBuilder.New.BasicPipe<int>().Build();
+
+            // Act
+            var pipeGraph = basicPipe.CreateGraphOfPipeSystem();
+            var inletGraph = basicPipe.Inlet.CreateGraphOfPipeSystem();
+            var outletGraph = basicPipe.Outlet.CreateGraphOfPipeSystem();
+
+            // Assert
+            pipeGraph.ShouldBeEquivalentTo(inletGraph);
+            inletGraph.ShouldBeEquivalentTo(outletGraph);
+        }
     }
 }
