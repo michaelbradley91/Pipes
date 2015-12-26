@@ -1,9 +1,9 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using NUnit.Framework;
-using System;
 using Pipes.Builders;
 
-namespace Pipes.Tests.UnitTests.FluentBuilders
+namespace Pipes.Tests.UnitTests.Builders
 {
     [TestFixture]
     public class CapacityPipeBuilderTests

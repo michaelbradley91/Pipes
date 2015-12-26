@@ -3,7 +3,7 @@ using NUnit.Framework;
 using Pipes.Builders;
 using Pipes.Models.Pipes;
 
-namespace Pipes.Tests.UnitTests.FluentBuilders
+namespace Pipes.Tests.UnitTests.Builders
 {
     [TestFixture]
     public class BasicPipeBuilderTests

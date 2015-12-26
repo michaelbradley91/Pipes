@@ -87,6 +87,7 @@
     <Compile Include="Helpers\SharedResourceHelpers.cs" />
     <Compile Include="IntegrationTests\Examples\BarrierExample.cs" />
     <Compile Include="IntegrationTests\Models\Pipes\ConnectTests.cs" />
+    <Compile Include="UnitTests\Builders\SplittingPipeBuilderTests.cs" />
     <Compile Include="UnitTests\Extensions\PipeExtensionsTests.cs" />
     <Compile Include="UnitTests\Extensions\GraphExtensionsTests.cs" />
     <Compile Include="UnitTests\Builders\BasicPipeBuilderTests.cs" />

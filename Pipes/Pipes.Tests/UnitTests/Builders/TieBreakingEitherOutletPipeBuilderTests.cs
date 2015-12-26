@@ -5,7 +5,7 @@ using Pipes.Builders;
 using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
 
-namespace Pipes.Tests.UnitTests.FluentBuilders
+namespace Pipes.Tests.UnitTests.Builders
 {
     [TestFixture]
     public class TieBreakingEitherOutletPipeBuilderTests

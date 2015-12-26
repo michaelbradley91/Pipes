@@ -1,13 +1,13 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using FluentAssertions;
 using Moq;
+using NUnit.Framework;
 using Pipes.Builders;
 using Pipes.Constants;
 using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
 
-namespace Pipes.Tests.UnitTests.FluentBuilders
+namespace Pipes.Tests.UnitTests.Builders
 {
     [TestFixture]
     public class EitherOutletPipeBuilderTests

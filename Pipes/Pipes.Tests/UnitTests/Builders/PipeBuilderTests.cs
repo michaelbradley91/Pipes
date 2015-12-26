@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Pipes.Builders;
 
-namespace Pipes.Tests.UnitTests.FluentBuilders
+namespace Pipes.Tests.UnitTests.Builders
 {
     [TestFixture]
     public class PipeBuilderTests
@@ -55,6 +55,16 @@ namespace Pipes.Tests.UnitTests.FluentBuilders
 
             // Assert
             builder.Should().BeAssignableTo<IEitherOutletPipeBuilder<int>>();
+        }
+
+        [Test]
+        public void SplittingPipe_ReturnsASplittingPipeBuilder()
+        {
+            // Act
+            var builder = PipeBuilder.New.SplittingPipe<int>();
+
+            // Assert
+            builder.Should().BeAssignableTo<ISplittingPipeBuilder<int>>();
         }
     }
 }
