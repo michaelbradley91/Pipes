@@ -12,7 +12,7 @@ namespace Pipes.Models.Pipes
 
     public class EitherOutletPipe<TTieBreaker, TMessage> : TwoOutletPipe<TMessage>, IEitherOutletPipe<TTieBreaker, TMessage> where TTieBreaker : ITieBreaker
     {
-        public TTieBreaker TieBreaker { get; private set; }
+        public TTieBreaker TieBreaker { get; }
 
         public EitherOutletPipe(IInlet<TMessage> inlet, IOutlet<TMessage> leftOutlet, IOutlet<TMessage> rightOutlet, TTieBreaker tieBreaker)
             : base(inlet, leftOutlet, rightOutlet)
@@ -20,7 +20,7 @@ namespace Pipes.Models.Pipes
             TieBreaker = tieBreaker;
         }
 
-        public override Action<TMessage> FindReceiver()
+        public override Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage)
         {
             var leftReceiver = LeftOutlet.FindReceiver();
             var rightReceiver = RightOutlet.FindReceiver();
@@ -39,7 +39,7 @@ namespace Pipes.Models.Pipes
             }
         }
 
-        public override Func<TMessage> FindSender()
+        public override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage)
         {
             return Inlet.FindSender();
         }

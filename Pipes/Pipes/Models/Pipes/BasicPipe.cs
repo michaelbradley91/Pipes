@@ -14,12 +14,12 @@ namespace Pipes.Models.Pipes
         {
         }
 
-        public override Action<TMessage> FindReceiver()
+        public override Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage)
         {
             return Outlet.FindReceiver();
         }
 
-        public override Func<TMessage> FindSender()
+        public override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage)
         {
             return Inlet.FindSender();
         }

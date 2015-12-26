@@ -41,7 +41,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void FindReceiver_GivenThereIsNoReceiver_ReturnsNull()
         {
             // Act
-            var receiver = basicPipe.FindReceiver();
+            var receiver = basicPipe.FindReceiver(basicPipe.Inlet);
 
             // Assert
             receiver.Should().BeNull();
@@ -61,7 +61,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             Thread.Sleep(500);
 
             // Act
-            var receiver = basicPipe.FindReceiver();
+            var receiver = basicPipe.FindReceiver(basicPipe.Inlet);
 
             // Assert
             receiver.Should().NotBeNull();
@@ -78,7 +78,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void FindSender_GivenThereIsNoSender_ReturnsNull()
         {
             // Act
-            var sender = basicPipe.FindSender();
+            var sender = basicPipe.FindSender(basicPipe.Outlet);
 
             // Assert
             sender.Should().BeNull();
@@ -97,7 +97,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             Thread.Sleep(500);
 
             // Act
-            var sender = basicPipe.FindSender();
+            var sender = basicPipe.FindSender(basicPipe.Outlet);
 
             // Assert
             sender.Should().NotBeNull();
@@ -114,13 +114,16 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            basicPipe.Outlet.ConnectTo(mockPipe.Object.Inlets.Single());
+            var mockInlet = mockPipe.Object.Inlets.Single();
+
+            basicPipe.Outlet.ConnectTo(mockInlet);
 
             // Act
-            basicPipe.FindReceiver();
+            basicPipe.FindReceiver(basicPipe.Inlet);
+            
 
             // Assert
-            mockPipe.Verify(p => p.FindReceiver());
+            mockPipe.Verify(p => p.FindReceiver(mockInlet));
         }
 
         [Test]
@@ -128,13 +131,15 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            basicPipe.Inlet.ConnectTo(mockPipe.Object.Outlets.Single());
+            var mockOutlet = mockPipe.Object.Outlets.Single();
+
+            basicPipe.Inlet.ConnectTo(mockOutlet);
 
             // Act
-            basicPipe.FindSender();
+            basicPipe.FindSender(basicPipe.Outlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindSender());
+            mockPipe.Verify(p => p.FindSender(mockOutlet));
         }
     }
 }

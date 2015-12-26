@@ -11,7 +11,7 @@ namespace Pipes.Models.TieBreakers
 
     public class AlternatingTieBreaker : IAlternatingTieBreaker
     {
-        public Priority InitialPriority { get; private set; }
+        public Priority InitialPriority { get; }
         public Priority NextPriority { get; private set; }
 
         public AlternatingTieBreaker(Alternated alternated)

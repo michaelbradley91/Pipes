@@ -48,7 +48,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void FindReceiver_GivenThereIsNoReceiver_ReturnsNull()
         {
             // Act
-            var receiver = eitherInletPipe.FindReceiver();
+            var receiver = eitherInletPipe.FindReceiver(eitherInletPipe.LeftInlet);
 
             // Assert
             receiver.Should().BeNull();
@@ -68,7 +68,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             Thread.Sleep(500);
 
             // Act
-            var receiver = eitherInletPipe.FindReceiver();
+            var receiver = eitherInletPipe.FindReceiver(eitherInletPipe.LeftInlet);
 
             // Assert
             receiver.Should().NotBeNull();
@@ -85,7 +85,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void FindSender_GivenThereIsNoSender_ReturnsNull()
         {
             // Act
-            var sender = eitherInletPipe.FindSender();
+            var sender = eitherInletPipe.FindSender(eitherInletPipe.Outlet);
 
             // Assert
             sender.Should().BeNull();
@@ -104,7 +104,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             Thread.Sleep(500);
 
             // Act
-            var sender = eitherInletPipe.FindSender();
+            var sender = eitherInletPipe.FindSender(eitherInletPipe.Outlet);
 
             // Assert
             sender.Should().NotBeNull();
@@ -129,7 +129,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             Thread.Sleep(500);
 
             // Act
-            var sender = eitherInletPipe.FindSender();
+            var sender = eitherInletPipe.FindSender(eitherInletPipe.Outlet);
 
             // Assert
             sender.Should().NotBeNull();
@@ -146,13 +146,15 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            eitherInletPipe.Outlet.ConnectTo(mockPipe.Object.Inlets.Single());
+            var mockInlet = mockPipe.Object.Inlets.Single();
+
+            eitherInletPipe.Outlet.ConnectTo(mockInlet);
 
             // Act
-            eitherInletPipe.FindReceiver();
+            eitherInletPipe.FindReceiver(eitherInletPipe.LeftInlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindReceiver());
+            mockPipe.Verify(p => p.FindReceiver(mockInlet));
         }
 
         [Test]
@@ -160,13 +162,15 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            eitherInletPipe.LeftInlet.ConnectTo(mockPipe.Object.Outlets.Single());
+            var mockOutlet = mockPipe.Object.Outlets.Single();
+
+            eitherInletPipe.LeftInlet.ConnectTo(mockOutlet);
 
             // Act
-            eitherInletPipe.FindSender();
+            eitherInletPipe.FindSender(eitherInletPipe.Outlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindSender());
+            mockPipe.Verify(p => p.FindSender(mockOutlet));
         }
 
         [Test]
@@ -174,13 +178,15 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            eitherInletPipe.RightInlet.ConnectTo(mockPipe.Object.Outlets.Single());
+            var mockOutlet = mockPipe.Object.Outlets.Single();
+
+            eitherInletPipe.RightInlet.ConnectTo(mockOutlet);
 
             // Act
-            eitherInletPipe.FindSender();
+            eitherInletPipe.FindSender(eitherInletPipe.Outlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindSender());
+            mockPipe.Verify(p => p.FindSender(mockOutlet));
         }
 
         [Test]
@@ -189,18 +195,22 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             // Arrange
             var mockLeftPipe = PipeHelpers.CreateMockPipe<int>();
             var mockRightPipe = PipeHelpers.CreateMockPipe<int>();
-            eitherInletPipe.LeftInlet.ConnectTo(mockLeftPipe.Object.Outlets.Single());
-            eitherInletPipe.RightInlet.ConnectTo(mockRightPipe.Object.Outlets.Single());
+
+            var mockLeftPipeOutlet = mockLeftPipe.Object.Outlets.Single();
+            var mockRightPipeOutlet = mockRightPipe.Object.Outlets.Single();
+
+            eitherInletPipe.LeftInlet.ConnectTo(mockLeftPipeOutlet);
+            eitherInletPipe.RightInlet.ConnectTo(mockRightPipeOutlet);
 
             Func<int> leftSender = () => 3;
             Func<int> rightSender = () => 4;
-            mockLeftPipe.Setup(p => p.FindSender()).Returns(leftSender);
-            mockRightPipe.Setup(p => p.FindSender()).Returns(rightSender);
+            mockLeftPipe.Setup(p => p.FindSender(mockLeftPipeOutlet)).Returns(leftSender);
+            mockRightPipe.Setup(p => p.FindSender(mockRightPipeOutlet)).Returns(rightSender);
 
             tieBreaker.Setup(t => t.ResolveTie()).Returns(TieResult.Left);
 
             // Act
-            var sender = eitherInletPipe.FindSender();
+            var sender = eitherInletPipe.FindSender(eitherInletPipe.Outlet);
 
             // Assert
             sender.Should().Be(leftSender);
@@ -212,18 +222,22 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             // Arrange
             var mockLeftPipe = PipeHelpers.CreateMockPipe<int>();
             var mockRightPipe = PipeHelpers.CreateMockPipe<int>();
-            eitherInletPipe.LeftInlet.ConnectTo(mockLeftPipe.Object.Outlets.Single());
-            eitherInletPipe.RightInlet.ConnectTo(mockRightPipe.Object.Outlets.Single());
+
+            var mockLeftPipeOutlet = mockLeftPipe.Object.Outlets.Single();
+            var mockRightPipeOutlet = mockRightPipe.Object.Outlets.Single();
+
+            eitherInletPipe.LeftInlet.ConnectTo(mockLeftPipeOutlet);
+            eitherInletPipe.RightInlet.ConnectTo(mockRightPipeOutlet);
 
             Func<int> leftSender = () => 3;
             Func<int> rightSender = () => 4;
-            mockLeftPipe.Setup(p => p.FindSender()).Returns(leftSender);
-            mockRightPipe.Setup(p => p.FindSender()).Returns(rightSender);
+            mockLeftPipe.Setup(p => p.FindSender(mockLeftPipeOutlet)).Returns(leftSender);
+            mockRightPipe.Setup(p => p.FindSender(mockRightPipeOutlet)).Returns(rightSender);
 
             tieBreaker.Setup(t => t.ResolveTie()).Returns(TieResult.Right);
 
             // Act
-            var sender = eitherInletPipe.FindSender();
+            var sender = eitherInletPipe.FindSender(eitherInletPipe.Outlet);
 
             // Assert
             sender.Should().Be(rightSender);
