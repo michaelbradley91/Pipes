@@ -6,6 +6,7 @@
         ICapacityPipeBuilder<TMessage> CapacityPipe<TMessage>();
         IEitherInletPipeBuilder<TMessage> EitherInletPipe<TMessage>();
         IEitherOutletPipeBuilder<TMessage> EitherOutletPipe<TMessage>();
+        ISplittingPipeBuilder<TMessage> SplittingPipe<TMessage>();
     }
 
     public class PipeBuilder : IPipeBuilder
@@ -30,6 +31,11 @@
         public IEitherOutletPipeBuilder<TMessage> EitherOutletPipe<TMessage>()
         {
             return new EitherOutletPipeBuilder<TMessage>();
+        }
+
+        public ISplittingPipeBuilder<TMessage> SplittingPipe<TMessage>()
+        {
+            return new SplittingPipeBuilder<TMessage>();
         }
     }
 }

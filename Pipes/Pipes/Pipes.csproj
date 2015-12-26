@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builders\EitherOutletPipeBuilder.cs" />
+    <Compile Include="Builders\SplittingPipeBuilder.cs" />
     <Compile Include="Builders\TieBreakingEitherOutletPipeBuilder.cs" />
     <Compile Include="Builders\TieBreakingEitherInletPipeBuilder.cs" />
     <Compile Include="Builders\EitherInletPipeBuilder.cs" />
