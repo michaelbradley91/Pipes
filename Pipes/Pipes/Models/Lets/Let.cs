@@ -20,8 +20,8 @@ namespace Pipes.Models.Lets
 
     public abstract class Let<TMessage> : ILet<TMessage>
     {
-        public IPipe<TMessage> Pipe { get { return pipe.Value; } }
-        public SharedResource SharedResource { get; private set; }
+        public IPipe<TMessage> Pipe => pipe.Value;
+        public SharedResource SharedResource { get; }
 
         private readonly Lazy<IPipe<TMessage>> pipe;
         private SharedResourceGroup activeResourceGroup;
@@ -71,10 +71,10 @@ namespace Pipes.Models.Lets
 
                 while (true)
                 {
-                    var sender = outlet.Pipe.FindSender();
+                    var sender = outlet.Pipe.FindSender(outlet);
                     if (sender == null) return;
 
-                    var receiver = inlet.Pipe.FindReceiver();
+                    var receiver = inlet.Pipe.FindReceiver(inlet);
                     if (receiver != null)
                     {
                         receiver(sender());

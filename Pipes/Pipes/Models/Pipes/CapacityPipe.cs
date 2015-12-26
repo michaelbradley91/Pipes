@@ -13,7 +13,7 @@ namespace Pipes.Models.Pipes
     public class CapacityPipe<TMessage> : StraightPipe<TMessage>, ICapacityPipe<TMessage>
     {
         private readonly Queue<TMessage> storedMessages;
-        public int Capacity { get; private set; }
+        public int Capacity { get; }
 
         public CapacityPipe(IInlet<TMessage> inlet, IOutlet<TMessage> outlet, int capacity)
             : base(inlet, outlet)
@@ -22,7 +22,7 @@ namespace Pipes.Models.Pipes
             storedMessages = new Queue<TMessage>();
         }
 
-        public override Action<TMessage> FindReceiver()
+        public override Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage)
         {
             if (storedMessages.Any())
             {
@@ -38,7 +38,7 @@ namespace Pipes.Models.Pipes
             return null;
         }
 
-        public override Func<TMessage> FindSender()
+        public override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage)
         {
             if (storedMessages.Any())
             {

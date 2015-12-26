@@ -79,6 +79,7 @@
     <Compile Include="Models\Lets\WaitingSender.cs" />
     <Compile Include="Models\Lets\Outlet.cs" />
     <Compile Include="Models\Pipes\BasicPipe.cs" />
+    <Compile Include="Models\Pipes\DuplicatorPipe.cs" />
     <Compile Include="Models\Pipes\EitherOutletPipe.cs" />
     <Compile Include="Models\Pipes\Pipe.cs" />
     <Compile Include="Models\Pipes\StraightPipe.cs" />

@@ -10,7 +10,7 @@ namespace Pipes.Models.TieBreakers
 
     public class PrioritisingTieBreaker : IPrioritisingTieBreaker
     {
-        public Priority Priority { get; private set; }
+        public Priority Priority { get; }
 
         public PrioritisingTieBreaker(Priority priority)
         {

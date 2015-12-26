@@ -13,8 +13,8 @@ namespace Pipes.Models.Pipes
 
     public abstract class StraightPipe<TMessage> : IStraightPipe<TMessage>
     {
-        public IInlet<TMessage> Inlet { get; private set; }
-        public IOutlet<TMessage> Outlet { get; private set; }
+        public IInlet<TMessage> Inlet { get; }
+        public IOutlet<TMessage> Outlet { get; }
 
         protected StraightPipe(IInlet<TMessage> inlet, IOutlet<TMessage> outlet)
         {
@@ -32,17 +32,11 @@ namespace Pipes.Models.Pipes
             resourceGroup.FreeSharedResources();
         }
 
-        public IReadOnlyCollection<IInlet<TMessage>> Inlets
-        {
-            get { return new[] {Inlet}; }
-        }
+        public IReadOnlyCollection<IInlet<TMessage>> Inlets => new[] {Inlet};
 
-        public IReadOnlyCollection<IOutlet<TMessage>> Outlets
-        {
-            get { return new[] {Outlet}; }
-        }
+        public IReadOnlyCollection<IOutlet<TMessage>> Outlets => new[] {Outlet};
 
-        public abstract Action<TMessage> FindReceiver();
-        public abstract Func<TMessage> FindSender();
+        public abstract Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage);
+        public abstract Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage);
     }
 }

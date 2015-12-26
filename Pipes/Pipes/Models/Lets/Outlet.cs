@@ -108,7 +108,7 @@ namespace Pipes.Models.Lets
 
             if (!HasWaitingReceiver())
             {
-                var sender = Pipe.FindSender();
+                var sender = Pipe.FindSender(this);
                 if (sender != null)
                 {
                     var message = sender();
@@ -169,7 +169,7 @@ namespace Pipes.Models.Lets
 
         public Action<TMessage> FindReceiver()
         {
-            if (ConnectedInlet != null) return ConnectedInlet.Pipe.FindReceiver();
+            if (ConnectedInlet != null) return ConnectedInlet.Pipe.FindReceiver(ConnectedInlet);
             if (HasWaitingReceiver()) return UseWaitingReceiver;
             return null;
         }

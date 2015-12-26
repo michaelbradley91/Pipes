@@ -46,7 +46,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void FindReceiver_GivenThereIsNoReceiver_ReturnsNull()
         {
             // Act
-            var receiver = capacityZeroPipe.FindReceiver();
+            var receiver = capacityZeroPipe.FindReceiver(capacityZeroPipe.Inlet);
 
             // Assert
             receiver.Should().BeNull();
@@ -66,7 +66,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             Thread.Sleep(500);
 
             // Act
-            var receiver = capacityZeroPipe.FindReceiver();
+            var receiver = capacityZeroPipe.FindReceiver(capacityZeroPipe.Inlet);
 
             // Assert
             receiver.Should().NotBeNull();
@@ -83,7 +83,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void FindSender_GivenThereIsNoSender_ReturnsNull()
         {
             // Act
-            var sender = capacityZeroPipe.FindSender();
+            var sender = capacityZeroPipe.FindSender(capacityZeroPipe.Outlet);
 
             // Assert
             sender.Should().BeNull();
@@ -102,7 +102,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             Thread.Sleep(500);
 
             // Act
-            var sender = capacityZeroPipe.FindSender();
+            var sender = capacityZeroPipe.FindSender(capacityZeroPipe.Outlet);
 
             // Assert
             sender.Should().NotBeNull();
@@ -119,13 +119,15 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            capacityZeroPipe.Outlet.ConnectTo(mockPipe.Object.Inlets.Single());
+            var mockInlet = mockPipe.Object.Inlets.Single();
+
+            capacityZeroPipe.Outlet.ConnectTo(mockInlet);
 
             // Act
-            capacityZeroPipe.FindReceiver();
+            capacityZeroPipe.FindReceiver(capacityZeroPipe.Inlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindReceiver());
+            mockPipe.Verify(p => p.FindReceiver(mockInlet));
         }
 
         [Test]
@@ -133,20 +135,22 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            capacityZeroPipe.Inlet.ConnectTo(mockPipe.Object.Outlets.Single());
+            var mockOutlet = mockPipe.Object.Outlets.Single();
+
+            capacityZeroPipe.Inlet.ConnectTo(mockOutlet);
 
             // Act
-            capacityZeroPipe.FindSender();
+            capacityZeroPipe.FindSender(capacityZeroPipe.Outlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindSender());
+            mockPipe.Verify(p => p.FindSender(mockOutlet));
         }
 
         [Test]
         public void FindReceiver_GivenThePipeHasSpareCapacity_ReturnsAReceiver()
         {
             // Act
-            var receiver = capacityThreePipe.FindReceiver();
+            var receiver = capacityThreePipe.FindReceiver(capacityThreePipe.Inlet);
 
             // Assert
             receiver.Should().NotBeNull();
@@ -166,7 +170,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             Thread.Sleep(500);
 
             // Act
-            var receiver = capacityThreePipe.FindReceiver();
+            var receiver = capacityThreePipe.FindReceiver(capacityThreePipe.Inlet);
 
             // Assert
             receiver.Should().NotBeNull();
@@ -184,12 +188,14 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            capacityThreePipe.Outlet.ConnectTo(mockPipe.Object.Inlets.Single());
+            var mockInlet = mockPipe.Object.Inlets.Single();
+
+            capacityThreePipe.Outlet.ConnectTo(mockInlet);
             var expectedReceiver = new Action<int>(m => { });
-            mockPipe.Setup(p => p.FindReceiver()).Returns(expectedReceiver);
+            mockPipe.Setup(p => p.FindReceiver(mockInlet)).Returns(expectedReceiver);
 
             // Act
-            var actualReceiver = capacityThreePipe.FindReceiver();
+            var actualReceiver = capacityThreePipe.FindReceiver(capacityThreePipe.Inlet);
 
             // Assert
             actualReceiver.Should().Be(expectedReceiver);
@@ -203,7 +209,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             capacityThreePipe.Inlet.Send(message);
 
             // Act
-            var sender = capacityThreePipe.FindSender();
+            var sender = capacityThreePipe.FindSender(capacityThreePipe.Outlet);
 
             // Assert
             sender.Should().NotBeNull();
@@ -217,14 +223,14 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             const int expectedFirstMessage = 1;
             const int expectedSecondMessage = 2;
             const int expectedThirdMessage = 3;
-            capacityThreePipe.FindReceiver()(expectedFirstMessage);
-            capacityThreePipe.FindReceiver()(expectedSecondMessage);
-            capacityThreePipe.FindReceiver()(expectedThirdMessage);
+            capacityThreePipe.FindReceiver(capacityThreePipe.Inlet)(expectedFirstMessage);
+            capacityThreePipe.FindReceiver(capacityThreePipe.Inlet)(expectedSecondMessage);
+            capacityThreePipe.FindReceiver(capacityThreePipe.Inlet)(expectedThirdMessage);
 
             // Act
-            var actualFirstMessage = capacityThreePipe.FindSender()();
-            var actualSecondMessage = capacityThreePipe.FindSender()();
-            var actualThirdMessage = capacityThreePipe.FindSender()();
+            var actualFirstMessage = capacityThreePipe.FindSender(capacityThreePipe.Outlet)();
+            var actualSecondMessage = capacityThreePipe.FindSender(capacityThreePipe.Outlet)();
+            var actualThirdMessage = capacityThreePipe.FindSender(capacityThreePipe.Outlet)();
 
             // Assert
             actualFirstMessage.Should().Be(expectedFirstMessage);
@@ -236,12 +242,12 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void FindReceiver_GivenThePipeIsFull_ReturnsNull()
         {
             // Arrange
-            capacityThreePipe.FindReceiver()(1);
-            capacityThreePipe.FindReceiver()(2);
-            capacityThreePipe.FindReceiver()(3);
+            capacityThreePipe.FindReceiver(capacityThreePipe.Inlet)(1);
+            capacityThreePipe.FindReceiver(capacityThreePipe.Inlet)(2);
+            capacityThreePipe.FindReceiver(capacityThreePipe.Inlet)(3);
 
             // Act
-            var receiver = capacityThreePipe.FindReceiver();
+            var receiver = capacityThreePipe.FindReceiver(capacityThreePipe.Inlet);
 
             // Assert
             receiver.Should().BeNull();
@@ -260,23 +266,23 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             const int expectedFifthMessage = 5;
             const int expectedSixthMessage = 6;
 
-            capacityThreePipe.FindReceiver()(expectedFirstMessage);
-            capacityThreePipe.FindReceiver()(expectedSecondMessage);
-            capacityThreePipe.FindReceiver()(expectedThirdMessage);
-            capacityThreePipe.FindReceiver()(expectedFourthMessage);
-            capacityThreePipe.FindReceiver()(expectedFifthMessage);
+            capacityThreePipe.FindReceiver(capacityThreePipe.Inlet)(expectedFirstMessage);
+            capacityThreePipe.FindReceiver(capacityThreePipe.Inlet)(expectedSecondMessage);
+            capacityThreePipe.FindReceiver(capacityThreePipe.Inlet)(expectedThirdMessage);
+            capacityThreePipe.FindReceiver(capacityThreePipe.Inlet)(expectedFourthMessage);
+            capacityThreePipe.FindReceiver(capacityThreePipe.Inlet)(expectedFifthMessage);
 
             var thread = new Thread(() => capacityThreePipe.Inlet.Send(expectedSixthMessage));
             thread.Start();
             Thread.Sleep(500);
 
             // Act
-            var actualFirstMessage = capacityTwoPipe.FindSender()();
-            var actualSecondMessage = capacityTwoPipe.FindSender()();
-            var actualThirdMessage = capacityTwoPipe.FindSender()();
-            var actualFourthMessage = capacityTwoPipe.FindSender()();
-            var actualFifthMessage = capacityTwoPipe.FindSender()();
-            var actualSixthMessage = capacityTwoPipe.FindSender()();
+            var actualFirstMessage = capacityTwoPipe.FindSender(capacityTwoPipe.Outlet)();
+            var actualSecondMessage = capacityTwoPipe.FindSender(capacityTwoPipe.Outlet)();
+            var actualThirdMessage = capacityTwoPipe.FindSender(capacityTwoPipe.Outlet)();
+            var actualFourthMessage = capacityTwoPipe.FindSender(capacityTwoPipe.Outlet)();
+            var actualFifthMessage = capacityTwoPipe.FindSender(capacityTwoPipe.Outlet)();
+            var actualSixthMessage = capacityTwoPipe.FindSender(capacityTwoPipe.Outlet)();
 
             // Assert
             actualFirstMessage.Should().Be(expectedFirstMessage);

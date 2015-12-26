@@ -11,8 +11,8 @@ namespace Pipes.Models.TieBreakers
 
     public class RandomisingTieBreaker : IRandomisingTieBreaker
     {
-        public double LeftProbability { get; private set; }
-        public double RightProbability { get { return 1 - LeftProbability; } }
+        public double LeftProbability { get; }
+        public double RightProbability => 1 - LeftProbability;
 
         private readonly Random randomNumberGenerator;
 
