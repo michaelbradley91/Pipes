@@ -50,7 +50,7 @@ namespace Pipes.Models.Lets
             activeResourceGroup.FreeSharedResources();
         }
 
-        protected void Connect(IInlet<TMessage> inlet, IOutlet<TMessage> outlet, bool checkForCycles)
+        protected void Connect(IInlet<TMessage> inlet, IOutlet<TMessage> outlet, bool checkPipeSystemFormsTree)
         {
             Try(() =>
             {
@@ -60,11 +60,11 @@ namespace Pipes.Models.Lets
                 inlet.ConnectedOutlet = outlet;
                 outlet.ConnectedInlet = inlet;
 
-                if (checkForCycles && inlet.Pipe.CreateGraphOfPipeSystem().ContainsCycle())
+                if (checkPipeSystemFormsTree && !inlet.Pipe.CreateGraphOfPipeSystem().IsTree())
                 {
                     inlet.ConnectedOutlet = null;
                     outlet.ConnectedInlet = null;
-                    throw new InvalidOperationException("Connecting these pipes creates a cycle.");
+                    throw new InvalidOperationException("Connecting these pipes results in a pipe system that does not form a tree.");
                 }
 
                 activeResourceGroup.ConnectSharedResources(inlet.SharedResource, outlet.SharedResource);

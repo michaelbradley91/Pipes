@@ -127,5 +127,104 @@ namespace Pipes.Tests.UnitTests.Extensions
             // Assert
             containsCycle.Should().BeTrue();
         }
+
+        [Test]
+        public void IsTree_GivenAnEmptyGraph_ReturnsTrue()
+        {
+            // Act
+            var isTree = graph.IsTree();
+
+            // Assert
+            isTree.Should().BeTrue();
+        }
+
+        [Test]
+        public void IsTree_GivenAGraphWhichIsATree_ReturnsTrue()
+        {
+            // Arrange
+            graph.AddVerticesAndEdgeRange(new[]
+            {
+                new Edge<string>("A", "B"),
+                new Edge<string>("B", "C"),
+                new Edge<string>("A", "D"),
+                new Edge<string>("D", "E")
+            });
+
+            // Act
+            var isTree = graph.IsTree();
+
+            // Assert
+            isTree.Should().BeTrue();
+        }
+
+        [Test]
+        public void IsTree_GivenAGraphContainingADirectedCycle_ReturnsFalse()
+        {
+            // Arrange
+            graph.AddVerticesAndEdgeRange(new[]
+            {
+                new Edge<string>("A", "B"),
+                new Edge<string>("B", "C"),
+                new Edge<string>("C", "A"),
+                new Edge<string>("D", "E")
+            });
+
+            // Act
+            var isTree = graph.IsTree();
+
+            // Assert
+            isTree.Should().BeFalse();
+        }
+
+        [Test]
+        public void IsTree_GivenAGraphContainingAnUndirectedCycle_ReturnsFalse()
+        {
+            // Arrange
+            graph.AddVerticesAndEdgeRange(new[]
+            {
+                new Edge<string>("A", "B"),
+                new Edge<string>("B", "C"),
+                new Edge<string>("A", "C")
+            });
+
+            // Act
+            var isTree = graph.IsTree();
+
+            // Assert
+            isTree.Should().BeFalse();
+        }
+
+        [Test]
+        public void IsTree_GivenAGraphContainingASelfLoop_ReturnsFalse()
+        {
+            // Arrange
+            graph.AddVerticesAndEdgeRange(new[]
+            {
+                new Edge<string>("A", "A")
+            });
+
+            // Act
+            var isTree = graph.IsTree();
+
+            // Assert
+            isTree.Should().BeFalse();
+        }
+
+        [Test]
+        public void IsTree_GivenAGraphContainingTwoVerticesInACycle_ReturnsFalse()
+        {
+            // Arrange
+            graph.AddVerticesAndEdgeRange(new[]
+            {
+                new Edge<string>("A", "B"),
+                new Edge<string>("B", "A")
+            });
+
+            // Act
+            var isTree = graph.IsTree();
+
+            // Assert
+            isTree.Should().BeFalse();
+        }
     }
 }

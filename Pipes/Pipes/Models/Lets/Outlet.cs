@@ -27,13 +27,13 @@ namespace Pipes.Models.Lets
 
         /// <summary>
         /// Connect this outlet to an inlet. This helps you to build up a pipe system!
-        /// By default, this will also check to see if you would create a cycle by doing this. If so, it will refuse to connect to the given inlet and throw
+        /// By default, this will also check to see if the pipe system would no longer be a tree after this. If so, it will refuse to connect to the given inlet and throw
         /// an InvalidOperationException. This is quite an expensive check for large pipe systems however, so if you're confident you are not creating cycles, you
         /// can turn it off.
         /// 
         /// (This method will also connect the outlet to this inlet)
         /// </summary>
-        void ConnectTo(IInlet<TMessage> inlet, bool checkForCycles = true);
+        void ConnectTo(IInlet<TMessage> inlet, bool checkPipeSystemFormsTree = true);
 
         /// <summary>
         /// Returns true if and only if this outlet can be connected to an inlet.
@@ -147,10 +147,10 @@ namespace Pipes.Models.Lets
             }
         }
 
-        public void ConnectTo(IInlet<TMessage> inlet, bool checkForCycles = true)
+        public void ConnectTo(IInlet<TMessage> inlet, bool checkPipeSystemFormsTree = true)
         {
             LockWith(inlet);
-            Connect(inlet, this, checkForCycles);
+            Connect(inlet, this, checkPipeSystemFormsTree);
             Unlock();
         }
 

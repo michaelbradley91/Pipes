@@ -22,28 +22,19 @@ namespace Pipes.Tests.IntegrationTests.Models.Pipes
             sourceCapacityPipe2.Inlet.Send(2);
             sourceCapacityPipe2.Inlet.Send(3);
 
-            var targetCapacityPipe1 = PipeBuilder.New.CapacityPipe<int>().WithCapacity(2).Build();
-            var targetCapacityPipe2 = PipeBuilder.New.CapacityPipe<int>().WithCapacity(1).Build();
-            var targetEitherOutletPipe = PipeBuilder.New.EitherOutletPipe<int>().WithPrioritisingTieBreaker().Build();
-            targetEitherOutletPipe.LeftOutlet.ConnectTo(targetCapacityPipe1.Inlet);
-            targetEitherOutletPipe.RightOutlet.ConnectTo(targetCapacityPipe2.Inlet);
+            var targetCapacityPipe = PipeBuilder.New.CapacityPipe<int>().WithCapacity(3).Build();
 
             // Act
-            sourceEitherInletPipe.Outlet.ConnectTo(targetEitherOutletPipe.Inlet);
-            sourceEitherInletPipe.Outlet.Disconnect();
+            sourceEitherInletPipe.Outlet.ConnectTo(targetCapacityPipe.Inlet);
 
             // Assert
-            var targetEitherInletPipe = PipeBuilder.New.EitherInletPipe<int>().WithPrioritisingTieBreaker().Build();
-            targetEitherInletPipe.LeftInlet.ConnectTo(targetCapacityPipe1.Outlet);
-            targetEitherInletPipe.RightInlet.ConnectTo(targetCapacityPipe2.Outlet);
-
-            targetEitherInletPipe.Outlet.Receive().Should().Be(1);
-            targetEitherInletPipe.Outlet.Receive().Should().Be(2);
-            targetEitherInletPipe.Outlet.Receive().Should().Be(3);
+            targetCapacityPipe.Outlet.Receive().Should().Be(1);
+            targetCapacityPipe.Outlet.Receive().Should().Be(2);
+            targetCapacityPipe.Outlet.Receive().Should().Be(3);
 
             try
             {
-                targetEitherInletPipe.Outlet.ReceiveImmediately();
+                targetCapacityPipe.Outlet.ReceiveImmediately();
                 Assert.Fail("The pipe system should not have had any more messages");
             }
             catch (InvalidOperationException)

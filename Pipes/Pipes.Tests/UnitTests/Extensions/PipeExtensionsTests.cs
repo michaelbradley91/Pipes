@@ -70,33 +70,6 @@ namespace Pipes.Tests.UnitTests.Extensions
         }
 
         [Test]
-        public void CreateGraphOfPipeSystem_OfPipesNotFormingATreeButRemainingAcycle_ReturnsADirectedAcyclicGraph()
-        {
-            // Arrange
-            var twoOutletPipe = PipeBuilder.New.EitherOutletPipe<int>().Build();
-            var basicPipe1 = PipeBuilder.New.BasicPipe<int>().Build();
-            var basicPipe2 = PipeBuilder.New.BasicPipe<int>().Build();
-            var twoInletPipe = PipeBuilder.New.EitherInletPipe<int>().Build();
-
-            twoOutletPipe.LeftOutlet.ConnectTo(basicPipe1.Inlet);
-            twoOutletPipe.RightOutlet.ConnectTo(basicPipe2.Inlet);
-            basicPipe1.Outlet.ConnectTo(twoInletPipe.LeftInlet);
-            basicPipe2.Outlet.ConnectTo(twoInletPipe.RightInlet);
-
-            // Act
-            var graph = twoOutletPipe.CreateGraphOfPipeSystem();
-
-            // Assert
-            graph.Vertices.Count().Should().Be(4);
-            graph.Vertices.Should().Contain(new IPipe<int>[] { twoOutletPipe, basicPipe1, basicPipe2, twoInletPipe });
-            graph.EdgeCount.Should().Be(4);
-            graph.Edges.Count(e => e.Source.Equals(twoOutletPipe) && e.Target.Equals(basicPipe1)).Should().Be(1);
-            graph.Edges.Count(e => e.Source.Equals(twoOutletPipe) && e.Target.Equals(basicPipe2)).Should().Be(1);
-            graph.Edges.Count(e => e.Source.Equals(basicPipe1) && e.Target.Equals(twoInletPipe)).Should().Be(1);
-            graph.Edges.Count(e => e.Source.Equals(basicPipe2) && e.Target.Equals(twoInletPipe)).Should().Be(1);
-        }
-
-        [Test]
         public void CreateGraphOfPipeSystem_GivenAPipeConnectedToItself_ReturnsAGraphWithASelfLoop()
         {
             // Arrange
@@ -167,7 +140,5 @@ namespace Pipes.Tests.UnitTests.Extensions
             graph.Edges.Count(e => e.Source.Equals(twoOutletPipe) && e.Target.Equals(basicPipe1)).Should().Be(1);
             graph.Edges.Count(e => e.Source.Equals(twoOutletPipe) && e.Target.Equals(basicPipe3)).Should().Be(1);
         }
-
-
     }
 }
