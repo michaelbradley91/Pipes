@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Pipes.Models.Lets;
 using SharedResources.SharedResources;
 
@@ -17,6 +16,7 @@ namespace Pipes.Models.Pipes
         public IInlet<TMessage> LeftInlet { get; }
         public IInlet<TMessage> RightInlet { get; }
         public IOutlet<TMessage> Outlet { get; }
+        public override SharedResource SharedResource { get; }
 
         protected TwoInletPipe(IInlet<TMessage> leftInlet, IInlet<TMessage> rightInlet, IOutlet<TMessage> outlet)
         {
@@ -34,6 +34,8 @@ namespace Pipes.Models.Pipes
             resourceGroup.ConnectSharedResources(pipeResource, Outlet.SharedResource);
             
             resourceGroup.FreeSharedResources();
+
+            SharedResource = pipeResource;
         }
 
         public override IReadOnlyCollection<IInlet<TMessage>> Inlets => new[] {LeftInlet, RightInlet};

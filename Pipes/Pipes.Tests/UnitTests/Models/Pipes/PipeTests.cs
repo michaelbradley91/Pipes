@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
+using SharedResources.SharedResources;
 
 namespace Pipes.Tests.UnitTests.Models.Pipes
 {
@@ -100,6 +101,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
 
             public override IReadOnlyCollection<IInlet<int>> Inlets => new List<IInlet<int>> {Inlet.Object};
             public override IReadOnlyCollection<IOutlet<int>> Outlets => new List<IOutlet<int>> { Outlet.Object };
+
+            public override SharedResource SharedResource => null;
 
             protected override Action<int> FindReceiver(IInlet<int> inletSendingMessage)
             {

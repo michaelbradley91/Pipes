@@ -1,6 +1,4 @@
-﻿using Pipes.Models.Pipes;
-
-namespace Pipes.Builders
+﻿namespace Pipes.Builders
 {
     public interface IPipeBuilder
     {

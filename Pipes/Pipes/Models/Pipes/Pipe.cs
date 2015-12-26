@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Pipes.Models.Lets;
+using SharedResources.SharedResources;
 
 namespace Pipes.Models.Pipes
 {
@@ -25,6 +26,16 @@ namespace Pipes.Models.Pipes
         /// If checkOutlet is false, no exception will be thrown but the pipe may not behave as expected.
         /// </summary>
         Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage, bool checkOutlet = true);
+
+        /// <summary>
+        /// This is a technical field. This is the shared resource that is associated to this pipe. The inlets and outlets
+        /// are then connected to its shared resource forming a common resource group.
+        /// 
+        /// In short, acquiring this shared resource acquires all components of the pipe system this pipe is connected to.
+        /// 
+        /// You normally should not require access to this unless using existing pipes to form your own custom pipes.
+        /// </summary>
+        SharedResource SharedResource { get; }
     }
 
     public abstract class Pipe<TMessage> : IPipe<TMessage>
@@ -51,6 +62,8 @@ namespace Pipes.Models.Pipes
 
             return FindSender(outletReceivingMessage);
         }
+
+        public abstract SharedResource SharedResource { get; }
 
         /// <summary>
         /// There is no need to check if the inlet is one of yours here, as this has been handled by the base class (if requested).

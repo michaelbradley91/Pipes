@@ -14,6 +14,7 @@ namespace Pipes.Models.Pipes
     {
         public IInlet<TMessage> Inlet { get; }
         public IOutlet<TMessage> Outlet { get; }
+        public override SharedResource SharedResource { get; }
 
         protected StraightPipe(IInlet<TMessage> inlet, IOutlet<TMessage> outlet)
         {
@@ -22,13 +23,13 @@ namespace Pipes.Models.Pipes
 
             var resourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(Inlet.SharedResource, Outlet.SharedResource);
             var pipeResource = resourceGroup.CreateAndAcquireSharedResource();
-
-            pipeResource.AssociatedObject = this;
-
+            
             resourceGroup.ConnectSharedResources(inlet.SharedResource, pipeResource);
             resourceGroup.ConnectSharedResources(pipeResource, outlet.SharedResource);
 
             resourceGroup.FreeSharedResources();
+
+            SharedResource = pipeResource;
         }
 
         public override IReadOnlyCollection<IInlet<TMessage>> Inlets => new[] {Inlet};
