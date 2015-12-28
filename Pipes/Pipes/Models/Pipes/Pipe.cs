@@ -6,10 +6,10 @@ using SharedResources.SharedResources;
 
 namespace Pipes.Models.Pipes
 {
-    public interface IPipe<TMessage>
+    public interface IPipe
     {
-        IReadOnlyCollection<IInlet<TMessage>> Inlets { get; }
-        IReadOnlyCollection<IOutlet<TMessage>> Outlets { get; }
+        IReadOnlyCollection<IInlet> AllInlets { get; }
+        IReadOnlyCollection<IOutlet> AllOutlets { get; }
 
         /// <summary>
         /// Find an receiver on this pipe for the inlet that wishes to send the message.
@@ -17,7 +17,7 @@ namespace Pipes.Models.Pipes
         /// The inlet should be one of the pipe's inlets. If it is not and checkInlet is true (its default), this will throw an InvalidOperation exception.
         /// If checkInlet is false, no exception will be thrown but the pipe may not behave as expected.
         /// </summary>
-        Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage, bool checkInlet = true);
+        Action<TMessage> FindReceiver<TMessage>(IInlet<TMessage> inletSendingMessage, bool checkInlet = true);
 
         /// <summary>
         /// Find a sender on this pipe for the outlet that wishes to receive the message.
@@ -25,7 +25,7 @@ namespace Pipes.Models.Pipes
         /// The outlet should be one of the pipe's outlets. If it is not and checkOutlet is true (its default), this will throw an InvalidOperation exception.
         /// If checkOutlet is false, no exception will be thrown but the pipe may not behave as expected.
         /// </summary>
-        Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage, bool checkOutlet = true);
+        Func<TMessage> FindSender<TMessage>(IOutlet<TMessage> outletReceivingMessage, bool checkOutlet = true);
 
         /// <summary>
         /// This is a technical field. This is the shared resource that is associated to this pipe. The inlets and outlets
@@ -38,29 +38,29 @@ namespace Pipes.Models.Pipes
         SharedResource SharedResource { get; }
     }
 
-    public abstract class Pipe<TMessage> : IPipe<TMessage>
+    public abstract class Pipe : IPipe
     {
-        public abstract IReadOnlyCollection<IInlet<TMessage>> Inlets { get; }
-        public abstract IReadOnlyCollection<IOutlet<TMessage>> Outlets { get; }
+        public abstract IReadOnlyCollection<IInlet> AllInlets { get; }
+        public abstract IReadOnlyCollection<IOutlet> AllOutlets { get; }
 
-        public Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage, bool checkInlet)
+        public Action<TMessage> FindReceiver<TMessage>(IInlet<TMessage> inletSendingMessage, bool checkInlet)
         {
-            if (checkInlet && !Inlets.Contains(inletSendingMessage))
+            if (checkInlet && !AllInlets.Contains(inletSendingMessage))
             {
                 throw new InvalidOperationException("The inlet sending the message is not associated to this pipe.");
             }
 
-            return FindReceiver(inletSendingMessage);
+            return FindReceiverFor(inletSendingMessage);
         }
 
-        public Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage, bool checkOutlet)
+        public Func<TMessage> FindSender<TMessage>(IOutlet<TMessage> outletReceivingMessage, bool checkOutlet)
         {
-            if (checkOutlet && !Outlets.Contains(outletReceivingMessage))
+            if (checkOutlet && !AllOutlets.Contains(outletReceivingMessage))
             {
                 throw new InvalidOperationException("The outlet receiving the message is not associated to this pipe.");
             }
 
-            return FindSender(outletReceivingMessage);
+            return FindSenderFor(outletReceivingMessage);
         }
 
         public abstract SharedResource SharedResource { get; }
@@ -68,11 +68,11 @@ namespace Pipes.Models.Pipes
         /// <summary>
         /// There is no need to check if the inlet is one of yours here, as this has been handled by the base class (if requested).
         /// </summary>
-        protected abstract Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage);
+        protected abstract Action<TMessage> FindReceiverFor<TMessage>(IInlet<TMessage> inletSendingMessage);
 
         /// <summary>
         /// There is no need to check if the outlet is one of yours here, as this has been handled by the base class (if requested).
         /// </summary>
-        protected abstract Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage);
+        protected abstract Func<TMessage> FindSenderFor<TMessage>(IOutlet<TMessage> outletReceivingMessage);
     }
 }

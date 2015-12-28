@@ -4,14 +4,14 @@ using SharedResources.SharedResources;
 
 namespace Pipes.Models.Pipes
 {
-    public interface ITwoOutletPipe<TMessage> : IPipe<TMessage>
+    public interface ITwoOutletPipe<TMessage> : IPipe
     {
         IInlet<TMessage> Inlet { get; }
         IOutlet<TMessage> LeftOutlet { get; }
         IOutlet<TMessage> RightOutlet { get; }
     }
 
-    public abstract class TwoOutletPipe<TMessage> : Pipe<TMessage>, ITwoOutletPipe<TMessage>
+    public abstract class TwoOutletPipe<TMessage> : SimplePipe<TMessage>, ITwoOutletPipe<TMessage>
     {
         public IInlet<TMessage> Inlet { get; }
         public IOutlet<TMessage> LeftOutlet { get; }
@@ -38,7 +38,7 @@ namespace Pipes.Models.Pipes
             SharedResource = pipeResource;
         }
 
-        public override IReadOnlyCollection<IInlet<TMessage>> Inlets => new[] {Inlet};
-        public override IReadOnlyCollection<IOutlet<TMessage>> Outlets => new[] {LeftOutlet, RightOutlet};
+        public override IReadOnlyCollection<IInlet> AllInlets => new[] {Inlet};
+        public override IReadOnlyCollection<IOutlet> AllOutlets => new[] {LeftOutlet, RightOutlet};
     }
 }

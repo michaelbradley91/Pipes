@@ -7,7 +7,12 @@ using SharedResources.SharedResources;
 
 namespace Pipes.Models.Lets
 {
-    public interface IOutlet<TMessage> : ILet<TMessage>
+    public interface IOutlet : ILet
+    {
+        IInlet TypelessConnectedInlet { get; } 
+    }
+
+    public interface IOutlet<TMessage> : IOutlet
     {
         /// <summary>
         /// Retrieve a message from this pipe. If no message is available, this method will block until one arrives.
@@ -63,19 +68,14 @@ namespace Pipes.Models.Lets
         Action<TMessage> FindReceiver();
     }
 
-    public class Outlet<TMessage> : Let<TMessage>, IOutlet<TMessage>
+    public class Outlet<TMessage> : Let, IOutlet<TMessage>
     {
-        IInlet<TMessage> IOutlet<TMessage>.ConnectedInlet
-        {
-            get { return ConnectedInlet; }
-            set { ConnectedInlet = value; }
-        }
-
-        public IInlet<TMessage> ConnectedInlet { get; protected set; }
+        public IInlet<TMessage> ConnectedInlet { get; set; }
+        public IInlet TypelessConnectedInlet => ConnectedInlet; 
 
         private readonly IList<WaitingReceiver<TMessage>> waitingReceivers;
 
-        internal Outlet(Lazy<IPipe<TMessage>> pipe, SharedResource sharedResource) : base(pipe, sharedResource)
+        internal Outlet(Lazy<IPipe> pipe, SharedResource sharedResource) : base(pipe, sharedResource)
         {
             waitingReceivers = new List<WaitingReceiver<TMessage>>();
             ConnectedInlet = null;
@@ -88,7 +88,7 @@ namespace Pipes.Models.Lets
 
         public TMessage Receive(TimeSpan timeout)
         {
-            if (timeout.CompareTo(TimeSpan.Zero) < 0) throw new ArgumentOutOfRangeException("timeout", "The timespan cannot be negative");
+            if (timeout.CompareTo(TimeSpan.Zero) < 0) throw new ArgumentOutOfRangeException(nameof(timeout), "The timespan cannot be negative");
             return Receive(s => s.WaitOne(timeout), new TimeoutException("A message could not be received within the specified timeout"));
         }
 

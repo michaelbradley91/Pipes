@@ -5,28 +5,30 @@ using SharedResources.SharedResources;
 
 namespace Pipes.Models.Lets
 {
-    public interface ILet<TMessage>
+    public interface ILet
     {
         /// <summary>
         /// The pipe this in/outlet is a part of
         /// </summary>
-        IPipe<TMessage> Pipe { get; } 
-        
+        IPipe Pipe { get; }
+
         /// <summary>
         /// The shared resource held by this in/outlet.
         /// </summary>
         SharedResource SharedResource { get; }
     }
 
-    public abstract class Let<TMessage> : ILet<TMessage>
+    public abstract class Let : ILet
     {
-        public IPipe<TMessage> Pipe => pipe.Value;
+        public IPipe Pipe => pipe.Value;
+        public IPipe TypelessPipe => pipe.Value;
+
         public SharedResource SharedResource { get; }
 
-        private readonly Lazy<IPipe<TMessage>> pipe;
+        private readonly Lazy<IPipe> pipe;
         private SharedResourceGroup activeResourceGroup;
 
-        protected Let(Lazy<IPipe<TMessage>> pipe, SharedResource sharedResource)
+        protected Let(Lazy<IPipe> pipe, SharedResource sharedResource)
         {
             SharedResource = sharedResource;
             this.pipe = pipe;
@@ -40,7 +42,7 @@ namespace Pipes.Models.Lets
             activeResourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(SharedResource);
         }
 
-        protected void LockWith(ILet<TMessage> otherLet)
+        protected void LockWith(ILet otherLet)
         {
             activeResourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(SharedResource, otherLet.SharedResource);
         }
@@ -50,7 +52,7 @@ namespace Pipes.Models.Lets
             activeResourceGroup.FreeSharedResources();
         }
 
-        protected void Connect(IInlet<TMessage> inlet, IOutlet<TMessage> outlet, bool checkPipeSystemFormsTree)
+        protected void Connect<TMessage>(IInlet<TMessage> inlet, IOutlet<TMessage> outlet, bool checkPipeSystemFormsTree)
         {
             Try(() =>
             {
@@ -87,7 +89,7 @@ namespace Pipes.Models.Lets
             });
         }
 
-        protected void Disconnect(IInlet<TMessage> inlet, IOutlet<TMessage> outlet)
+        protected void Disconnect<TMessage>(IInlet<TMessage> inlet, IOutlet<TMessage> outlet)
         {
             Try(() =>
             {

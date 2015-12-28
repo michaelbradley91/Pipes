@@ -7,7 +7,12 @@ using SharedResources.SharedResources;
 
 namespace Pipes.Models.Lets
 {
-    public interface IInlet<TMessage> : ILet<TMessage>
+    public interface IInlet : ILet
+    {
+        IOutlet TypelessConnectedOutlet { get; }
+    }
+
+    public interface IInlet<TMessage> : IInlet
     {
         /// <summary>
         /// Send a message down the pipe. If the pipe system has insufficient capacity to accept the message, this will block until the message can be sent.
@@ -63,13 +68,14 @@ namespace Pipes.Models.Lets
         Func<TMessage> FindSender();
     }
 
-    public class Inlet<TMessage> : Let<TMessage>, IInlet<TMessage>
+    public class Inlet<TMessage> : Let, IInlet<TMessage>
     {
         public IOutlet<TMessage> ConnectedOutlet { get; set; }
+        public IOutlet TypelessConnectedOutlet => ConnectedOutlet;
 
         private readonly IList<WaitingSender<TMessage>> waitingSenders;
 
-        internal Inlet(Lazy<IPipe<TMessage>> pipe, SharedResource sharedResource) : base(pipe, sharedResource)
+        internal Inlet(Lazy<IPipe> pipe, SharedResource sharedResource) : base(pipe, sharedResource)
         {
             waitingSenders = new List<WaitingSender<TMessage>>();
             ConnectedOutlet = null;
@@ -81,7 +87,7 @@ namespace Pipes.Models.Lets
 
         public void Send(TMessage message, TimeSpan timeout)
         {
-            if (timeout.CompareTo(TimeSpan.Zero) < 0) throw new ArgumentOutOfRangeException("timeout", "The timespan cannot be negative");
+            if (timeout.CompareTo(TimeSpan.Zero) < 0) throw new ArgumentOutOfRangeException(nameof(timeout), "The timespan cannot be negative");
             Send(message, s => s.WaitOne(timeout), new TimeoutException("The message could not be sent within the specified timeout"));
         }
 

@@ -3,6 +3,7 @@ using System.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 using Pipes.Builders;
+using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Tests.Helpers;
 
@@ -24,8 +25,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Assert
             basicPipe.Inlet.Should().NotBeNull();
-            basicPipe.Inlets.Count.Should().Be(1);
-            basicPipe.Inlets.Single().Should().Be(basicPipe.Inlet);
+            basicPipe.AllInlets.Count.Should().Be(1);
+            basicPipe.AllInlets.Single().Should().Be(basicPipe.Inlet);
         }
 
         [Test]
@@ -33,8 +34,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Assert
             basicPipe.Outlet.Should().NotBeNull();
-            basicPipe.Outlets.Count.Should().Be(1);
-            basicPipe.Outlets.Single().Should().Be(basicPipe.Outlet);
+            basicPipe.AllOutlets.Count.Should().Be(1);
+            basicPipe.AllOutlets.Single().Should().Be(basicPipe.Outlet);
         }
 
         [Test]
@@ -114,7 +115,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            var mockInlet = mockPipe.Object.Inlets.Single();
+            var mockInlet = (IInlet<int>)mockPipe.Object.AllInlets.Single();
 
             basicPipe.Outlet.ConnectTo(mockInlet);
 
@@ -131,7 +132,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            var mockOutlet = mockPipe.Object.Outlets.Single();
+            var mockOutlet = (IOutlet<int>)mockPipe.Object.AllOutlets.Single();
 
             basicPipe.Inlet.ConnectTo(mockOutlet);
 

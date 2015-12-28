@@ -6,10 +6,10 @@ namespace Pipes.Tests.Helpers
 {
     public static class InletHelpers
     {
-        public static Inlet<T> CreateInlet<T>(IPipe<T> pipe)
+        public static Inlet<T> CreateInlet<T>(IPipe pipe)
         {
             var sharedResource = SharedResourceHelpers.CreateSharedResource();
-            return new Inlet<T>(new Lazy<IPipe<T>>(() => pipe), sharedResource);
+            return new Inlet<T>(new Lazy<IPipe>(() => pipe), sharedResource);
         }
     }
 }

@@ -94,13 +94,13 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             sender.Should().NotBeNull();
         }
 
-        private class DummyPipe : Pipe<int>
+        private class DummyPipe : SimplePipe<int>
         {
             public readonly Mock<IInlet<int>> Inlet = new Mock<IInlet<int>>();
             public readonly Mock<IOutlet<int>> Outlet = new Mock<IOutlet<int>>();
 
-            public override IReadOnlyCollection<IInlet<int>> Inlets => new List<IInlet<int>> {Inlet.Object};
-            public override IReadOnlyCollection<IOutlet<int>> Outlets => new List<IOutlet<int>> { Outlet.Object };
+            public override IReadOnlyCollection<IInlet> AllInlets => new List<IInlet<int>> {Inlet.Object};
+            public override IReadOnlyCollection<IOutlet> AllOutlets => new List<IOutlet<int>> { Outlet.Object };
 
             public override SharedResource SharedResource => null;
 

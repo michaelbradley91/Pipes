@@ -4,6 +4,7 @@ using System.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 using Pipes.Builders;
+using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Tests.Helpers;
 
@@ -29,8 +30,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Assert
             capacityZeroPipe.Inlet.Should().NotBeNull();
-            capacityZeroPipe.Inlets.Count.Should().Be(1);
-            capacityZeroPipe.Inlets.Single().Should().Be(capacityZeroPipe.Inlet);
+            capacityZeroPipe.AllInlets.Count.Should().Be(1);
+            capacityZeroPipe.AllInlets.Single().Should().Be(capacityZeroPipe.Inlet);
         }
 
         [Test]
@@ -38,8 +39,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Assert
             capacityZeroPipe.Outlet.Should().NotBeNull();
-            capacityZeroPipe.Outlets.Count.Should().Be(1);
-            capacityZeroPipe.Outlets.Single().Should().Be(capacityZeroPipe.Outlet);
+            capacityZeroPipe.AllOutlets.Count.Should().Be(1);
+            capacityZeroPipe.AllOutlets.Single().Should().Be(capacityZeroPipe.Outlet);
         }
 
         [Test]
@@ -119,7 +120,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            var mockInlet = mockPipe.Object.Inlets.Single();
+            var mockInlet = (IInlet<int>)mockPipe.Object.AllInlets.Single();
 
             capacityZeroPipe.Outlet.ConnectTo(mockInlet);
 
@@ -135,7 +136,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            var mockOutlet = mockPipe.Object.Outlets.Single();
+            var mockOutlet = (IOutlet<int>)mockPipe.Object.AllOutlets.Single();
 
             capacityZeroPipe.Inlet.ConnectTo(mockOutlet);
 
@@ -188,17 +189,20 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            var mockInlet = mockPipe.Object.Inlets.Single();
+            var mockInlet = (IInlet<int>)mockPipe.Object.AllInlets.Single();
 
             capacityThreePipe.Outlet.ConnectTo(mockInlet);
-            var expectedReceiver = new Action<int>(m => { });
+            var receivedMessage = 0;
+            var expectedReceiver = new Action<int>(m => { receivedMessage = m; });
             mockPipe.Setup(p => p.FindReceiver(mockInlet, true)).Returns(expectedReceiver);
 
             // Act
             var actualReceiver = capacityThreePipe.FindReceiver(capacityThreePipe.Inlet);
+            const int message = 15;
+            actualReceiver(message);
 
             // Assert
-            actualReceiver.Should().Be(expectedReceiver);
+            receivedMessage.Should().Be(message);
         }
 
         [Test]

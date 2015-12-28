@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Pipes.Models.Lets;
 using SharedResources.SharedResources;
 
 namespace Pipes.Models.Pipes
 {
-    public interface IStraightPipe<TMessage> : IPipe<TMessage>
+    public interface IStraightPipe<TMessage> : IPipe
     {
         IInlet<TMessage> Inlet { get; }
         IOutlet<TMessage> Outlet { get; }
     }
 
-    public abstract class StraightPipe<TMessage> : Pipe<TMessage>, IStraightPipe<TMessage>
+    public abstract class StraightPipe<TMessage> : SimplePipe<TMessage>, IStraightPipe<TMessage>
     {
         public IInlet<TMessage> Inlet { get; }
         public IOutlet<TMessage> Outlet { get; }
@@ -32,8 +33,7 @@ namespace Pipes.Models.Pipes
             SharedResource = pipeResource;
         }
 
-        public override IReadOnlyCollection<IInlet<TMessage>> Inlets => new[] {Inlet};
-
-        public override IReadOnlyCollection<IOutlet<TMessage>> Outlets => new[] {Outlet};
+        public override IReadOnlyCollection<IInlet> AllInlets => new[] {Inlet};
+        public override IReadOnlyCollection<IOutlet> AllOutlets => new[] {Outlet};
     }
 }

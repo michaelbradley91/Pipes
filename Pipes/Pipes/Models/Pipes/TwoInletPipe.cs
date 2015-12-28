@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Pipes.Models.Lets;
 using SharedResources.SharedResources;
 
 namespace Pipes.Models.Pipes
 {
-    public interface ITwoInletPipe<TMessage> : IPipe<TMessage>
+    public interface ITwoInletPipe<TMessage> : IPipe
     {
         IInlet<TMessage> LeftInlet { get; }
         IInlet<TMessage> RightInlet { get; }
         IOutlet<TMessage> Outlet { get; }
     }
 
-    public abstract class TwoInletPipe<TMessage> : Pipe<TMessage>, ITwoInletPipe<TMessage>
+    public abstract class TwoInletPipe<TMessage> : SimplePipe<TMessage>, ITwoInletPipe<TMessage>
     {
         public IInlet<TMessage> LeftInlet { get; }
         public IInlet<TMessage> RightInlet { get; }
@@ -38,7 +39,7 @@ namespace Pipes.Models.Pipes
             SharedResource = pipeResource;
         }
 
-        public override IReadOnlyCollection<IInlet<TMessage>> Inlets => new[] {LeftInlet, RightInlet};
-        public override IReadOnlyCollection<IOutlet<TMessage>> Outlets => new[] {Outlet};
+        public override IReadOnlyCollection<IInlet> AllInlets => new[] {LeftInlet, RightInlet};
+        public override IReadOnlyCollection<IOutlet> AllOutlets => new[] {Outlet};
     }
 }

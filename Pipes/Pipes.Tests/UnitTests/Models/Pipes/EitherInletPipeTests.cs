@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using Pipes.Builders;
 using Pipes.Constants;
+using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
 using Pipes.Tests.Helpers;
@@ -31,8 +32,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             // Assert
             eitherInletPipe.LeftInlet.Should().NotBeNull();
             eitherInletPipe.RightInlet.Should().NotBeNull();
-            eitherInletPipe.Inlets.Count.Should().Be(2);
-            eitherInletPipe.Inlets.Should().BeEquivalentTo(eitherInletPipe.LeftInlet, eitherInletPipe.RightInlet);
+            eitherInletPipe.AllInlets.Count.Should().Be(2);
+            eitherInletPipe.AllInlets.Should().BeEquivalentTo(eitherInletPipe.LeftInlet, eitherInletPipe.RightInlet);
         }
 
         [Test]
@@ -40,8 +41,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Assert
             eitherInletPipe.Outlet.Should().NotBeNull();
-            eitherInletPipe.Outlets.Count.Should().Be(1);
-            eitherInletPipe.Outlets.Single().Should().Be(eitherInletPipe.Outlet);
+            eitherInletPipe.AllOutlets.Count.Should().Be(1);
+            eitherInletPipe.AllOutlets.Single().Should().Be(eitherInletPipe.Outlet);
         }
 
         [Test]
@@ -146,7 +147,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            var mockInlet = mockPipe.Object.Inlets.Single();
+            var mockInlet = (IInlet<int>)mockPipe.Object.AllInlets.Single();
 
             eitherInletPipe.Outlet.ConnectTo(mockInlet);
 
@@ -162,7 +163,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            var mockOutlet = mockPipe.Object.Outlets.Single();
+            var mockOutlet = (IOutlet<int>)mockPipe.Object.AllOutlets.Single();
 
             eitherInletPipe.LeftInlet.ConnectTo(mockOutlet);
 
@@ -178,7 +179,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            var mockOutlet = mockPipe.Object.Outlets.Single();
+            var mockOutlet = (IOutlet<int>)mockPipe.Object.AllOutlets.Single();
 
             eitherInletPipe.RightInlet.ConnectTo(mockOutlet);
 
@@ -196,13 +197,14 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             var mockLeftPipe = PipeHelpers.CreateMockPipe<int>();
             var mockRightPipe = PipeHelpers.CreateMockPipe<int>();
 
-            var mockLeftPipeOutlet = mockLeftPipe.Object.Outlets.Single();
-            var mockRightPipeOutlet = mockRightPipe.Object.Outlets.Single();
+            var mockLeftPipeOutlet = (IOutlet<int>)mockLeftPipe.Object.AllOutlets.Single();
+            var mockRightPipeOutlet = (IOutlet<int>)mockRightPipe.Object.AllOutlets.Single();
 
             eitherInletPipe.LeftInlet.ConnectTo(mockLeftPipeOutlet);
             eitherInletPipe.RightInlet.ConnectTo(mockRightPipeOutlet);
 
-            Func<int> leftSender = () => 3;
+            const int message = 3;
+            Func<int> leftSender = () => message;
             Func<int> rightSender = () => 4;
             mockLeftPipe.Setup(p => p.FindSender(mockLeftPipeOutlet, true)).Returns(leftSender);
             mockRightPipe.Setup(p => p.FindSender(mockRightPipeOutlet, true)).Returns(rightSender);
@@ -213,7 +215,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             var sender = eitherInletPipe.FindSender(eitherInletPipe.Outlet);
 
             // Assert
-            sender.Should().Be(leftSender);
+            sender().Should().Be(message);
         }
 
         [Test]
@@ -223,14 +225,15 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             var mockLeftPipe = PipeHelpers.CreateMockPipe<int>();
             var mockRightPipe = PipeHelpers.CreateMockPipe<int>();
 
-            var mockLeftPipeOutlet = mockLeftPipe.Object.Outlets.Single();
-            var mockRightPipeOutlet = mockRightPipe.Object.Outlets.Single();
+            var mockLeftPipeOutlet = (IOutlet<int>)mockLeftPipe.Object.AllOutlets.Single();
+            var mockRightPipeOutlet = (IOutlet<int>)mockRightPipe.Object.AllOutlets.Single();
 
             eitherInletPipe.LeftInlet.ConnectTo(mockLeftPipeOutlet);
             eitherInletPipe.RightInlet.ConnectTo(mockRightPipeOutlet);
 
             Func<int> leftSender = () => 3;
-            Func<int> rightSender = () => 4;
+            const int message = 4;
+            Func<int> rightSender = () => message;
             mockLeftPipe.Setup(p => p.FindSender(mockLeftPipeOutlet, true)).Returns(leftSender);
             mockRightPipe.Setup(p => p.FindSender(mockRightPipeOutlet, true)).Returns(rightSender);
 
@@ -240,7 +243,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             var sender = eitherInletPipe.FindSender(eitherInletPipe.Outlet);
 
             // Assert
-            sender.Should().Be(rightSender);
+            sender().Should().Be(message);
         }
     }
 }

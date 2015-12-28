@@ -13,21 +13,21 @@ namespace Pipes.Builders
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe<TMessage>>, IInlet<TMessage>> LeftInlet { get; set; }
+        Func<Lazy<IPipe>, IInlet<TMessage>> LeftInlet { get; set; }
 
         /// <summary>
         /// A function that, given the pipe, will produce the right inlet to be used by that pipe.
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe<TMessage>>, IInlet<TMessage>> RightInlet { get; set; }
+        Func<Lazy<IPipe>, IInlet<TMessage>> RightInlet { get; set; }
 
         /// <summary>
         /// A function that, given the pipe, will produce the outlet to be used by that pipe.
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe<TMessage>>, IOutlet<TMessage>> Outlet { get; set; }
+        Func<Lazy<IPipe>, IOutlet<TMessage>> Outlet { get; set; }
 
         TTieBreaker TieBreaker { get; set; }
 
@@ -36,9 +36,9 @@ namespace Pipes.Builders
 
     public class TieBreakingEitherInletPipeBuilder<TTieBreaker, TMessage> : ITieBreakingEitherInletPipeBuilder<TTieBreaker, TMessage> where TTieBreaker : ITieBreaker
     {
-        public Func<Lazy<IPipe<TMessage>>, IInlet<TMessage>> LeftInlet { get; set; }
-        public Func<Lazy<IPipe<TMessage>>, IInlet<TMessage>> RightInlet { get; set; }
-        public Func<Lazy<IPipe<TMessage>>, IOutlet<TMessage>> Outlet { get; set; }
+        public Func<Lazy<IPipe>, IInlet<TMessage>> LeftInlet { get; set; }
+        public Func<Lazy<IPipe>, IInlet<TMessage>> RightInlet { get; set; }
+        public Func<Lazy<IPipe>, IOutlet<TMessage>> Outlet { get; set; }
         public TTieBreaker TieBreaker { get; set; }
 
         public TieBreakingEitherInletPipeBuilder(TTieBreaker tieBreaker)
@@ -52,7 +52,7 @@ namespace Pipes.Builders
         public IEitherInletPipe<TTieBreaker, TMessage> Build()
         {
             EitherInletPipe<TTieBreaker, TMessage>[] pipe = { null };
-            var lazyPipe = new Lazy<IPipe<TMessage>>(() => pipe[0]);
+            var lazyPipe = new Lazy<IPipe>(() => pipe[0]);
 
             var leftInlet = LeftInlet(lazyPipe);
             var rightInlet = RightInlet(lazyPipe);

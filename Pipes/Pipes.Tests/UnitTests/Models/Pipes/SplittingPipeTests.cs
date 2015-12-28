@@ -1,14 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using FluentAssertions;
-using Moq;
 using NUnit.Framework;
 using Pipes.Builders;
-using Pipes.Constants;
 using Pipes.Models.Pipes;
-using Pipes.Models.TieBreakers;
-using Pipes.Tests.Helpers;
 
 namespace Pipes.Tests.UnitTests.Models.Pipes
 {
@@ -28,8 +23,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Assert
             splittingPipe.Inlet.Should().NotBeNull();
-            splittingPipe.Inlets.Count.Should().Be(1);
-            splittingPipe.Inlets.Single().Should().Be(splittingPipe.Inlet);
+            splittingPipe.AllInlets.Count.Should().Be(1);
+            splittingPipe.AllInlets.Single().Should().Be(splittingPipe.Inlet);
         }
 
         [Test]
@@ -38,8 +33,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             // Assert
             splittingPipe.LeftOutlet.Should().NotBeNull();
             splittingPipe.RightOutlet.Should().NotBeNull();
-            splittingPipe.Outlets.Count.Should().Be(2);
-            splittingPipe.Outlets.Should().BeEquivalentTo(splittingPipe.LeftOutlet, splittingPipe.RightOutlet);
+            splittingPipe.AllOutlets.Count.Should().Be(2);
+            splittingPipe.AllOutlets.Should().BeEquivalentTo(splittingPipe.LeftOutlet, splittingPipe.RightOutlet);
         }
 
         [Test]
