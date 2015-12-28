@@ -11,13 +11,13 @@ namespace Pipes.Tests.Helpers
         {
             var pipe = new Mock<IPipe>();
 
-            var inlets = new List<Inlet<T>>();
+            var inlets = new List<SimpleInlet<T>>();
             for (var i = 0; i < numberOfOutlets; i++)
             {
                 inlets.Add(InletHelpers.CreateInlet<T>(pipe.Object));
             }
 
-            var outlets = new List<Outlet<T>>();
+            var outlets = new List<SimpleOutlet<T>>();
             for (var i = 0; i < numberOfOutlets; i++)
             {
                 outlets.Add(OutletHelpers.CreateOutlet<T>(pipe.Object));

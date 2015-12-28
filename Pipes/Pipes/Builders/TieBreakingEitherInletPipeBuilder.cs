@@ -13,21 +13,21 @@ namespace Pipes.Builders
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, IInlet<TMessage>> LeftInlet { get; set; }
+        Func<Lazy<IPipe>, ISimpleInlet<TMessage>> LeftInlet { get; set; }
 
         /// <summary>
         /// A function that, given the pipe, will produce the right inlet to be used by that pipe.
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, IInlet<TMessage>> RightInlet { get; set; }
+        Func<Lazy<IPipe>, ISimpleInlet<TMessage>> RightInlet { get; set; }
 
         /// <summary>
         /// A function that, given the pipe, will produce the outlet to be used by that pipe.
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, IOutlet<TMessage>> Outlet { get; set; }
+        Func<Lazy<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
 
         TTieBreaker TieBreaker { get; set; }
 
@@ -36,16 +36,16 @@ namespace Pipes.Builders
 
     public class TieBreakingEitherInletPipeBuilder<TTieBreaker, TMessage> : ITieBreakingEitherInletPipeBuilder<TTieBreaker, TMessage> where TTieBreaker : ITieBreaker
     {
-        public Func<Lazy<IPipe>, IInlet<TMessage>> LeftInlet { get; set; }
-        public Func<Lazy<IPipe>, IInlet<TMessage>> RightInlet { get; set; }
-        public Func<Lazy<IPipe>, IOutlet<TMessage>> Outlet { get; set; }
+        public Func<Lazy<IPipe>, ISimpleInlet<TMessage>> LeftInlet { get; set; }
+        public Func<Lazy<IPipe>, ISimpleInlet<TMessage>> RightInlet { get; set; }
+        public Func<Lazy<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
         public TTieBreaker TieBreaker { get; set; }
 
         public TieBreakingEitherInletPipeBuilder(TTieBreaker tieBreaker)
         {
-            LeftInlet = p => new Inlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
-            RightInlet = p => new Inlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
-            Outlet = p => new Outlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
+            LeftInlet = p => new SimpleInlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
+            RightInlet = p => new SimpleInlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
+            Outlet = p => new SimpleOutlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
             TieBreaker = tieBreaker;
         }
 

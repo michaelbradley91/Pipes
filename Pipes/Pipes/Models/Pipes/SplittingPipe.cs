@@ -9,7 +9,7 @@ namespace Pipes.Models.Pipes
 
     public class SplittingPipe<TMessage> : TwoOutletPipe<TMessage>, ISplittingPipe<TMessage>
     {
-        public SplittingPipe(IInlet<TMessage> inlet, IOutlet<TMessage> leftOutlet, IOutlet<TMessage> rightOutlet)
+        public SplittingPipe(ISimpleInlet<TMessage> inlet, ISimpleOutlet<TMessage> leftOutlet, ISimpleOutlet<TMessage> rightOutlet)
             : base(inlet, leftOutlet, rightOutlet)
         {
         }

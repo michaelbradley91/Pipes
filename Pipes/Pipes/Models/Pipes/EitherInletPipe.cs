@@ -14,7 +14,7 @@ namespace Pipes.Models.Pipes
     {
         public TTieBreaker TieBreaker { get; }
 
-        public EitherInletPipe(IInlet<TMessage> leftInlet, IInlet<TMessage> rightInlet, IOutlet<TMessage> outlet, TTieBreaker tieBreaker)
+        public EitherInletPipe(ISimpleInlet<TMessage> leftInlet, ISimpleInlet<TMessage> rightInlet, ISimpleOutlet<TMessage> outlet, TTieBreaker tieBreaker)
             : base(leftInlet, rightInlet, outlet)
         {
             TieBreaker = tieBreaker;

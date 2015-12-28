@@ -73,10 +73,12 @@
     <Compile Include="Helpers\SharedResourceHelpers.cs" />
     <Compile Include="Models\Graphs\PipeGraphVertex.cs" />
     <Compile Include="Models\Lets\Inlet.cs" />
+    <Compile Include="Models\Lets\Outlet.cs" />
+    <Compile Include="Models\Lets\SimpleInlet.cs" />
     <Compile Include="Models\Lets\Let.cs" />
     <Compile Include="Models\Lets\WaitingReceiver.cs" />
     <Compile Include="Models\Lets\WaitingSender.cs" />
-    <Compile Include="Models\Lets\Outlet.cs" />
+    <Compile Include="Models\Lets\SimpleOutlet.cs" />
     <Compile Include="Models\Pipes\BasicPipe.cs" />
     <Compile Include="Models\Pipes\SimplePipe.cs" />
     <Compile Include="Models\Pipes\SplittingPipe.cs" />

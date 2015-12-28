@@ -15,7 +15,7 @@ namespace Pipes.Models.Pipes
         private readonly Queue<TMessage> storedMessages;
         public int Capacity { get; }
 
-        public CapacityPipe(IInlet<TMessage> inlet, IOutlet<TMessage> outlet, int capacity)
+        public CapacityPipe(ISimpleInlet<TMessage> inlet, ISimpleOutlet<TMessage> outlet, int capacity)
             : base(inlet, outlet)
         {
             Capacity = capacity;

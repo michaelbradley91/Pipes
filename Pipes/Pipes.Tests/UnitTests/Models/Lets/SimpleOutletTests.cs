@@ -9,46 +9,46 @@ using Pipes.Models.Pipes;
 namespace Pipes.Tests.UnitTests.Models.Lets
 {
     [TestFixture]
-    public class InletTests
+    public class SimpleOutletTests
     {
         private IBasicPipe<int> pipe;
-        private Inlet<int> inlet;
-        private IOutlet<int> outlet;
+        private ISimpleInlet<int> inlet;
+        private SimpleOutlet<int> simpleOutlet;
         
         [SetUp]
         public void SetUp()
         {
             pipe = PipeBuilder.New.BasicPipe<int>().Build();
-            inlet = (Inlet<int>) pipe.Inlet;
-            outlet = pipe.Outlet;
+            inlet = pipe.Inlet;
+            simpleOutlet = (SimpleOutlet<int>) pipe.Outlet;
         }
 
         [Test]
-        public void Inlet_BeginsDisconnectedFromAnyOutlet()
+        public void Outlet_BeginsDisconnectedFromAnyInlet()
         {
             // Assert
-            inlet.ConnectedOutlet.Should().BeNull();
+            simpleOutlet.ConnectedInlet.Should().BeNull();
         }
 
         [Test]
-        public void Inlet_RemembersThePipeItIsConnectedTo()
+        public void Outlet_RemembersThePipeItIsConnectedTo()
         {
             // Assert
-            inlet.Pipe.Should().Be(pipe);
+            simpleOutlet.Pipe.Should().Be(pipe);
         }
 
         [Test]
-        public void SendWithoutATimeout_GivenThereIsNoReceiver_WillKeepWaitingUntilTheThreadIsInterrupted()
+        public void ReceiveWithoutATimeout_GivenThereIsNoSender_WillKeepWaitingUntilTheThreadIsInterrupted()
         {
             // Arrange
-            var sentSuccessfully = false;
+            var receivedSuccessfully = false;
             var caughtException = default(Exception);
             var thread = new Thread(() =>
             {
                 try
                 {
-                    inlet.Send(3);
-                    sentSuccessfully = true;
+                    simpleOutlet.Receive();
+                    receivedSuccessfully = true;
                 }
                 catch (Exception e)
                 {
@@ -61,7 +61,7 @@ namespace Pipes.Tests.UnitTests.Models.Lets
             Thread.Sleep(500);
 
             // Assert
-            sentSuccessfully.Should().BeFalse();
+            receivedSuccessfully.Should().BeFalse();
             caughtException.Should().BeNull();
 
             // Act
@@ -69,20 +69,21 @@ namespace Pipes.Tests.UnitTests.Models.Lets
             Thread.Sleep(500);
 
             // Assert
-            sentSuccessfully.Should().BeFalse();
+            receivedSuccessfully.Should().BeFalse();
             caughtException.Should().NotBeNull().And.BeAssignableTo<ThreadInterruptedException>();
         }
 
         [Test]
-        public void SendWithoutATimeout_GivenThereIsEventuallyAReceiver_WillSendSuccessfully()
+        public void ReceiveWithoutATimeout_GivenThereIsEventuallyASender_WillReceiveSuccessfully()
         {
             // Arrange
             const int sentMessage = 3;
-            var sentSuccessfully = false;
+            var receivedSuccessfully = false;
+            var receivedMessage = default(int);
             var thread = new Thread(() =>
             {
-                inlet.Send(sentMessage);
-                sentSuccessfully = true;
+                receivedMessage = simpleOutlet.Receive();
+                receivedSuccessfully = true;
             });
 
             // Act
@@ -90,57 +91,57 @@ namespace Pipes.Tests.UnitTests.Models.Lets
             Thread.Sleep(500);
 
             // Assert
-            sentSuccessfully.Should().BeFalse();
+            receivedSuccessfully.Should().BeFalse();
 
             // Act
-            var receivedMessage = outlet.Receive();
+            inlet.Send(sentMessage);
             Thread.Sleep(500);
 
             // Assert
             receivedMessage.Should().Be(sentMessage);
-            sentSuccessfully.Should().BeTrue();
+            receivedSuccessfully.Should().BeTrue();
         }
 
         [Test]
-        public void SendWithoutATimeout_GivenThereIsAReceiverAlready_WillSendSuccessfully()
+        public void ReceiveWithoutATimeout_GivenThereIsASenderAlready_WillReceiveSuccessfully()
         {
             // Arrange
             const int sentMessage = 4;
-            var sentSuccessfully = false;
+            var receivedSuccessfully = false;
             var messageReceived = default(int);
-            var receivingThread = new Thread(() =>
-            {
-                messageReceived = outlet.Receive();
-            });
-            receivingThread.Start();
-            Thread.Sleep(500);
             var sendingThread = new Thread(() =>
             {
                 inlet.Send(sentMessage);
-                sentSuccessfully = true;
+            });
+            sendingThread.Start();
+            Thread.Sleep(500);
+            var receivingThread = new Thread(() =>
+            {
+                messageReceived = simpleOutlet.Receive();
+                receivedSuccessfully = true;
             });
 
             // Act
-            sendingThread.Start();
+            receivingThread.Start();
             Thread.Sleep(500);
 
             // Assert
-            sentSuccessfully.Should().BeTrue();
+            receivedSuccessfully.Should().BeTrue();
             messageReceived.Should().Be(sentMessage);
         }
 
         [Test]
-        public void SendWithATimeout_GivenThereIsNoReceiver_WillThrowATimeoutExceptionOnceTheTimeoutExpires()
+        public void ReceiveWithATimeout_GivenThereIsNoSender_WillThrowATimeoutExceptionOnceTheTimeoutExpires()
         {
             // Arrange
-            var sentSuccessfully = false;
+            var receivedSuccessfully = false;
             var caughtException = default(Exception);
             var thread = new Thread(() =>
             {
                 try
                 {
-                    inlet.Send(3, TimeSpan.FromMilliseconds(50));
-                    sentSuccessfully = true;
+                    simpleOutlet.Receive(TimeSpan.FromMilliseconds(50));
+                    receivedSuccessfully = true;
                 }
                 catch (Exception e)
                 {
@@ -153,20 +154,21 @@ namespace Pipes.Tests.UnitTests.Models.Lets
             Thread.Sleep(500);
 
             // Assert
-            sentSuccessfully.Should().BeFalse();
+            receivedSuccessfully.Should().BeFalse();
             caughtException.Should().NotBeNull().And.BeAssignableTo<TimeoutException>();
         }
 
         [Test]
-        public void SendWithATimeout_GivenThereIsAReceiveWithinTheTimeout_WillSendSuccessfully()
+        public void ReceiveWithATimeout_GivenThereIsASenderWithinTheTimeout_WillReceiveSuccessfully()
         {
             // Arrange
             const int sentMessage = 3;
-            var sentSuccessfully = false;
+            var receivedSuccessfully = false;
+            var receivedMessage = default(int);
             var thread = new Thread(() =>
             {
-                inlet.Send(sentMessage, TimeSpan.FromMilliseconds(5000));
-                sentSuccessfully = true;
+                receivedMessage = simpleOutlet.Receive(TimeSpan.FromMilliseconds(5000));
+                receivedSuccessfully = true;
             });
 
             // Act
@@ -174,57 +176,57 @@ namespace Pipes.Tests.UnitTests.Models.Lets
             Thread.Sleep(500);
 
             // Assert
-            sentSuccessfully.Should().BeFalse();
+            receivedSuccessfully.Should().BeFalse();
 
             // Act
-            var receivedMessage = outlet.Receive();
+            inlet.Send(sentMessage);
             Thread.Sleep(500);
 
             // Assert
             receivedMessage.Should().Be(sentMessage);
-            sentSuccessfully.Should().BeTrue();
+            receivedSuccessfully.Should().BeTrue();
         }
 
         [Test]
-        public void SendWithATimeout_GivenThereIsAReceiverAlready_WillSendSuccessfully()
+        public void ReceiveWithATimeout_GivenThereIsASenderAlready_WillReceiveSuccessfully()
         {
             // Arrange
             const int sentMessage = 4;
-            var sentSuccessfully = false;
+            var receivedSuccessfully = false;
             var messageReceived = default(int);
-            var receivingThread = new Thread(() =>
-            {
-                messageReceived = outlet.Receive();
-            });
-            receivingThread.Start();
-            Thread.Sleep(500);
             var sendingThread = new Thread(() =>
             {
-                inlet.Send(sentMessage, TimeSpan.FromMilliseconds(50));
-                sentSuccessfully = true;
+                inlet.Send(sentMessage);
+            });
+            sendingThread.Start();
+            Thread.Sleep(500);
+            var receivingThread = new Thread(() =>
+            {
+                messageReceived = simpleOutlet.Receive(TimeSpan.FromMilliseconds(50));
+                receivedSuccessfully = true;
             });
 
             // Act
-            sendingThread.Start();
+            receivingThread.Start();
             Thread.Sleep(500);
 
             // Assert
-            sentSuccessfully.Should().BeTrue();
+            receivedSuccessfully.Should().BeTrue();
             messageReceived.Should().Be(sentMessage);
         }
 
         [Test]
-        public void SendImmediately_GivenThereIsNoReceiver_ThrowsAnInvalidOperationException()
+        public void ReceiveImmediately_GivenThereIsNoSender_ThrowsAnInvalidOperationException()
         {
             // Arrange
-            var sentSuccessfully = false;
+            var receivedSuccessfully = false;
             var caughtException = default(Exception);
             var thread = new Thread(() =>
             {
                 try
                 {
-                    inlet.SendImmediately(3);
-                    sentSuccessfully = true;
+                    simpleOutlet.ReceiveImmediately();
+                    receivedSuccessfully = true;
                 }
                 catch (Exception e)
                 {
@@ -237,76 +239,75 @@ namespace Pipes.Tests.UnitTests.Models.Lets
             Thread.Sleep(500);
 
             // Assert
-            sentSuccessfully.Should().BeFalse();
+            receivedSuccessfully.Should().BeFalse();
             caughtException.Should().NotBeNull().And.BeAssignableTo<InvalidOperationException>();
         }
 
         [Test]
-        public void SendImmediately_GivenThereIsAlreadyAReceiver_SendsSuccessfully()
+        public void ReceiveImmediately_GivenThereIsAlreadyASender_ReceivesSuccessfully()
         {
             // Arrange
             const int sentMessage = 4;
-            var sentSuccessfully = false;
+            var receivedSuccessfully = false;
             var messageReceived = default(int);
-            var receivingThread = new Thread(() =>
-            {
-                messageReceived = outlet.Receive();
-            });
-            receivingThread.Start();
-            Thread.Sleep(500);
             var sendingThread = new Thread(() =>
             {
-                inlet.SendImmediately(sentMessage);
-                sentSuccessfully = true;
+                inlet.Send(sentMessage);
             });
-
-            // Act
             sendingThread.Start();
+            Thread.Sleep(500);
+            var receivingThread = new Thread(() =>
+            {
+                messageReceived = simpleOutlet.ReceiveImmediately();
+                receivedSuccessfully = true;
+            });
+            // Act
+            receivingThread.Start();
             Thread.Sleep(500);
 
             // Assert
-            sentSuccessfully.Should().BeTrue();
+            receivedSuccessfully.Should().BeTrue();
             messageReceived.Should().Be(sentMessage);
         }
 
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         [Test]
-        public void SendWithTimeout_GivenANegativeTimeSpan_ThrowsAnArgumentOutOfRangeException()
+        public void ReceiveWithTimeout_GivenANegativeTimeSpan_ThrowsAnArgumentOutOfRangeException()
         {
             // Act
-            inlet.Send(3, TimeSpan.FromMilliseconds(-1));
+            simpleOutlet.Receive(TimeSpan.FromMilliseconds(-1));
         }
 
         [Test]
-        public void ConnectTo_GivenTheInletIsNotConnected_ConnectsToTheGivenOutlet()
+        public void ConnectTo_GivenTheOutletIsNotConnected_ConnectsToTheGivenInlet()
         {
             // Arrange
             var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
 
             // Act
-            inlet.ConnectTo(pipe2.Outlet);
+            simpleOutlet.ConnectTo(pipe2.Inlet);
 
             // Assert
-            inlet.ConnectedOutlet.Should().Be(pipe2.Outlet);
-            pipe2.Outlet.ConnectedInlet.Should().Be(inlet);
+            simpleOutlet.ConnectedInlet.Should().Be(pipe2.Inlet);
+            pipe2.Inlet.ConnectedOutlet.Should().Be(simpleOutlet);
         }
 
         [ExpectedException(typeof(InvalidOperationException))]
         [Test]
-        public void ConnectTo_GivenTheInletIsAlreadyConnected_ThrowsAnInvalidOperationException()
+        public void ConnectTo_GivenTheOutletIsAlreadyConnected_ThrowsAnInvalidOperationException()
         {
             // Arrange
             var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
-            pipe2.Outlet.ConnectTo(inlet);
+            pipe2.Inlet.ConnectTo(simpleOutlet);
             var pipe3 = PipeBuilder.New.BasicPipe<int>().Build();
 
             // Act
-            inlet.ConnectTo(pipe3.Outlet);
+            simpleOutlet.ConnectTo(pipe3.Inlet);
         }
 
         [ExpectedException(typeof(InvalidOperationException))]
         [Test]
-        public void ConnectTo_GivenTheInletHasASender_ThrowsAnInvalidOperationException()
+        public void ConnectTo_GivenTheOutletHasASender_ThrowsAnInvalidOperationException()
         {
             // Arrange
             var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
@@ -314,7 +315,7 @@ namespace Pipes.Tests.UnitTests.Models.Lets
             {
                 try
                 {
-                    inlet.Send(3);
+                    simpleOutlet.Receive();
                 }
                 catch
                 {
@@ -327,7 +328,7 @@ namespace Pipes.Tests.UnitTests.Models.Lets
             // Act
             try
             {
-                inlet.ConnectTo(pipe2.Outlet);
+                simpleOutlet.ConnectTo(pipe2.Inlet);
             }
             catch
             {
@@ -338,97 +339,100 @@ namespace Pipes.Tests.UnitTests.Models.Lets
 
         [ExpectedException(typeof(InvalidOperationException))]
         [Test]
-        public void SendWithoutATimeout_GivenTheInletIsConnected_ThrowsAnInvalidOperationException()
+        public void ReceiveWithoutATimeout_GivenTheOutletIsConnected_ThrowsAnInvalidOperationException()
         {
             // Arrange
             var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
-            pipe2.Outlet.ConnectTo(inlet);
+            pipe2.Inlet.ConnectTo(simpleOutlet);
 
             // Act
-            inlet.Send(3);
+            simpleOutlet.Receive();
         }
 
         [ExpectedException(typeof(InvalidOperationException))]
         [Test]
-        public void SendWithATimeout_GivenTheInletIsConnected_ThrowsAnInvalidOperationException()
+        public void ReceiveWithATimeout_GivenTheOutletIsConnected_ThrowsAnInvalidOperationException()
         {
             // Arrange
             var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
-            pipe2.Outlet.ConnectTo(inlet);
+            pipe2.Inlet.ConnectTo(simpleOutlet);
 
             // Act
-            inlet.Send(3, TimeSpan.FromMilliseconds(100));
+            simpleOutlet.Receive(TimeSpan.FromMilliseconds(100));
         }
 
         [ExpectedException(typeof(InvalidOperationException))]
         [Test]
-        public void SendImmediately_GivenTheInletIsConnected_ThrowsAnInvalidOperationException()
+        public void ReceiveImmediately_GivenTheOutletIsConnected_ThrowsAnInvalidOperationException()
         {
             // Arrange
             var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
-            pipe2.Outlet.ConnectTo(inlet);
+            pipe2.Inlet.ConnectTo(simpleOutlet);
 
             // Act
-            inlet.SendImmediately(4);
+            simpleOutlet.ReceiveImmediately();
         }
 
         [Test]
-        public void SendWithoutATimeout_GivenTheOutletIsConnected_WillSendToTheConnectedPipe()
+        public void ReceiveWithoutATimeout_GivenTheInletIsConnected_WillReceiveFromTheConnectedPipe()
         {
             // Arrange
             var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
-            outlet.ConnectTo(pipe2.Inlet);
-
-            const int messageSent = 4;
-            new Thread(() =>
-            {
-                inlet.Send(messageSent);
-            }).Start();
-
-            // Act
-            var messageReceived = pipe2.Outlet.Receive();
-
-            // Assert
-            messageReceived.Should().Be(messageSent);
-        }
-
-        [Test]
-        public void SendWithATimeout_GivenTheOutletIsConnected_WillSendToTheConnectedPipe()
-        {
-            // Arrange
-            var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
-            outlet.ConnectTo(pipe2.Inlet);
-
-            const int messageSent = 4;
-            new Thread(() =>
-            {
-                inlet.Send(messageSent, TimeSpan.FromMilliseconds(1000));
-            }).Start();
-
-            // Act
-            var messageReceived = pipe2.Outlet.Receive();
-
-            // Assert
-            messageReceived.Should().Be(messageSent);
-        }
-
-        [Test]
-        public void SendImmediately_GivenTheOutletIsConnected_WillSendToTheConnectedPipe()
-        {
-            // Arrange
-            var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
-            outlet.ConnectTo(pipe2.Inlet);
+            inlet.ConnectTo(pipe2.Outlet);
 
             const int messageSent = 4;
             var messageReceived = default(int);
             new Thread(() =>
             {
-                messageReceived = pipe2.Outlet.Receive();
+                messageReceived = simpleOutlet.Receive();
+            }).Start();
+
+            // Act
+            pipe2.Inlet.Send(messageSent);
+            Thread.Sleep(500);
+
+            // Assert
+            messageReceived.Should().Be(messageSent);
+        }
+
+        [Test]
+        public void ReceiveWithATimeout_GivenTheInletIsConnected_WillReceiveFromTheConnectedPipe()
+        {
+            // Arrange
+            var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
+            inlet.ConnectTo(pipe2.Outlet);
+
+            const int messageSent = 4;
+            var messageReceived = default(int);
+            new Thread(() =>
+            {
+                messageReceived = simpleOutlet.Receive(TimeSpan.FromMilliseconds(2000));
+            }).Start();
+
+            // Act
+            pipe2.Inlet.Send(messageSent);
+            Thread.Sleep(500);
+
+            // Assert
+            messageReceived.Should().Be(messageSent);
+        }
+
+        [Test]
+        public void ReceiveImmediately_GivenTheInletIsConnected_WillReceiveFromTheConnectedPipe()
+        {
+            // Arrange
+            var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
+            inlet.ConnectTo(pipe2.Outlet);
+
+            const int messageSent = 4;
+            new Thread(() =>
+            {
+                pipe2.Inlet.Send(messageSent);
             }).Start();
             Thread.Sleep(500);
 
             // Act
-            inlet.SendImmediately(messageSent);
+            var messageReceived = simpleOutlet.ReceiveImmediately();
             Thread.Sleep(500);
 
             // Assert
@@ -440,7 +444,7 @@ namespace Pipes.Tests.UnitTests.Models.Lets
         public void ConnectTo_WhenConnectingThePipeToItself_ThrowsAnInvalidOperationException()
         {
             // Act
-            inlet.ConnectTo(outlet);
+            simpleOutlet.ConnectTo(inlet);
         }
 
         [ExpectedException(typeof(InvalidOperationException))]
@@ -449,47 +453,33 @@ namespace Pipes.Tests.UnitTests.Models.Lets
         {
             // Arrange
             var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
-            pipe2.Inlet.ConnectTo(outlet);
+            pipe2.Outlet.ConnectTo(inlet);
 
             // Act
-            inlet.ConnectTo(pipe2.Outlet);
+            simpleOutlet.ConnectTo(pipe2.Inlet);
         }
 
         [ExpectedException(typeof(InvalidOperationException))]
         [Test]
-        public void ConnectTo_WhenConnectingPipeToCreateANonTree_ThrowsAnInvalidOperationException()
-        {
-            // Arrange
-            var pipe1 = PipeBuilder.New.EitherOutletPipe<int>().Build();
-            var pipe2 = PipeBuilder.New.EitherInletPipe<int>().Build();
-
-            pipe1.LeftOutlet.ConnectTo(pipe2.LeftInlet);
-
-            // Act
-            pipe1.RightOutlet.ConnectTo(pipe2.RightInlet);
-        }
-
-        [ExpectedException(typeof(InvalidOperationException))]
-        [Test]
-        public void Disconnect_GivenTheInletIsNotConnected_ThrowsAnInvalidOperationException()
+        public void Disconnect_GivenTheOutletIsNotConnected_ThrowsAnInvalidOperationException()
         {
             // Act
-            inlet.Disconnect();
+            simpleOutlet.Disconnect();
         }
 
         [Test]
-        public void Disconnect_GivenTheInletIsConnected_DisconnectsTheInletFromItsOutlet()
+        public void Disconnect_GivenTheOutletIsConnected_DisconnectsTheOutletFromItsInlet()
         {
             // Arrange
             var pipe2 = PipeBuilder.New.BasicPipe<int>().Build();
-            inlet.ConnectTo(pipe2.Outlet);
+            simpleOutlet.ConnectTo(pipe2.Inlet);
 
             // Act
-            inlet.Disconnect();
+            simpleOutlet.Disconnect();
 
             // Assert
-            inlet.ConnectedOutlet.Should().BeNull();
-            pipe2.Outlet.ConnectedInlet.Should().BeNull();
+            simpleOutlet.ConnectedInlet.Should().BeNull();
+            pipe2.Inlet.ConnectedOutlet.Should().BeNull();
         }
     }
 }

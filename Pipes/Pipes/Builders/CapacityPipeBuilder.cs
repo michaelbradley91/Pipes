@@ -12,14 +12,14 @@ namespace Pipes.Builders
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, IInlet<TMessage>> Inlet { get; set; }
+        Func<Lazy<IPipe>, ISimpleInlet<TMessage>> Inlet { get; set; }
 
         /// <summary>
         /// A function that, given the pipe, will produce the outlet to be used by that pipe.
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, IOutlet<TMessage>> Outlet { get; set; }
+        Func<Lazy<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
 
         int Capacity { get; set; }
 
@@ -30,14 +30,14 @@ namespace Pipes.Builders
 
     public class CapacityPipeBuilder<TMessage> : ICapacityPipeBuilder<TMessage>
     {
-        public Func<Lazy<IPipe>, IInlet<TMessage>> Inlet { get; set; }
-        public Func<Lazy<IPipe>, IOutlet<TMessage>> Outlet { get; set; }
+        public Func<Lazy<IPipe>, ISimpleInlet<TMessage>> Inlet { get; set; }
+        public Func<Lazy<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
         public int Capacity { get; set; }
 
         public CapacityPipeBuilder()
         {
-            Inlet = p => new Inlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
-            Outlet = p => new Outlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
+            Inlet = p => new SimpleInlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
+            Outlet = p => new SimpleOutlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
         }   
 
         public ICapacityPipe<TMessage> Build()

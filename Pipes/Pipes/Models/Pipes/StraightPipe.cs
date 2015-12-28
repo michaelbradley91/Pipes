@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Pipes.Models.Lets;
 using SharedResources.SharedResources;
 
@@ -7,17 +6,17 @@ namespace Pipes.Models.Pipes
 {
     public interface IStraightPipe<TMessage> : IPipe
     {
-        IInlet<TMessage> Inlet { get; }
-        IOutlet<TMessage> Outlet { get; }
+        ISimpleInlet<TMessage> Inlet { get; }
+        ISimpleOutlet<TMessage> Outlet { get; }
     }
 
     public abstract class StraightPipe<TMessage> : SimplePipe<TMessage>, IStraightPipe<TMessage>
     {
-        public IInlet<TMessage> Inlet { get; }
-        public IOutlet<TMessage> Outlet { get; }
+        public ISimpleInlet<TMessage> Inlet { get; }
+        public ISimpleOutlet<TMessage> Outlet { get; }
         public override SharedResource SharedResource { get; }
 
-        protected StraightPipe(IInlet<TMessage> inlet, IOutlet<TMessage> outlet)
+        protected StraightPipe(ISimpleInlet<TMessage> inlet, ISimpleOutlet<TMessage> outlet)
         {
             Inlet = inlet;
             Outlet = outlet;

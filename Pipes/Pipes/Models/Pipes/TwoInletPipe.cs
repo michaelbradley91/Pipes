@@ -7,19 +7,19 @@ namespace Pipes.Models.Pipes
 {
     public interface ITwoInletPipe<TMessage> : IPipe
     {
-        IInlet<TMessage> LeftInlet { get; }
-        IInlet<TMessage> RightInlet { get; }
-        IOutlet<TMessage> Outlet { get; }
+        ISimpleInlet<TMessage> LeftInlet { get; }
+        ISimpleInlet<TMessage> RightInlet { get; }
+        ISimpleOutlet<TMessage> Outlet { get; }
     }
 
     public abstract class TwoInletPipe<TMessage> : SimplePipe<TMessage>, ITwoInletPipe<TMessage>
     {
-        public IInlet<TMessage> LeftInlet { get; }
-        public IInlet<TMessage> RightInlet { get; }
-        public IOutlet<TMessage> Outlet { get; }
+        public ISimpleInlet<TMessage> LeftInlet { get; }
+        public ISimpleInlet<TMessage> RightInlet { get; }
+        public ISimpleOutlet<TMessage> Outlet { get; }
         public override SharedResource SharedResource { get; }
 
-        protected TwoInletPipe(IInlet<TMessage> leftInlet, IInlet<TMessage> rightInlet, IOutlet<TMessage> outlet)
+        protected TwoInletPipe(ISimpleInlet<TMessage> leftInlet, ISimpleInlet<TMessage> rightInlet, ISimpleOutlet<TMessage> outlet)
         {
             LeftInlet = leftInlet;
             RightInlet = rightInlet;

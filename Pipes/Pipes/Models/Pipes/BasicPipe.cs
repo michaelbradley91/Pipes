@@ -9,7 +9,7 @@ namespace Pipes.Models.Pipes
 
     public class BasicPipe<TMessage> : StraightPipe<TMessage>, IBasicPipe<TMessage>
     {
-        public BasicPipe(IInlet<TMessage> inlet, IOutlet<TMessage> outlet)
+        public BasicPipe(ISimpleInlet<TMessage> inlet, ISimpleOutlet<TMessage> outlet)
             : base(inlet, outlet)
         {
         }

@@ -16,9 +16,9 @@ namespace Pipes.Tests.IntegrationTests.Examples
 
         private Thread[] workerThreads;
         private int[] sharedMemory;
-        private IOutlet<int>[] outlets; 
+        private ISimpleOutlet<int>[] outlets; 
 
-        private IInlet<int> barrierInlet;
+        private ISimpleInlet<int> barrierInlet;
 
         [SetUp]
         public void SetUp()
@@ -36,11 +36,11 @@ namespace Pipes.Tests.IntegrationTests.Examples
             }
         }
 
-        private static Tuple<IInlet<int>, IOutlet<int>[]> CreateBinaryTreeOfSplittingPipes(int numberOfOutlets)
+        private static Tuple<ISimpleInlet<int>, ISimpleOutlet<int>[]> CreateBinaryTreeOfSplittingPipes(int numberOfOutlets)
         {
             if (numberOfOutlets < 2) throw new InvalidOperationException();
             
-            var outletQueue = new Queue<IOutlet<int>>();
+            var outletQueue = new Queue<ISimpleOutlet<int>>();
 
             var firstSplittingPipe = PipeBuilder.New.SplittingPipe<int>().Build();
             var inlet = firstSplittingPipe.Inlet;
@@ -57,7 +57,7 @@ namespace Pipes.Tests.IntegrationTests.Examples
             }
 
             var outletArray = outletQueue.ToArray();
-            return new Tuple<IInlet<int>, IOutlet<int>[]>(inlet, outletArray);
+            return new Tuple<ISimpleInlet<int>, ISimpleOutlet<int>[]>(inlet, outletArray);
         }
 
         private ThreadStart CreateWorker(int workerId)

@@ -98,8 +98,8 @@
     <Compile Include="UnitTests\Builders\EitherOutletPipeBuilderTests.cs" />
     <Compile Include="UnitTests\Builders\EitherInletPipeBuilderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnitTests\Models\Lets\OutletTests.cs" />
-    <Compile Include="UnitTests\Models\Lets\InletTests.cs" />
+    <Compile Include="UnitTests\Models\Lets\SimpleOutletTests.cs" />
+    <Compile Include="UnitTests\Models\Lets\SimpleInletTests.cs" />
     <Compile Include="UnitTests\Models\Lets\WaitingSenderTests.cs" />
     <Compile Include="UnitTests\Models\Lets\WaitingReceiverTests.cs" />
     <Compile Include="UnitTests\Models\Pipes\SimplePipeTests.cs" />
