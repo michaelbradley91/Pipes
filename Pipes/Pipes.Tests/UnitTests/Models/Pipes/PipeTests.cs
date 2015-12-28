@@ -94,7 +94,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             sender.Should().NotBeNull();
         }
 
-        private class DummyPipe : SimplePipe<int>
+        private class DummyPipe : Pipe
         {
             public readonly Mock<IInlet<int>> Inlet = new Mock<IInlet<int>>();
             public readonly Mock<IOutlet<int>> Outlet = new Mock<IOutlet<int>>();
@@ -104,14 +104,14 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
 
             public override SharedResource SharedResource => null;
 
-            protected override Action<int> FindReceiver(IInlet<int> inletSendingMessage)
+            protected override Action<T> FindReceiverFor<T>(IInlet<T> inletSendingMessage)
             {
                 return i => { };
             }
 
-            protected override Func<int> FindSender(IOutlet<int> outletReceivingMessage)
+            protected override Func<T> FindSenderFor<T>(IOutlet<T> outletReceivingMessage)
             {
-                return () => 3;
+                return () => (T)(object)3;
             }
         }
     }
