@@ -24,7 +24,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void FindReceiver_GivenTheReceiverShouldBeNull_ReturnsNull()
         {
             // Arrange
-            dummyPipe.receiver = null;
+            dummyPipe.Receiver = null;
 
             // Act
             var receiver = dummyPipe.FindReceiver(dummyPipe.Inlet.Object, true);
@@ -38,7 +38,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var messageReceived = 0;
-            dummyPipe.receiver = m => messageReceived = m;
+            dummyPipe.Receiver = m => messageReceived = m;
 
             // Act
             var receiver = dummyPipe.FindReceiver(dummyPipe.Inlet.Object, true);
@@ -53,7 +53,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void FindSender_GivenTheSenderShouldBeNull_ReturnsNull()
         {
             // Arrange
-            dummyPipe.sender = null;
+            dummyPipe.Sender = null;
 
             // Act
             var sender = dummyPipe.FindSender(dummyPipe.Outlet.Object, true);
@@ -66,7 +66,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             const int message = 12;
-            dummyPipe.sender = () => message;
+            dummyPipe.Sender = () => message;
 
             // Act
             var sender = dummyPipe.FindSender(dummyPipe.Outlet.Object, true);
@@ -85,17 +85,17 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
 
             public override SharedResource SharedResource => null;
 
-            public Action<int> receiver = i => { };
-            public Func<int> sender = () => 3;
+            public Action<int> Receiver = i => { };
+            public Func<int> Sender = () => 3;
 
             protected override Action<int> FindReceiver(IInlet<int> inletSendingMessage)
             {
-                return receiver;
+                return Receiver;
             }
 
             protected override Func<int> FindSender(IOutlet<int> outletReceivingMessage)
             {
-                return sender;
+                return Sender;
             }
         }
     }

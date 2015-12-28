@@ -102,6 +102,8 @@
     <Compile Include="UnitTests\Models\Lets\SimpleInletTests.cs" />
     <Compile Include="UnitTests\Models\Lets\WaitingSenderTests.cs" />
     <Compile Include="UnitTests\Models\Lets\WaitingReceiverTests.cs" />
+    <Compile Include="UnitTests\Models\Pipes\TransformPipeTests.cs" />
+    <Compile Include="UnitTests\Models\Pipes\ComplexPipeTests.cs" />
     <Compile Include="UnitTests\Models\Pipes\SimplePipeTests.cs" />
     <Compile Include="UnitTests\Models\Pipes\SplittingPipeTests.cs" />
     <Compile Include="UnitTests\Models\Pipes\PipeTests.cs" />

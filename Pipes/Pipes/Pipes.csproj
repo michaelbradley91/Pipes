@@ -64,6 +64,8 @@
     <Compile Include="Builders\EitherInletPipeBuilder.cs" />
     <Compile Include="Builders\CapacityPipeBuilder.cs" />
     <Compile Include="Builders\BasicPipeBuilder.cs" />
+    <Compile Include="Builders\TransformPipeBuilder.cs" />
+    <Compile Include="Builders\TransformPipeWithMapBuilder.cs" />
     <Compile Include="Constants\Alternated.cs" />
     <Compile Include="Constants\Priority.cs" />
     <Compile Include="Constants\TieResult.cs" />
@@ -80,12 +82,14 @@
     <Compile Include="Models\Lets\WaitingSender.cs" />
     <Compile Include="Models\Lets\SimpleOutlet.cs" />
     <Compile Include="Models\Pipes\BasicPipe.cs" />
+    <Compile Include="Models\Pipes\ComplexPipe.cs" />
     <Compile Include="Models\Pipes\SimplePipe.cs" />
     <Compile Include="Models\Pipes\SplittingPipe.cs" />
     <Compile Include="Models\Pipes\EitherOutletPipe.cs" />
     <Compile Include="Models\Pipes\Pipe.cs" />
     <Compile Include="Models\Pipes\StraightPipe.cs" />
     <Compile Include="Models\Pipes\EitherInletPipe.cs" />
+    <Compile Include="Models\Pipes\TransformPipe.cs" />
     <Compile Include="Models\TieBreakers\TieBreaker.cs" />
     <Compile Include="Models\TieBreakers\AlternatingTieBreaker.cs" />
     <Compile Include="Models\TieBreakers\PrioritisingTieBreaker.cs" />

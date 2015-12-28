@@ -7,6 +7,7 @@
         IEitherInletPipeBuilder<TMessage> EitherInletPipe<TMessage>();
         IEitherOutletPipeBuilder<TMessage> EitherOutletPipe<TMessage>();
         ISplittingPipeBuilder<TMessage> SplittingPipe<TMessage>();
+        ITransformPipeBuilder<TSourceMessage, TTargetMessage> TransformPipe<TSourceMessage, TTargetMessage>();
     }
 
     public class PipeBuilder : IPipeBuilder
@@ -36,6 +37,11 @@
         public ISplittingPipeBuilder<TMessage> SplittingPipe<TMessage>()
         {
             return new SplittingPipeBuilder<TMessage>();
+        }
+
+        public ITransformPipeBuilder<TSourceMessage, TTargetMessage> TransformPipe<TSourceMessage, TTargetMessage>()
+        {
+            return new TransformPipeBuilder<TSourceMessage, TTargetMessage>();
         }
     }
 }
