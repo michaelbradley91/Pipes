@@ -21,6 +21,13 @@ namespace Pipes.Builders
         /// </summary>
         Func<Lazy<IPipe>, ISimpleOutlet<TTargetMessage>> Outlet { get; set; }
 
+        /// <summary>
+        /// This function may be run by pipes any number of times while resolving where a message
+        /// is sent. It should also not rely on the acquisition of any other pipes.
+        /// 
+        /// Generally, this should be a simple stateless function - for the same input it should return the same output.
+        /// Try other functions at your own risk
+        /// </summary>
         Func<TSourceMessage, TTargetMessage> Map { get; set; }
 
         ITransformPipe<TSourceMessage, TTargetMessage> Build();
