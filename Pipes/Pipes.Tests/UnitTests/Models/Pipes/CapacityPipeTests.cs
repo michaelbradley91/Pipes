@@ -297,5 +297,32 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             actualSixthMessage.Should().Be(expectedSixthMessage);
         }
 
+        [Test]
+        public void StoredMessages_GivenTheCapacityPipeHasNoMessages_ReturnsAnEmptyList()
+        {
+            // Act
+            var storedMessages = capacityThreePipe.StoredMessages;
+
+            // Assert
+            storedMessages.Should().BeEmpty();
+        }
+
+        [Test]
+        public void StoredMessages_GivenTheCapacityPipeHasMessages_ReturnsThoseMessagesInOrder()
+        {
+            // Arrange
+            capacityThreePipe.Inlet.Send(1);
+            capacityThreePipe.Inlet.Send(2);
+            capacityThreePipe.Inlet.Send(3);
+
+            // Act
+            var storedMessages = capacityThreePipe.StoredMessages;
+
+            // Assert
+            storedMessages.Count.Should().Be(3);
+            storedMessages[0].Should().Be(1);
+            storedMessages[1].Should().Be(2);
+            storedMessages[2].Should().Be(3);
+        }
     }
 }

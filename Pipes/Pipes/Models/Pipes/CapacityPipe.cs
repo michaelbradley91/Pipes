@@ -8,12 +8,14 @@ namespace Pipes.Models.Pipes
     public interface ICapacityPipe<TMessage> : IStraightPipe<TMessage>
     {
         int Capacity { get; }
+        IReadOnlyList<TMessage> StoredMessages { get; }
     }
 
     public class CapacityPipe<TMessage> : StraightPipe<TMessage>, ICapacityPipe<TMessage>
     {
-        private readonly Queue<TMessage> storedMessages;
         public int Capacity { get; }
+        private readonly Queue<TMessage> storedMessages;
+        public IReadOnlyList<TMessage> StoredMessages => storedMessages.ToArray();
 
         public CapacityPipe(ISimpleInlet<TMessage> inlet, ISimpleOutlet<TMessage> outlet, int capacity)
             : base(inlet, outlet)
