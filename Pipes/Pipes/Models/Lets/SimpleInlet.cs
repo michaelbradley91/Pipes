@@ -24,37 +24,17 @@ namespace Pipes.Models.Lets
         /// Send a message down the pipe. If the pipe system has insufficient capacity to accept the message, this will throw an invalid operation exception.
         /// </summary>
         void SendImmediately(TMessage message);
-
-        /// <summary>
-        /// Connect this outlet to an inlet. This helps you to build up a pipe system!
-        /// By default, this will also check to see if the pipe system would no longer be a tree after this. If so, it will refuse to connect to the given inlet and throw
-        /// an InvalidOperationException. This is quite an expensive check for large pipe systems however, so if you're confident you are not creating cycles, you
-        /// can turn it off.
-        /// 
-        /// (This method will also connect the outlet to this inlet)
-        /// </summary>
-        void ConnectTo(IOutlet<TMessage> outlet, bool checkPipeSystemFormsTree = true);
-
-        /// <summary>
-        /// Disconnect this inlet from its connected outlet.
-        /// 
-        /// (This method will also disconnect the outlet from this inlet)
-        /// </summary>
-        void Disconnect();
     }
 
-    public class SimpleInlet<TMessage> : Let, ISimpleInlet<TMessage>
+    public class SimpleInlet<TMessage> : Inlet<TMessage>, ISimpleInlet<TMessage>
     {
-        public IOutlet<TMessage> ConnectedOutlet { get; set; }
-        public IOutlet TypelessConnectedOutlet => ConnectedOutlet;
-
         private readonly IList<WaitingSender<TMessage>> waitingSenders;
 
         internal SimpleInlet(Lazy<IPipe> pipe, SharedResource sharedResource) : base(pipe, sharedResource)
         {
             waitingSenders = new List<WaitingSender<TMessage>>();
-            ConnectedOutlet = null;
         }
+
         public void Send(TMessage message)
         {
             Send(message, s => s.WaitOne(), new ThreadInterruptedException("The message could not be sent as the thread was interrupted"));
@@ -119,28 +99,13 @@ namespace Pipes.Models.Lets
                 throw;
             }
         }
-
-        public void ConnectTo(IOutlet<TMessage> outlet, bool checkPipeSystemFormsTree = true)
-        {
-            LockWith(outlet);
-            Connect(this, outlet, checkPipeSystemFormsTree);
-            Unlock();
-        }
-
-        public void Disconnect()
-        {
-            if (ConnectedOutlet == null) throw new InvalidOperationException("You cannot disconnect an inlet unless it is already connected");
-            LockWith(ConnectedOutlet);
-            Disconnect(this, ConnectedOutlet);
-            Unlock();
-        }
-
-        public bool CanConnect()
+        
+        public override bool CanConnect()
         {
             return !waitingSenders.Any() && ConnectedOutlet == null;
         }
 
-        public Func<TMessage> FindSender()
+        public override Func<TMessage> FindSender()
         {
             if (ConnectedOutlet != null) return ConnectedOutlet.Pipe.FindSender(ConnectedOutlet);
             if (HasWaitingSender()) return UseWaitingSender;

@@ -93,7 +93,10 @@ namespace Pipes.Models.Lets
         {
             Try(() =>
             {
-                if (inlet.ConnectedOutlet != outlet || outlet.ConnectedInlet != inlet) throw new InvalidOperationException("The inlet and outlet were not connected");
+                if (inlet == null || outlet == null || inlet.ConnectedOutlet != outlet || outlet.ConnectedInlet != inlet)
+                {
+                    throw new InvalidOperationException("The inlet and outlet were not connected");
+                }
 
                 inlet.ConnectedOutlet = null;
                 outlet.ConnectedInlet = null;

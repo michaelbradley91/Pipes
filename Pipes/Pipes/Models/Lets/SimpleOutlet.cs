@@ -24,36 +24,15 @@ namespace Pipes.Models.Lets
         /// Retrieve a message from this pipe. If no message is available, this will throw an invalid operation exception.
         /// </summary>
         TMessage ReceiveImmediately();
-
-        /// <summary>
-        /// Connect this outlet to an inlet. This helps you to build up a pipe system!
-        /// By default, this will also check to see if the pipe system would no longer be a tree after this. If so, it will refuse to connect to the given inlet and throw
-        /// an InvalidOperationException. This is quite an expensive check for large pipe systems however, so if you're confident you are not creating cycles, you
-        /// can turn it off.
-        /// 
-        /// (This method will also connect the outlet to this inlet)
-        /// </summary>
-        void ConnectTo(IInlet<TMessage> inlet, bool checkPipeSystemFormsTree = true);
-
-        /// <summary>
-        /// Disconnect this outlet from its inlet.
-        /// 
-        /// (This method will also disconnect the outlet from this inlet)
-        /// </summary>
-        void Disconnect();
     }
 
-    public class SimpleOutlet<TMessage> : Let, ISimpleOutlet<TMessage>
+    public class SimpleOutlet<TMessage> : Outlet<TMessage>, ISimpleOutlet<TMessage>
     {
-        public IInlet<TMessage> ConnectedInlet { get; set; }
-        public IInlet TypelessConnectedInlet => ConnectedInlet; 
-
         private readonly IList<WaitingReceiver<TMessage>> waitingReceivers;
 
         internal SimpleOutlet(Lazy<IPipe> pipe, SharedResource sharedResource) : base(pipe, sharedResource)
         {
             waitingReceivers = new List<WaitingReceiver<TMessage>>();
-            ConnectedInlet = null;
         }
 
         public TMessage Receive()
@@ -122,27 +101,12 @@ namespace Pipes.Models.Lets
             }
         }
 
-        public void ConnectTo(IInlet<TMessage> inlet, bool checkPipeSystemFormsTree = true)
-        {
-            LockWith(inlet);
-            Connect(inlet, this, checkPipeSystemFormsTree);
-            Unlock();
-        }
-
-        public bool CanConnect()
+        public override bool CanConnect()
         {
             return !waitingReceivers.Any() && ConnectedInlet == null;
         }
-
-        public void Disconnect()
-        {
-            if (ConnectedInlet == null) throw new InvalidOperationException("You cannot disconnect an outlet unless it is already connected");
-            LockWith(ConnectedInlet);
-            Disconnect(ConnectedInlet, this);
-            Unlock();
-        }
-
-        public Action<TMessage> FindReceiver()
+        
+        public override Action<TMessage> FindReceiver()
         {
             if (ConnectedInlet != null) return ConnectedInlet.Pipe.FindReceiver(ConnectedInlet);
             if (HasWaitingReceiver()) return UseWaitingReceiver;

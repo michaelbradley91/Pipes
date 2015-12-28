@@ -1,4 +1,6 @@
 using System;
+using Pipes.Models.Pipes;
+using SharedResources.SharedResources;
 
 namespace Pipes.Models.Lets
 {
@@ -28,5 +30,52 @@ namespace Pipes.Models.Lets
         /// Evaluating this function will receive a message from a sender.
         /// </summary>
         Func<TMessage> FindSender();
+
+        /// <summary>
+        /// Connect this outlet to an inlet. This helps you to build up a pipe system!
+        /// By default, this will also check to see if the pipe system would no longer be a tree after this. If so, it will refuse to connect to the given inlet and throw
+        /// an InvalidOperationException. This is quite an expensive check for large pipe systems however, so if you're confident you are not creating cycles, you
+        /// can turn it off.
+        /// 
+        /// (This method will also connect the outlet to this inlet)
+        /// </summary>
+        void ConnectTo(IOutlet<TMessage> outlet, bool checkPipeSystemFormsTree = true);
+
+        /// <summary>
+        /// Disconnect this inlet from its connected outlet.
+        /// 
+        /// (This method will also disconnect the outlet from this inlet)
+        /// </summary>
+        void Disconnect();
+    }
+
+    public abstract class Inlet<TMessage> : Let, IInlet<TMessage>
+    {
+        public IOutlet<TMessage> ConnectedOutlet { get; set; }
+        public IOutlet TypelessConnectedOutlet => ConnectedOutlet;
+
+        protected Inlet(Lazy<IPipe> pipe, SharedResource sharedResource) : base(pipe, sharedResource)
+        {
+            ConnectedOutlet = null;
+        }
+
+        public void ConnectTo(IOutlet<TMessage> outlet, bool checkPipeSystemFormsTree = true)
+        {
+            LockWith(outlet);
+            Connect(this, outlet, checkPipeSystemFormsTree);
+            Unlock();
+        }
+
+        public void Disconnect()
+        {
+            if (ConnectedOutlet == null) throw new InvalidOperationException("You cannot disconnect an inlet unless it is already connected");
+            LockWith(ConnectedOutlet);
+            Disconnect(this, ConnectedOutlet);
+            Unlock();
+        }
+
+        public abstract bool CanConnect();
+
+        public abstract Func<TMessage> FindSender();
     }
 }
