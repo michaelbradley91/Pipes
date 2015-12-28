@@ -33,7 +33,7 @@ namespace Pipes.Builders
         {
             Inlet = p => new SimpleInlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
             Outlet = p => new SimpleOutlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
-        }  
+        }
 
         public IBasicPipe<TMessage> Build()
         {

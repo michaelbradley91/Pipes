@@ -6,7 +6,6 @@ using NUnit.Framework;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Tests.Helpers;
-using SharedResources.SharedResources;
 
 namespace Pipes.Tests.UnitTests.Models.Pipes
 {

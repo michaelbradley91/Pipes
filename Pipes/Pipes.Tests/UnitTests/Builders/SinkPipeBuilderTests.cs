@@ -5,21 +5,21 @@ using Pipes.Builders;
 namespace Pipes.Tests.UnitTests.Builders
 {
     [TestFixture]
-    public class SplittingPipeBuilderTests
+    public class SinkPipeBuilderTests
     {
-        private ISplittingPipeBuilder<int> splittingPipeBuilder;
+        private ISinkPipeBuilder<int> sinkPipeBuilder;
 
         [SetUp]
         public void SetUp()
         {
-            splittingPipeBuilder = new SplittingPipeBuilder<int>();
+            sinkPipeBuilder = new SinkPipeBuilder<int>();
         }
 
         [Test]
-        public void Build_ReturnsASplittingPipe()
+        public void Build_ReturnsASinkPipe()
         {
             // Act
-            var pipe = splittingPipeBuilder.Build();
+            var pipe = sinkPipeBuilder.Build();
 
             // Assert
             pipe.Should().NotBeNull();

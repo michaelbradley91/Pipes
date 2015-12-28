@@ -12,7 +12,7 @@ namespace Pipes.Models.Pipes
     {
         public ISimpleInlet<TMessage> Inlet { get; }
 
-        protected SinkPipe(ISimpleInlet<TMessage> inlet) : base(new[] {inlet}, new IOutlet[] {})
+        public SinkPipe(ISimpleInlet<TMessage> inlet) : base(new[] {inlet}, new IOutlet[] {})
         {
             Inlet = inlet;
         }
@@ -24,7 +24,7 @@ namespace Pipes.Models.Pipes
 
         protected override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage)
         {
-            return Inlet.FindSender();
+            return null;
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Pipes.Models.Lets;
-using SharedResources.SharedResources;
+﻿using Pipes.Models.Lets;
 
 namespace Pipes.Models.Pipes
 {
