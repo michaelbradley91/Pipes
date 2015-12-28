@@ -24,7 +24,7 @@ namespace Pipes.Tests.UnitTests.Builders
             var builder = PipeBuilder.New.BasicPipe<int>();
 
             // Assert
-            builder.Should().BeAssignableTo<IBasicPipeBuilder<int>>();
+            builder.Should().BeAssignableTo<BasicPipeBuilder<int>>();
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace Pipes.Tests.UnitTests.Builders
             var builder = PipeBuilder.New.CapacityPipe<int>();
 
             // Assert
-            builder.Should().BeAssignableTo<ICapacityPipeBuilder<int>>();
+            builder.Should().BeAssignableTo<CapacityPipeBuilder<int>>();
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace Pipes.Tests.UnitTests.Builders
             var builder = PipeBuilder.New.EitherInletPipe<int>();
 
             // Assert
-            builder.Should().BeAssignableTo<IEitherInletPipeBuilder<int>>();
+            builder.Should().BeAssignableTo<EitherInletPipeBuilder<int>>();
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace Pipes.Tests.UnitTests.Builders
             var builder = PipeBuilder.New.EitherOutletPipe<int>();
 
             // Assert
-            builder.Should().BeAssignableTo<IEitherOutletPipeBuilder<int>>();
+            builder.Should().BeAssignableTo<EitherOutletPipeBuilder<int>>();
         }
 
         [Test]
@@ -64,7 +64,37 @@ namespace Pipes.Tests.UnitTests.Builders
             var builder = PipeBuilder.New.SplittingPipe<int>();
 
             // Assert
-            builder.Should().BeAssignableTo<ISplittingPipeBuilder<int>>();
+            builder.Should().BeAssignableTo<SplittingPipeBuilder<int>>();
+        }
+
+        [Test]
+        public void TransformPipe_ReturnsATransformPipeBuilder()
+        {
+            // Act
+            var builder = PipeBuilder.New.TransformPipe<int, string>();
+
+            // Assert
+            builder.Should().BeAssignableTo<TransformPipeBuilder<int, string>>();
+        }
+
+        [Test]
+        public void SinkPipe_ReturnsASinkPipeBuilder()
+        {
+            // Act
+            var builder = PipeBuilder.New.SinkPipe<int>();
+
+            // Assert
+            builder.Should().BeAssignableTo<SinkPipeBuilder<int>>();
+        }
+
+        [Test]
+        public void SourcePipe_ReturnsASourcePipeBuilder()
+        {
+            // Act
+            var builder = PipeBuilder.New.SourcePipe<int>();
+
+            // Assert
+            builder.Should().BeAssignableTo<SourcePipeBuilder<int>>();
         }
     }
 }

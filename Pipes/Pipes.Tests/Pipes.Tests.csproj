@@ -89,7 +89,9 @@
     <Compile Include="IntegrationTests\Examples\ReadOrWriteExample.cs" />
     <Compile Include="IntegrationTests\Models\Pipes\ConnectTests.cs" />
     <Compile Include="UnitTests\Builders\SinkPipeBuilderTests.cs" />
-    <Compile Include="UnitTests\Builders\TransformPipeBuilderWithMapTests.cs" />
+    <Compile Include="UnitTests\Builders\SourcePipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\SourcePipeWithMessageProducerBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\TransformPipeWithMapBuilderTests.cs" />
     <Compile Include="UnitTests\Builders\TransformPipeBuilderTests.cs" />
     <Compile Include="UnitTests\Builders\SplittingPipeBuilderTests.cs" />
     <Compile Include="UnitTests\Extensions\PipeExtensionsTests.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="UnitTests\Models\Lets\WaitingSenderTests.cs" />
     <Compile Include="UnitTests\Models\Lets\WaitingReceiverTests.cs" />
     <Compile Include="UnitTests\Models\Pipes\SinkPipeTests.cs" />
+    <Compile Include="UnitTests\Models\Pipes\SourcePipeTests.cs" />
     <Compile Include="UnitTests\Models\Pipes\TransformPipeTests.cs" />
     <Compile Include="UnitTests\Models\Pipes\ComplexPipeTests.cs" />
     <Compile Include="UnitTests\Models\Pipes\SimplePipeTests.cs" />

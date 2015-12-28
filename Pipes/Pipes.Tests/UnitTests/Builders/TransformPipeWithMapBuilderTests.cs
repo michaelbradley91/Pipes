@@ -6,7 +6,7 @@ using Pipes.Builders;
 namespace Pipes.Tests.UnitTests.Builders
 {
     [TestFixture]
-    public class TransformPipeBuilderWithMapTests
+    public class TransformPipeWithMapBuilderTests
     {        
         [Test]
         public void TheMapPassedIntoTheConstructor_IsSetOnTheMapProperty()
