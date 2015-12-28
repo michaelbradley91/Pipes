@@ -1,33 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
-using SharedResources.SharedResources;
+using Pipes.Tests.Helpers;
 
 namespace Pipes.Tests.UnitTests.Models.Pipes
 {
     [TestFixture]
     public class PipeTests
     {
+        private Mock<ISimpleInlet<int>> inlet;
+        private Mock<ISimpleOutlet<int>> outlet;
         private DummyPipe dummyPipe;
 
         [SetUp]
         public void SetUp()
         {
-            dummyPipe = new DummyPipe();
+            inlet = new Mock<ISimpleInlet<int>>();
+            inlet.SetupGet(i => i.SharedResource).Returns(SharedResourceHelpers.CreateSharedResource());
+
+            outlet = new Mock<ISimpleOutlet<int>>();
+            outlet.SetupGet(i => i.SharedResource).Returns(SharedResourceHelpers.CreateSharedResource());
+
+            dummyPipe = new DummyPipe(inlet.Object, outlet.Object);
         }
 
         [Test]
         public void FindReceiver_GivenAnInletBelongingToThePipe_DoesNotThrowAnException()
         {
-            // Arrange
-            var inlet = dummyPipe.Inlet.Object;
-
             // Act
-            var receiver = dummyPipe.FindReceiver(inlet, true);
+            var receiver = dummyPipe.FindReceiver(inlet.Object, true);
 
             // Assert
             receiver.Should().NotBeNull();
@@ -60,11 +64,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         [Test]
         public void FindSender_GivenAnOutletBelongingToThePipe_DoesNotThrowAnException()
         {
-            // Arrange
-            var outlet = dummyPipe.Outlet.Object;
-
             // Act
-            var sender = dummyPipe.FindSender(outlet, true);
+            var sender = dummyPipe.FindSender(outlet.Object, true);
 
             // Assert
             sender.Should().NotBeNull();
@@ -96,13 +97,10 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
 
         private class DummyPipe : Pipe
         {
-            public readonly Mock<IInlet<int>> Inlet = new Mock<IInlet<int>>();
-            public readonly Mock<IOutlet<int>> Outlet = new Mock<IOutlet<int>>();
-
-            public override IReadOnlyCollection<IInlet> AllInlets => new List<IInlet<int>> {Inlet.Object};
-            public override IReadOnlyCollection<IOutlet> AllOutlets => new List<IOutlet<int>> { Outlet.Object };
-
-            public override SharedResource SharedResource => null;
+            public DummyPipe(IInlet<int> inlet, IOutlet<int> outlet)
+                : base(new[] {inlet}, new[] {outlet})
+            {
+            }
 
             protected override Action<T> FindReceiverFor<T>(IInlet<T> inletSendingMessage)
             {

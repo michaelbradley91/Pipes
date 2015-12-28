@@ -17,29 +17,13 @@ namespace Pipes.Models.Pipes
         public ISimpleInlet<TMessage> LeftInlet { get; }
         public ISimpleInlet<TMessage> RightInlet { get; }
         public ISimpleOutlet<TMessage> Outlet { get; }
-        public override SharedResource SharedResource { get; }
 
         protected TwoInletPipe(ISimpleInlet<TMessage> leftInlet, ISimpleInlet<TMessage> rightInlet, ISimpleOutlet<TMessage> outlet)
+            : base(new[] {leftInlet, rightInlet}, new[] {outlet})
         {
             LeftInlet = leftInlet;
             RightInlet = rightInlet;
             Outlet = outlet;
-
-            var resourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(LeftInlet.SharedResource, RightInlet.SharedResource, Outlet.SharedResource);
-            var pipeResource = resourceGroup.CreateAndAcquireSharedResource();
-
-            pipeResource.AssociatedObject = this;
-
-            resourceGroup.ConnectSharedResources(LeftInlet.SharedResource, pipeResource);
-            resourceGroup.ConnectSharedResources(RightInlet.SharedResource, pipeResource);
-            resourceGroup.ConnectSharedResources(pipeResource, Outlet.SharedResource);
-            
-            resourceGroup.FreeSharedResources();
-
-            SharedResource = pipeResource;
         }
-
-        public override IReadOnlyCollection<IInlet> AllInlets => new[] {LeftInlet, RightInlet};
-        public override IReadOnlyCollection<IOutlet> AllOutlets => new[] {Outlet};
     }
 }

@@ -1,23 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
-using SharedResources.SharedResources;
+using Pipes.Tests.Helpers;
 
 namespace Pipes.Tests.UnitTests.Models.Pipes
 {
     [TestFixture]
     public class SimplePipeTests
     {
+        private Mock<ISimpleInlet<int>> inlet;
+        private Mock<ISimpleOutlet<int>> outlet;
         private DummyPipe dummyPipe;
 
         [SetUp]
         public void SetUp()
         {
-            dummyPipe = new DummyPipe();
+            inlet = new Mock<ISimpleInlet<int>>();
+            inlet.SetupGet(i => i.SharedResource).Returns(SharedResourceHelpers.CreateSharedResource());
+
+            outlet = new Mock<ISimpleOutlet<int>>();
+            outlet.SetupGet(i => i.SharedResource).Returns(SharedResourceHelpers.CreateSharedResource());
+
+            dummyPipe = new DummyPipe(inlet.Object, outlet.Object);
         }
 
         [Test]
@@ -27,7 +34,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             dummyPipe.Receiver = null;
 
             // Act
-            var receiver = dummyPipe.FindReceiver(dummyPipe.Inlet.Object, true);
+            var receiver = dummyPipe.FindReceiver(inlet.Object, true);
 
             // Assert
             receiver.Should().BeNull();
@@ -41,7 +48,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             dummyPipe.Receiver = m => messageReceived = m;
 
             // Act
-            var receiver = dummyPipe.FindReceiver(dummyPipe.Inlet.Object, true);
+            var receiver = dummyPipe.FindReceiver(inlet.Object, true);
             const int message = 223;
             receiver(message);
 
@@ -56,7 +63,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             dummyPipe.Sender = null;
 
             // Act
-            var sender = dummyPipe.FindSender(dummyPipe.Outlet.Object, true);
+            var sender = dummyPipe.FindSender(outlet.Object, true);
 
             // Assert
             sender.Should().BeNull();
@@ -69,7 +76,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             dummyPipe.Sender = () => message;
 
             // Act
-            var sender = dummyPipe.FindSender(dummyPipe.Outlet.Object, true);
+            var sender = dummyPipe.FindSender(outlet.Object, true);
 
             // Assert
             sender().Should().Be(message);
@@ -77,14 +84,11 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
 
         private class DummyPipe : SimplePipe<int>
         {
-            public readonly Mock<IInlet<int>> Inlet = new Mock<IInlet<int>>();
-            public readonly Mock<IOutlet<int>> Outlet = new Mock<IOutlet<int>>();
-
-            public override IReadOnlyCollection<IInlet> AllInlets => new List<IInlet<int>> {Inlet.Object};
-            public override IReadOnlyCollection<IOutlet> AllOutlets => new List<IOutlet<int>> { Outlet.Object };
-
-            public override SharedResource SharedResource => null;
-
+            public DummyPipe(IInlet<int> inlet, IOutlet<int> outlet)
+                : base(new[] {inlet}, new[] {outlet})
+            {
+            }
+            
             public Action<int> Receiver = i => { };
             public Func<int> Sender = () => 3;
 

@@ -40,8 +40,28 @@ namespace Pipes.Models.Pipes
 
     public abstract class Pipe : IPipe
     {
-        public abstract IReadOnlyCollection<IInlet> AllInlets { get; }
-        public abstract IReadOnlyCollection<IOutlet> AllOutlets { get; }
+        public IReadOnlyCollection<IInlet> AllInlets { get; }
+        public IReadOnlyCollection<IOutlet> AllOutlets { get; }
+        public SharedResource SharedResource { get; }
+
+        protected Pipe(IReadOnlyCollection<IInlet> allInlets, IReadOnlyCollection<IOutlet> allOutlets)
+        {
+            var allLetSharedResources = allInlets.Select(i => i.SharedResource).Concat(allOutlets.Select(o => o.SharedResource)).ToArray();
+
+            var resourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(allLetSharedResources);
+            var pipeResource = resourceGroup.CreateAndAcquireSharedResource();
+
+            foreach (var letSharedResource in allLetSharedResources)
+            {
+                resourceGroup.ConnectSharedResources(letSharedResource, pipeResource);
+            }
+
+            resourceGroup.FreeSharedResources();
+
+            AllInlets = allInlets;
+            AllOutlets = allOutlets;
+            SharedResource = pipeResource;
+        }
 
         public Action<TMessage> FindReceiver<TMessage>(IInlet<TMessage> inletSendingMessage, bool checkInlet)
         {
@@ -62,8 +82,6 @@ namespace Pipes.Models.Pipes
 
             return FindSenderFor(outletReceivingMessage);
         }
-
-        public abstract SharedResource SharedResource { get; }
 
         /// <summary>
         /// There is no need to check if the inlet is one of yours here, as this has been handled by the base class (if requested).

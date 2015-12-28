@@ -87,6 +87,7 @@
     <Compile Include="Models\Pipes\SplittingPipe.cs" />
     <Compile Include="Models\Pipes\EitherOutletPipe.cs" />
     <Compile Include="Models\Pipes\Pipe.cs" />
+    <Compile Include="Models\Pipes\SinkPipe.cs" />
     <Compile Include="Models\Pipes\StraightPipe.cs" />
     <Compile Include="Models\Pipes\EitherInletPipe.cs" />
     <Compile Include="Models\Pipes\TransformPipe.cs" />

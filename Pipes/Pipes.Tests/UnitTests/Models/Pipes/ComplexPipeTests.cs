@@ -105,8 +105,6 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
 
         private class DummyPipe : ComplexPipe<int, string>
         {
-            public override SharedResource SharedResource => null;
-
             public DummyPipe(ISimpleInlet<int> inlet, ISimpleOutlet<string> outlet) : base(inlet, outlet)
             {
             }

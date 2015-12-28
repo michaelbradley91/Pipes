@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using Pipes.Models.Lets;
 
 namespace Pipes.Models.Pipes
 {
     public abstract class SimplePipe<TMessage> : Pipe
     {
+        protected SimplePipe(IReadOnlyCollection<IInlet> allInlets, IReadOnlyCollection<IOutlet> allOutlets) : base(allInlets, allOutlets)
+        {
+        }
+
         protected override Action<T> FindReceiverFor<T>(IInlet<T> inletSendingMessage)
         {
             var inlet = (IInlet<TMessage>) inletSendingMessage;

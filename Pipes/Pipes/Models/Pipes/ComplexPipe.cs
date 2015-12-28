@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using Pipes.Models.Lets;
-using SharedResources.SharedResources;
 
 namespace Pipes.Models.Pipes
 {
@@ -15,23 +13,13 @@ namespace Pipes.Models.Pipes
     {
         public ISimpleInlet<TSourceMessage> Inlet { get; }
         public ISimpleOutlet<TTargetMessage> Outlet { get; }
-        public override SharedResource SharedResource { get; }
 
         protected ComplexPipe(ISimpleInlet<TSourceMessage> inlet, ISimpleOutlet<TTargetMessage> outlet)
+            : base(new[] {inlet}, new[] {outlet})
         {
             Inlet = inlet;
             Outlet = outlet;
-
-            var resourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(Inlet.SharedResource, Outlet.SharedResource);
-            var pipeResource = resourceGroup.CreateAndAcquireSharedResource();
-
-            resourceGroup.ConnectSharedResources(inlet.SharedResource, pipeResource);
-            resourceGroup.ConnectSharedResources(pipeResource, outlet.SharedResource);
-
-            resourceGroup.FreeSharedResources();
-
-            SharedResource = pipeResource;
-        } 
+        }
 
         protected override Action<T> FindReceiverFor<T>(IInlet<T> inletSendingMessage)
         {
@@ -51,8 +39,5 @@ namespace Pipes.Models.Pipes
 
         protected abstract Action<TSourceMessage> FindReceiver(IInlet<TSourceMessage> inletSendingMessage);
         protected abstract Func<TTargetMessage> FindSender(IOutlet<TTargetMessage> outletReceivingMessage);
-
-        public override IReadOnlyCollection<IInlet> AllInlets => new[] {Inlet};
-        public override IReadOnlyCollection<IOutlet> AllOutlets => new[] {Outlet};
     }
 }
