@@ -9,6 +9,10 @@ using Pipes.Models.Lets;
 
 namespace Pipes.Tests.IntegrationTests.Examples
 {
+    /// <summary>
+    /// An implementation of barrier synchronisation using just splitting pipes.
+    /// (You'd generalise the splitting pipe if you wanted to do this seriously).
+    /// </summary>
     [TestFixture]
     public class BarrierExample
     {

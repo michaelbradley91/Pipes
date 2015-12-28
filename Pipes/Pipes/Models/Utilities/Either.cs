@@ -22,6 +22,16 @@ namespace Pipes.Models.Utilities
             this.right = right;
         }
 
+        public static Either<TLeft, TRight> CreateLeft(TLeft left)
+        {
+            return new Either<TLeft, TRight>(left);
+        }
+
+        public static Either<TLeft, TRight> CreateRight(TRight left)
+        {
+            return new Either<TLeft, TRight>(left);
+        }
+
         public TLeft GetLeft()
         {
             if (!IsLeft) throw new InvalidOperationException();
