@@ -47,7 +47,6 @@ Pipes was originally inspired by CSO developed by Bernard Sufrin at Oxford Unive
 
 Code Examples
 -------------
-
 ### Getting Started
 The life of a pipe begins with the **PipeBuilder**. You specify the pipe you would like using a fluent syntax. some examples:
 
