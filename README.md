@@ -130,6 +130,38 @@ When you connect an inlet to an outlet, any possible sends and receives in the r
 
 For example, you can implement pass the parcel by connecting and disconnecting capacity pipes!
 
+An inlet can only be connected to one outlet and vice versa. You cannot attempt to send down a connected inlet, or receive from a connected outlet. This will throw an exception.
+
+You cannot connect an inlet or outlet if a thread is waiting on such an inlet / outlet. Doing so will result in an exception.
+
 Finally, inlets and outlets are strongly typed like their pipes. This means that an inlet can only be connected to an outlet expecting messages of the same type.
 
 <sup>**Note:** If you are concerned this implies a pipe system is restricted to a single type - don't worry. Pipes can still have inlets and outlets of different types associated to them. An example in the package is the "TransformPipe" that accepts "x" and returns "f(x)" where f's result type might be different to x's type.
+
+### Pipes
+
+This is a **very** brief explanation of the different pipes available in the package.
+
+#### Basic Pipe
+* One inlet
+* One outlet
+* No parameters
+
+If you try to receive a message from the outlet, you'll be forced to wait for a sender on the inlet.
+If you try to send a message down the inlet, you'll be forced to wait for a receiver of your message on the outlet.
+
+#### Capacity Pipe
+* One inlet
+* One outlet
+* Has a "capacity"
+* Exposes the messages stored in the pipe (readonly)
+
+Messages can be stored in this pipe up to its capacity. A capacity pipe will send its messages on to receivers (or other pipes connected to its outlet) as quickly as it can.
+
+When you send down this pipe:
+* If the pipe is full and no receivers exist, you'll be forced to wait.
+* If the pipe has spare capacity your message will be stored in the pipe and sent on to a receiver when possible. (Your thread will not be blocked)
+
+Wen you receive from this pipe:
+* If the pipe has stored messages you will receive the oldest message.
+* Otherwise if the pipe is empty, you will have to wait for a sender.
