@@ -25,18 +25,18 @@ Concurrency is about completing multiple tasks at the same time. As more and mor
 Pipes aims to simplify this. Processes communicate and synchronise with each other by sending messages through (thread-safe) pipes. To illustrate:
 
 **Thread 1:**
-<pre>
-<code>//... do some work
+```c#
+//... do some work
 var message = pipe.Outlet.Receive(); //blocks until thread 2 is read to send the message
-//... do more work</code>
-</pre>
+//... do more work
+```
 
 **Thread 2:**
-<pre>
-<code>//... do some work
+```c#
+//... do some work
 pipe.Inlet.Send(message); //blocks until thread 1 is ready to receive the message
-//... do more work</code>
-</pre>
+//... do more work
+```
 
 The real power of pipes can be better seen when pipes have multiple inlets / outlets. You can:
 * Create your own pipes easily. (For example, see if you can understand how the [capacity pipe](https://github.com/michaelbradley91/Pipes/blob/master/Pipes/Pipes/Models/Pipes/CapacityPipe.cs) was implemented.)
@@ -50,12 +50,82 @@ Pipes was originally inspired by CSO developed by Bernard Sufrin at Oxford Unive
 Code Examples
 -------------
 ### Getting Started
-The life of a pipe begins with the **PipeBuilder**. You specify the pipe you would like using a fluent syntax. some examples:
+The life of a pipe begins with the **PipeBuilder**. You specify the pipe you would like using a fluent builder style. Here are some examples:
 
-<pre>
-<code>
-var basicPipe = PipeBuilder.New.BasicPipe<int>().Build();
+```c#
+var basicPipe = PipeBuilder.New.BasicPipe<string>().Build();
 var capacityPipe = PipeBuilder.New.CapacityPipe<string>().WithCapacity(100).Build();
-var eitherInletPipe = PipeBuilder.New.EitherInletPipe<bool>().WithPrioritisingTieBreaker(Priority.Right).Build();
-</code>
-</pre>
+var eitherInletPipe = PipeBuilder.New.EitherInletPipe<string>().WithPrioritisingTieBreaker(Priority.Right).Build();
+```
+
+Pipes have **Inlets** and **Outlets**. You send messages down inlets, and you receive messages from outlets. For example:
+
+```c#
+// Send a message into the pipe to be picked up by a "receiver"
+capacityPipe.Inlet.Send("Hello");
+
+// Receive a message from the pipe that was sent by a "sender"
+var message = capacityPipe.Outlet.Receive();
+
+message.Should().Be("Hello");
+```
+
+You can connect pipes together to achieve unique pipe systems to suit your needs. For example:
+```c#
+basicPipe.Outlet.ConnectTo(capacityPipe.Inlet);
+capacityPipe.Outlet.ConnectTo(eitherInletPipe.LeftInlet);
+
+basicPipe.Inlet.Send("Travelled a long way");
+var travelledMessage = eitherInletPipe.Outlet.Receive();
+travelledMessage.Should().Be("Travelled a long way");
+```
+
+The behaviour of the individual pipes will be explained later. The important bit is that inlets and outlets can be connected together, and when you send / receive messages down the pipe system, it will be quickly resolved over the whole system.
+
+That's essentially all there is to it! Pipes, their inlets and their outlets are all customisable, so it's a little tricky to describe exactly what they do without going into specifics, but normally:
+* Any number of threads can try to receive from the same outlet.
+* Any number of threads can try to send down the same inlet.
+* Most pipes force a sending thread to wait for a receiving thread to be available and vice versa.
+* The whole pipe system is thread safe.
+
+<sup>**Note:** When multiple threads interact with the same in/outlet, they are held in a queue to ensure "fairness".</sup>
+
+### Inlet and Outlet Behaviour
+This package comes with one default inlet and one default outlet (called "simple" inlet and outlet), and it's expected you'll typically use these without thinking about them. They expose the following:
+
+#### Inlets:
+```c#
+// Try to send a message, and wait indefinitely for the pipe system to accept the message
+// (the thread can still be interrupted safely)
+basicPipe.Inlet.Send("Message");
+
+// Throw a TimeoutException if the message can't be sent within 10 seconds.
+basicPipe.Inlet.Send("Waiting a While", TimeSpan.FromSeconds(10));
+
+// Throw an InvalidOperationException if the message can't be sent "right now"
+basicPipe.Inlet.SendImmediately("Impatient Message");</code>
+
+basicPipe.Inlet.ConnectTo(anotherPipe.Outlet);
+basicPipe.Inlet.Disconnect();
+```
+
+#### Outlets:
+```c#
+// Try to receive a message, and wait indefinitely for the pipe system to provide one.
+// (the thread can still be safely interrupted)
+basicPipe.Outlet.Receive();
+
+// Throw a TimeoutException if a message can't be received within 10 seconds.
+basicPipe.Outlet.Receive(TimeSpan.FromSeconds(10));
+
+// Throw an InvalidOperationException if a message can't be received "right now"
+basicPipe.Outlet.ReceiveImmediately();</code>
+
+basicPipe.Outlet.ConnectTo(anotherPipe.Inlet);
+basicPipe.Outlet.Disconnect();
+```
+
+#### More Stuff about Inlets and Outlets:
+When you connect an inlet to an outlet, any possible sends and receives in the resulting pipe system are processed **immediately**. Normally, you will create your pipe system and then never change it, but you can exploit this behaviour. (Disconnecting and connecting is also thread safe).
+
+For example, you can implement pass the parcel by connecting and disconnecting capacity pipes!
