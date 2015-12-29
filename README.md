@@ -43,4 +43,18 @@ The real power of pipes can be better seen when pipes have multiple inlets / out
 
 This project is written in C# and is available as a Nuget Package with ID Parallel.Pipes, so it's super easy to get started! Read more below to learn how to use them.
 
-Pipes was originally inspired by CSO developed by Bernard Sufrin at Oxford University. You can learn more about CSO [here] (http://www.cs.ox.ac.uk/people/bernard.sufrin/CSO/cso-doc-scala2.11.4/index.html#ox.CSO$). However, Pipes' goals have deviated from CSO a little - there is a much stronger focus on making it extensible - so you have the power to do whatever you need to without worrying about thread management at all!
+Pipes was originally inspired by CSO developed by Bernard Sufrin at Oxford University. You can learn more about CSO [here](http://www.cs.ox.ac.uk/people/bernard.sufrin/CSO/cso-doc-scala2.11.4/index.html#ox.CSO$). However, Pipes' goals have deviated from CSO a little - there is a much stronger focus on making it extensible - so you have the power to do whatever you need to without worrying about thread management at all!
+
+Code Examples
+-------------
+
+### Getting Started
+The life of a pipe begins with the **PipeBuilder**. You specify the pipe you would like using a fluent syntax. some examples:
+
+<pre>
+<code>
+var basicPipe = PipeBuilder.New.BasicPipe<int>().Build();
+var capacityPipe = PipeBuilder.New.CapacityPipe<string>().WithCapacity(100).Build();
+var eitherInletPipe = PipeBuilder.New.EitherInletPipe<bool>().WithPrioritisingTieBreaker(Priority.Right).Build();
+</code>
+</pre>
