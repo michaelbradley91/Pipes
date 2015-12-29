@@ -25,16 +25,22 @@ Concurrency is about completing multiple tasks at the same time. As more and mor
 Pipes aims to simplify this. Processes communicate and synchronise with each other by sending messages through (thread-safe) pipes. To illustrate:
 
 **Thread 1:**
-<pre><code>//... do some work
+<pre>
+<code>
+//... do some work
 var message = pipe.Outlet.Receive(); //blocks until thread 2 is read to send the message
 //... do more work
-</code></pre>
+</code>
+</pre>
 
 **Thread 2:**
-<pre><code>//... do some work
+<pre>
+<code>
+//... do some work
 pipe.Inlet.Send(message); //blocks until thread 1 is ready to receive the message
 //... do more work
-</code></pre>
+</code>
+</pre>
 
 The real power of pipes can be better seen when pipes have multiple inlets / outlets. You can:
 * Create your own pipes easily. (For example, see if you can understand how the [capacity pipe](https://github.com/michaelbradley91/Pipes/blob/master/Pipes/Pipes/Models/Pipes/CapacityPipe.cs) was implemented.)
