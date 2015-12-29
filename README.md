@@ -103,7 +103,7 @@ basicPipe.Inlet.Send("Message");
 basicPipe.Inlet.Send("Waiting a While", TimeSpan.FromSeconds(10));
 
 // Throw an InvalidOperationException if the message can't be sent "right now"
-basicPipe.Inlet.SendImmediately("Impatient Message");</code>
+basicPipe.Inlet.SendImmediately("Impatient Message");
 
 basicPipe.Inlet.ConnectTo(anotherPipe.Outlet);
 basicPipe.Inlet.Disconnect();
@@ -119,7 +119,7 @@ basicPipe.Outlet.Receive();
 basicPipe.Outlet.Receive(TimeSpan.FromSeconds(10));
 
 // Throw an InvalidOperationException if a message can't be received "right now"
-basicPipe.Outlet.ReceiveImmediately();</code>
+basicPipe.Outlet.ReceiveImmediately();
 
 basicPipe.Outlet.ConnectTo(anotherPipe.Inlet);
 basicPipe.Outlet.Disconnect();
@@ -129,3 +129,7 @@ basicPipe.Outlet.Disconnect();
 When you connect an inlet to an outlet, any possible sends and receives in the resulting pipe system are processed **immediately**. Normally, you will create your pipe system and then never change it, but you can exploit this behaviour. (Disconnecting and connecting is also thread safe).
 
 For example, you can implement pass the parcel by connecting and disconnecting capacity pipes!
+
+Finally, inlets and outlets are strongly typed like their pipes. This means that an inlet can only be connected to an outlet expecting messages of the same type.
+
+<sup>**Note:** If you are concerned this implies a pipe system is restricted to a single type - don't worry. Pipes can still have inlets and outlets of different types associated to them. An example in the package is the "TransformPipe" that accepts "x" and returns "f(x)" where f's result type might be different to x's type.
