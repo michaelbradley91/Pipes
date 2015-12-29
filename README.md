@@ -90,6 +90,9 @@ That's essentially all there is to it! Pipes, their inlets and their outlets are
 
 <sup>**Note:** When multiple threads interact with the same in/outlet, they are held in a queue to ensure "fairness".</sup>
 
+Specifics
+---------
+
 ### Inlet and Outlet Behaviour
 This package comes with one default inlet and one default outlet (called "simple" inlet and outlet), and it's expected you'll typically use these without thinking about them. They expose the following:
 
@@ -214,7 +217,7 @@ A transform pipe converts the message arriving on its inlet with the "map" funct
 
 ### Restriction of Pipe Systems to Trees
 
-**This is a technical section. Feel free to skip as you'll probably never need to know this**
+**This is a technical section. Feel free to skip as you'll probably never need to know this.**
 
 If you start building complex pipe systems, you'll probably find its restriction that your system forms a tree a bit unreasonable. Obviously, your pipe system is unlikely to make sense if you include a cycle, but it is possible your pipe system still forms a DAG (directed acyclic graph).
 
