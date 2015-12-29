@@ -26,20 +26,16 @@ Pipes aims to simplify this. Processes communicate and synchronise with each oth
 
 **Thread 1:**
 <pre>
-<code>
-//... do some work
+<code>//... do some work
 var message = pipe.Outlet.Receive(); //blocks until thread 2 is read to send the message
-//... do more work
-</code>
+//... do more work</code>
 </pre>
 
 **Thread 2:**
 <pre>
-<code>
-//... do some work
+<code>//... do some work
 pipe.Inlet.Send(message); //blocks until thread 1 is ready to receive the message
-//... do more work
-</code>
+//... do more work</code>
 </pre>
 
 The real power of pipes can be better seen when pipes have multiple inlets / outlets. You can:
