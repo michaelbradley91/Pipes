@@ -162,6 +162,72 @@ When you send down this pipe:
 * If the pipe is full and no receivers exist, you'll be forced to wait.
 * If the pipe has spare capacity your message will be stored in the pipe and sent on to a receiver when possible. (Your thread will not be blocked)
 
-Wen you receive from this pipe:
+When you receive from this pipe:
 * If the pipe has stored messages you will receive the oldest message.
 * Otherwise if the pipe is empty, you will have to wait for a sender.
+
+#### Either Inlet Pipe
+* Two inlets
+* One outlet
+* Includes a tie breaker
+
+If you try to receive a message from this pipe, you will receive a message from either the left or the right inlet - whichever arrives first. If it is possible to receive both from the left and right inlets, then the tie breaker will decide which side to use.
+
+You can implement any tie breaker you like. The package provides three: randomised, prioritised, and alternating.
+
+#### Either Outlet Pipe
+* One inlet
+* Two outlets
+* Includes a tie breaker
+
+Much like the either inlet pipe, if you try to send a message, it will go either the left or right sender - whichever arrives first. If they are both available, the tie breaker decides who the message will go to.
+
+#### Splitting Pipe
+* One inlet
+* Two outlets
+* No other parameters
+
+This is the really important one. A splitting pipe will copy the message sent to its inlet to both outlets. Specifically, if you try to send on this pipe, you will be made to wait until a receiver arrives on the left outlet, **and** receiver arrives on the right outlet. Once the receivers are there, they both receive a copy of the message ("at the same time").
+
+Note that this pipe acts in a similar way to a transistor, and provides you with a lot of power.
+
+#### Source Pipe
+* Zero inlets
+* One outlet
+* Accepts a "Message Producer"
+
+A source pipe produces messages using a "Producer" which is simply a function. The producer could always produce the same message, or produce messages in as sequence. This function however should not rely on other pipes to determine its values. Essentially - keep the function simple.
+
+#### Sink Pipe
+* One inlet
+* Zero outlets
+* No other parameters
+
+A sink pipe consumes messages and throws them away. This might not seem terribly useful at first, but by connecting it to a splitting pipe you effectively turn a splitting pipe into a basic pipe, if that gives you some ideas. It will always be willing to receive messages.
+
+#### Transform Pipe
+* One inlet
+* One outlet
+* A "map" function
+
+A transform pipe converts the message arriving on its inlet with the "map" function, and sends the result to its outlet. So x -> Transform Pipe -> f(x). As with the source pipe, this function should be simple. In particular, it should not utilise other pipes.
+
+### Restriction of Pipe Systems to Trees
+
+**This is a technical section. Feel free to skip as you'll probably never need to know this**
+
+If you start building complex pipe systems, you'll probably find its restriction that your system forms a tree a bit unreasonable. Obviously, your pipe system is unlikely to make sense if you include a cycle, but it is possible your pipe system still forms a DAG (directed acyclic graph).
+
+The reason for this is the splitting pipe. The splitting pipe needs to know that the receivers on its left outlet and right outlet will not disappear. Consider the following:
+* A sender arrives.
+* The splitting pipe sees that there is a receiver on its left outlet and a receiver on its right outlet.
+* The splitting pipe forwards the message to the left outlet.
+* The splitting pipe then tries to forward the message to the right outlet, but the right outlet no longer has a receiver!!
+
+This is deeply confusing for the poor splitting pipe. The pipe system is considered "locked" during the bullets above, so a receiver should not have been able to leave. However, if the left and right receivers are really the "same" receiver (the same thread), the splitting pipe won't know what to do. This happens if you connect the two outlets of a splitting pipe to the two inlets of an either inlet pipe for example.
+
+After attempting a few workarounds, it turned out this is actually quite a pain to solve. Therefore, the restriction that the pipe system forms a tree was put in place.
+
+After considering a number of common use-cases, it seems a tree is sufficient for almost any situation. However, if you desperately need to form a DAG the pipe system will **probably** still work so long as the splitting pipe's receivers are known to be different threads. However, I'd recommend you avoid hacking around with this unless you're extremely confident you understand pipes.
+
+
