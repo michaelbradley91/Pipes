@@ -1,5 +1,6 @@
 Technicalities
 ==============
+[Click to return to Pipes](README.md)
 
 This is a very technical section and not worth reading unless you know pipes very well or you are experiencing an unusual problem.
 You don't need to read this to get started!
