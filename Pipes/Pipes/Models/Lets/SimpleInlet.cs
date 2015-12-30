@@ -30,7 +30,7 @@ namespace Pipes.Models.Lets
     {
         private readonly IList<WaitingSender<TMessage>> waitingSenders;
 
-        internal SimpleInlet(Lazy<IPipe> pipe, SharedResource sharedResource) : base(pipe, sharedResource)
+        public SimpleInlet(Lazy<IPipe> pipe, SharedResource sharedResource) : base(pipe, sharedResource)
         {
             waitingSenders = new List<WaitingSender<TMessage>>();
         }
