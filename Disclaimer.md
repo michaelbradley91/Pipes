@@ -1,5 +1,6 @@
 Disclaimer
 ==========
+[Click to return to Pipes](README.md)
 
 This package is pretty new so it might have bugs in it. It is thoroughly tested (when this was written - 226 tests!) but as this project concerns parallel programming, it is hard to test enough!
 
