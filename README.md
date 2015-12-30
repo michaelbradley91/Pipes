@@ -4,8 +4,8 @@ Pipes
 Navigation
 ----------
 Know what you're looking for? Try one of the links below:
-* [GettingStarted](GettingStarted.md) - A quick guide to help you begin writing code and using pipes.
-* [UpcomingFeatures](UpcomingFeatures.md) - What might be added to Pipes in future. (Email michael.bradley@hotmail.co.uk with suggestions)
+* [Getting Started](GettingStarted.md) - A quick guide to help you begin writing code and using pipes.
+* [Upcoming Features](UpcomingFeatures.md) - What might be added to Pipes in future. (Email michael.bradley@hotmail.co.uk with suggestions)
 * [Specification](Specifics.md) - A list of the pipes, inlets and outlets available and what they all do.
 * [Technicalities](Technicalities.md) - Various implementation specific details. If you think you've found a bug, it might help to look here.
 * [Disclaimer](Disclaimer.md) - I warn you that I am not perfect so things can go wrong...
