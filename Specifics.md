@@ -1,6 +1,6 @@
 Specifics
 =========
-
+[Click to return to Pipes](README.md)
 Inlet and Outlet Behaviour
 --------------------------
 This package comes with one default inlet and one default outlet (called "simple" inlet and outlet), and it's expected you'll typically use these without thinking about them. They expose the following:
