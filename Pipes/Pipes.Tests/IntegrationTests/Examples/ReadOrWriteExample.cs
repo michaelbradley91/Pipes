@@ -69,6 +69,7 @@ namespace Pipes.Tests.IntegrationTests.Examples
             var result = resultOutlet.Receive();
 
             // Assert
+            Thread.Sleep(500); // wait for variable assignment.
             result.IsLeft.Should().BeTrue();
             result.GetLeft().Should().Be(message); // I wrote the message
             externallyReceivedMessage.Should().Be(message);
