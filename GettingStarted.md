@@ -48,7 +48,7 @@ The pipe system should be constructed where it makes sense to know how the appli
 
 The behaviour of individual pipes is explained in [Specifics](Specifics.md).
 
-### Summary
+### Rest Stop
 That's essentially all there is to it! Pipes, their inlets and their outlets are all customisable, so it's a little tricky to describe exactly what they do without going into specifics, but normally:
 * Any number of threads can try to receive from the same outlet.
 * Any number of threads can try to send down the same inlet.
@@ -56,3 +56,34 @@ That's essentially all there is to it! Pipes, their inlets and their outlets are
 * The whole pipe system is thread safe.
 
 <sup>**Note:** When multiple threads interact with the same in/outlet, they are held in a queue to ensure "fairness".</sup>
+
+### First Pipe System
+A **capacity** pipe allows us to send a message down the pipe without waiting for a receiver - an asynchronouse write. The capacity pipe will send these messages on later as soon as receivers arrive.
+
+An **either outlet** pipe allows us to send a message so long as their is a receiver on either of the pipe's outlets. If there isn't one yet, we'll be forced to wait for a receiver to arrive.
+
+What if we wanted to be able to send a message asynchronously to the either outlet pipe. These messages should be passed to receivers arriving on the outlets of the either outlet pipe, but we don't want to wait for them. We can do this as follows:
+
+```c#
+var capacityPipe = PipeBuilder.New.CapacityPipe<string>().WithCapacity(int.MaxValue).Build();
+var eitherOutletPipe = PipeBuilder.New.EitherOutletPipe<string>().Build();
+
+capacityPipe.Outlet.ConnectTo(eitherOutletPipe.Inlet);
+
+capacityPipe.Inlet.Send("Hi");
+// The "Hi" message now sits in the capacity pipe, waiting for a receiver to appear.
+
+// A receiver arrives on the left outlet
+var message = eitherOutletPipe.LeftOutlet.Receive();
+// As the either outlet pipe is connected to the capacity pipe, this acts as a receiver
+// for the capacity pipe as well. Hence, we receive the message in the capacity pipe!
+
+message.Should().Be("Hi");
+```
+
+The capacity pipe and either outlet pipe form a **pipe system**. This system has one inlet - the inlet of the capacity pipe - and two outlets - the outlets of the either outlet pipe. Note that the system does not expose the inlet of the either outlet pipe or the outlet of the capacity pipe because they are connected.
+
+### Createing Your Own Pipe
+
+If we believe we'll need to reuse the pipe system above, we can actually turn it into a pipe! We can then create this pipe elsewhere as needed and share its behaviour. You could do this as follows:
+
