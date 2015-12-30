@@ -1,6 +1,6 @@
 Getting Started
 =================
-[Home page: Pipes](README.md)
+[Click to return to Pipes](README.md)
 ### Creating Pipes
 The **PipeBuilder** provides you with a fluent syntax for creating pipes. While you can use the constructors on pipes directly,
 this class should simplify the work. Here are some examples:
