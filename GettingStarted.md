@@ -10,6 +10,10 @@ var capacityPipe = PipeBuilder.New.CapacityPipe<string>().WithCapacity(100).Buil
 var eitherInletPipe = PipeBuilder.New.EitherInletPipe<string>().WithPrioritisingTieBreaker(Priority.Right).Build();
 ```
 
+The generic types above specify the type of messages processed by the pipe.
+
+<sup>**Note:**Some pipes might have multiple types if their inlets / outlets expose different types of messages.</sup>
+
 ### Using Pipes
 Pipes have **Inlets** and **Outlets**. You send messages down inlets, and you receive messages from outlets. For example:
 
