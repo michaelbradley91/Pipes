@@ -2,7 +2,7 @@ Getting Started
 =================
 [Click to return to Pipes](README.md)
 ### Creating Pipes
-The **PipeBuilder** provides you with a fluent syntax for creating pipes. While you can use the constructors on pipes directly,
+The **PipeBuilder** provides us with a fluent syntax for creating pipes. While we can use the constructors on pipes directly,
 this class should simplify the work. Here are some examples:
 
 ```c#
@@ -16,7 +16,7 @@ The generic types above specify the type of messages processed by the pipe.
 <sup>**Note:**Some pipes might have multiple types if their inlets / outlets expose different types of messages.</sup>
 
 ### Using Pipes
-Pipes have **Inlets** and **Outlets**. You send messages down inlets, and you receive messages from outlets. For example:
+Pipes have **Inlets** and **Outlets**. We send messages down inlets, and we receive messages from outlets. For example:
 
 ```c#
 // Send a message into the pipe to be picked up by a "receiver"
@@ -29,7 +29,7 @@ message.Should().Be("Hello");
 ```
 
 ### Connecting Pipes
-You can connect pipes together to achieve unique pipe systems to suit your needs. For example:
+We can connect pipes together to achieve unique pipe systems to suit our needs. For example:
 ```c#
 basicPipe.Outlet.ConnectTo(capacityPipe.Inlet);
 capacityPipe.Outlet.ConnectTo(eitherInletPipe.LeftInlet);
@@ -38,7 +38,7 @@ basicPipe.Inlet.Send("Travelled a long way");
 var travelledMessage = eitherInletPipe.Outlet.Receive();
 travelledMessage.Should().Be("Travelled a long way");
 ```
-Inlets can be connected to outlets allowing you to build a "network" of pipes called a **pipe system**.
+Inlets can be connected to outlets allowing us to build a "network" of pipes called a **pipe system**.
 
 The end result is that this pipe system exposes some inlets and outlets to the outside world - a bunch of interacting services / threads.
 
@@ -139,3 +139,54 @@ We also have an added bonus that the connected inlet and outlet are hidden from 
 
 ### Extending the Pipe Builder
 
+Before we created our new pipe above, all pipes were created using the Pipe Builder. It would be great if we could add our pipe to this fluent build syntax. As it just uses regular non-static c# classes, we can!
+
+```c#
+public static class PipeExtensions
+{
+    public static IAsynchronousEitherOutletPipeBuilder<TMessage> AsynchronousEitherOutletPipe<TMessage>(this IPipeBuilder pipeBuilder)
+    {
+        return new AsynchronousEitherOutletPipeBuilder<TMessage>();
+    }
+}
+
+public interface IAsynchronousEitherOutletPipeBuilder<TMessage>
+{
+    IAsynchronousEitherOutletPipe<TMessage> Build();
+}
+
+public class AsynchronousEitherOutletPipeBuilder<TMessage> : IAsynchronousEitherOutletPipeBuilder<TMessage>
+{
+    public IAsynchronousEitherOutletPipe<TMessage> Build()
+    {
+        var eitherOutletPipe = PipeBuilder.New.EitherOutletPipe<TMessage>().Build();
+        var capacityPipe = PipeBuilder.New.CapacityPipe<TMessage>().WithCapacity(int.MaxValue).Build();
+
+        eitherOutletPipe.Inlet.ConnectTo(capacityPipe.Outlet);
+
+        return new AsynchronousEitherOutletPipe<TMessage>(
+            capacityPipe.Inlet,
+            eitherOutletPipe.LeftOutlet,
+            eitherOutletPipe.RightOutlet);
+    }
+}
+```
+
+Finally, our code for the asynchronous pipe can become:
+```c#
+var asynchronousEitherOutletPipe = PipeBuilder.New.AsynchronousEitherOutletPipe<string>().Build();
+
+asynchronousEitherOutletPipe.Inlet.Send("Hi");
+
+var message = asynchronousEitherOutletPipe.LeftOutlet.Receive();
+
+message.Should().Be("Hi");
+```
+By extending the pipe builder, everyone else can easily find our pipe. We can also extend our asynchronous either outlet pipe builder to provide greater flexibility as with any builder. We might one day write:
+
+```c#
+var asynchronousEitherOutletPipe = 
+    PipeBuilder.New.AsynchronousEitherOutletPipe<string>().WithPrioritisingTieBreaker().Build();
+```
+
+That's it for the simple example. If you understood all of that, you can do most of what you'll ever need to.
