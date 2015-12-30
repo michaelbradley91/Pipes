@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -26,24 +25,6 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             outlet.SetupGet(i => i.SharedResource).Returns(SharedResourceHelpers.CreateSharedResource());
 
             complexPipe = new DummyPipe(inlet.Object, outlet.Object);
-        }
-
-        [Test]
-        public void ComplexPipe_HasOneInlet()
-        {
-            // Assert
-            complexPipe.Inlet.Should().NotBeNull();
-            complexPipe.AllInlets.Count.Should().Be(1);
-            complexPipe.AllInlets.Single().Should().Be(complexPipe.Inlet);
-        }
-
-        [Test]
-        public void ComplexPipe_HasOneOutlet()
-        {
-            // Assert
-            complexPipe.Outlet.Should().NotBeNull();
-            complexPipe.AllOutlets.Count.Should().Be(1);
-            complexPipe.AllOutlets.Single().Should().Be(complexPipe.Outlet);
         }
 
         [Test]
@@ -104,8 +85,14 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
 
         private class DummyPipe : ComplexPipe<int, string>
         {
-            public DummyPipe(ISimpleInlet<int> inlet, ISimpleOutlet<string> outlet) : base(inlet, outlet)
+            public ISimpleInlet<int> Inlet { get; }
+            public ISimpleOutlet<string> Outlet { get; }  
+
+            public DummyPipe(ISimpleInlet<int> inlet, ISimpleOutlet<string> outlet) 
+                : base(new [] { inlet }, new [] { outlet })
             {
+                Inlet = inlet;
+                Outlet = outlet;
             }
 
             public Action<int> Receiver = i => { };

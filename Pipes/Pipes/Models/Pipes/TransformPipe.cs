@@ -3,13 +3,18 @@ using Pipes.Models.Lets;
 
 namespace Pipes.Models.Pipes
 {
-    public interface ITransformPipe<TSourceMessage, TTargetMessage> : IComplexPipe<TSourceMessage, TTargetMessage>
+    public interface ITransformPipe<TSourceMessage, TTargetMessage> : IPipe
     {
+        ISimpleInlet<TSourceMessage> Inlet { get; }
+        ISimpleOutlet<TTargetMessage> Outlet { get; }
+
         Func<TSourceMessage, TTargetMessage> Map { get; }
     }
 
     public class TransformPipe<TSourceMessage, TTargetMessage> : ComplexPipe<TSourceMessage, TTargetMessage>, ITransformPipe<TSourceMessage, TTargetMessage>
     {
+        public ISimpleInlet<TSourceMessage> Inlet { get; }
+        public ISimpleOutlet<TTargetMessage> Outlet { get; }
         public Func<TSourceMessage, TTargetMessage> Map { get; }
 
         /// <summary>
@@ -20,8 +25,10 @@ namespace Pipes.Models.Pipes
         /// Try other functions at your own risk
         /// </summary>
         public TransformPipe(ISimpleInlet<TSourceMessage> inlet, ISimpleOutlet<TTargetMessage> outlet, Func<TSourceMessage, TTargetMessage> map)
-            : base(inlet, outlet)
+            : base(new[] {inlet}, new[] {outlet})
         {
+            Inlet = inlet;
+            Outlet = outlet;
             Map = map;
         }
 

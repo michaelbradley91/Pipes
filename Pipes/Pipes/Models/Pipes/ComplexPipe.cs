@@ -1,24 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using Pipes.Models.Lets;
 
 namespace Pipes.Models.Pipes
 {
-    public interface IComplexPipe<TSourceMessage, TTargetMessage> : IPipe
+    public abstract class ComplexPipe<TSourceMessage,TTargetMessage> : Pipe
     {
-        ISimpleInlet<TSourceMessage> Inlet { get; }
-        ISimpleOutlet<TTargetMessage> Outlet { get; }
-    }
-
-    public abstract class ComplexPipe<TSourceMessage,TTargetMessage> : Pipe, IComplexPipe<TSourceMessage, TTargetMessage>
-    {
-        public ISimpleInlet<TSourceMessage> Inlet { get; }
-        public ISimpleOutlet<TTargetMessage> Outlet { get; }
-
-        protected ComplexPipe(ISimpleInlet<TSourceMessage> inlet, ISimpleOutlet<TTargetMessage> outlet)
-            : base(new[] {inlet}, new[] {outlet})
+        protected ComplexPipe(IReadOnlyCollection<IInlet<TSourceMessage>> inlets, IReadOnlyCollection<IOutlet<TTargetMessage>> outlets)
+            : base(inlets, outlets)
         {
-            Inlet = inlet;
-            Outlet = outlet;
         }
 
         protected override Action<T> FindReceiverFor<T>(IInlet<T> inletSendingMessage)
