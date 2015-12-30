@@ -39,7 +39,10 @@ travelledMessage.Should().Be("Travelled a long way");
 ```
 Inlets can be connected to outlets allowing you to build a "network" of pipes called a **pipe system**.
 
-The end result is that this pipe system exposes some inlets and outlets to the outside world - a bunch of interacting threads. Each thread can just focus on sending or receiving messages down inlets and outlets it was passed, without worrying about the design of the system as a whole.
+The end result is that this pipe system exposes some inlets and outlets to the outside world - a bunch of interacting services / threads.
+
+Each service can focus on just sending or receiving messages down the inlets and outlets it was passed, **without worrying about the design of the system as a whole**.
+
 The pipe system should be constructed where it makes sense to know how the application is connected together. For web developers, this resembles the role of the [Composition Root](http://blog.ploeh.dk/2011/07/28/CompositionRoot/).
 
 The behaviour of individual pipes is explained in [Specifics](Specifics.md).
