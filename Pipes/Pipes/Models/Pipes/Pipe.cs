@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Pipes.Helpers;
 using Pipes.Models.Lets;
 using SharedResources.SharedResources;
 
@@ -47,20 +48,9 @@ namespace Pipes.Models.Pipes
         protected Pipe(IReadOnlyCollection<IInlet> allInlets, IReadOnlyCollection<IOutlet> allOutlets)
         {
             var allLetSharedResources = allInlets.Select(i => i.SharedResource).Concat(allOutlets.Select(o => o.SharedResource)).ToArray();
-
-            var resourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(allLetSharedResources);
-            var pipeResource = resourceGroup.CreateAndAcquireSharedResource();
-
-            foreach (var letSharedResource in allLetSharedResources)
-            {
-                resourceGroup.ConnectSharedResources(letSharedResource, pipeResource);
-            }
-
-            resourceGroup.FreeSharedResources();
-
+            SharedResource = SharedResourceHelpers.CreateAndConnectSharedResources(allLetSharedResources);
             AllInlets = allInlets;
             AllOutlets = allOutlets;
-            SharedResource = pipeResource;
         }
 
         public Action<TMessage> FindReceiver<TMessage>(IInlet<TMessage> inletSendingMessage, bool checkInlet)

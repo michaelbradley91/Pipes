@@ -42,7 +42,7 @@ namespace Pipes.Models.Lets
 
         public TMessage Receive(TimeSpan timeout)
         {
-            if (timeout.CompareTo(TimeSpan.Zero) < 0) throw new ArgumentOutOfRangeException(nameof(timeout), "The timespan cannot be negative");
+            if (timeout < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout), "The timespan cannot be negative");
             return Receive(s => s.WaitOne(timeout), new TimeoutException("A message could not be received within the specified timeout"));
         }
 

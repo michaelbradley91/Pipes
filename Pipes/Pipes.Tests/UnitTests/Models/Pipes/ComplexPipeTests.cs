@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Tests.Helpers;

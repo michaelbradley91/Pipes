@@ -42,7 +42,7 @@ namespace Pipes.Models.Lets
 
         public void Send(TMessage message, TimeSpan timeout)
         {
-            if (timeout.CompareTo(TimeSpan.Zero) < 0) throw new ArgumentOutOfRangeException(nameof(timeout), "The timespan cannot be negative");
+            if (timeout < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout), "The timespan cannot be negative");
             Send(message, s => s.WaitOne(timeout), new TimeoutException("The message could not be sent within the specified timeout"));
         }
 

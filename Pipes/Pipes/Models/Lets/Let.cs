@@ -21,8 +21,6 @@ namespace Pipes.Models.Lets
     public abstract class Let : ILet
     {
         public IPipe Pipe => pipe.Value;
-        public IPipe TypelessPipe => pipe.Value;
-
         public SharedResource SharedResource { get; }
 
         private readonly Lazy<IPipe> pipe;

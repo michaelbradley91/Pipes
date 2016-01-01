@@ -77,8 +77,12 @@
     <Compile Include="Builders\PipeBuilder.cs" />
     <Compile Include="Helpers\SharedResourceHelpers.cs" />
     <Compile Include="Models\Graphs\PipeGraphVertex.cs" />
+    <Compile Include="Models\Lets\AdapterOutlet.cs" />
+    <Compile Include="Models\Lets\AdapterInlet.cs" />
+    <Compile Include="Models\Lets\Valve.cs" />
     <Compile Include="Models\Lets\Inlet.cs" />
     <Compile Include="Models\Lets\Outlet.cs" />
+    <Compile Include="Models\Lets\ReceiveOrSendResult.cs" />
     <Compile Include="Models\Lets\SimpleInlet.cs" />
     <Compile Include="Models\Lets\Let.cs" />
     <Compile Include="Models\Lets\WaitingReceiver.cs" />
@@ -94,6 +98,7 @@
     <Compile Include="Models\Pipes\SinkPipe.cs" />
     <Compile Include="Models\Pipes\StraightPipe.cs" />
     <Compile Include="Models\Pipes\EitherInletPipe.cs" />
+    <Compile Include="Models\Pipes\ValvedPipe.cs" />
     <Compile Include="Models\Pipes\TransformPipe.cs" />
     <Compile Include="Models\TieBreakers\TieBreaker.cs" />
     <Compile Include="Models\TieBreakers\AlternatingTieBreaker.cs" />
