@@ -56,7 +56,7 @@ namespace Pipes.Models.Lets
             stopWatch.Stop();
 
             var timeRemaining = timeout.Subtract(stopWatch.Elapsed);
-            if (timeRemaining < TimeSpan.Zero) timeRemaining = TimeSpan.Zero;
+            if (timeRemaining < TimeSpan.Zero) timeRemaining = TimeSpan.FromMilliseconds(1);
 
             return TryButFlushOnException(() => resultOutlet.Receive(timeRemaining));
         }

@@ -30,9 +30,13 @@ namespace Pipes.Models.Pipes
         private readonly IAdapterInlet<TSend> adapterInlet;
         private readonly IAdapterOutlet<TReceive> adapterOutlet;
 
-        public ValvedPipe(ISimpleInlet<TReceive> inlet, ISimpleOutlet<TSend> outlet, TTieBreaker tieBreaker)
+        public ValvedPipe(Func<IValvedPipe<TReceive, TSend, TTieBreaker>, ISimpleInlet<TReceive>> inlet, Func<IValvedPipe<TReceive, TSend, TTieBreaker>, ISimpleOutlet<TSend>> outlet, TTieBreaker tieBreaker)
         {
-            var pipeResource = SharedResourceHelpers.CreateAndConnectSharedResources(inlet.SharedResource, outlet.SharedResource);
+            Inlet = inlet(this);
+            Outlet = outlet(this);
+            TieBreaker = tieBreaker;
+
+            var pipeResource = SharedResourceHelpers.CreateAndConnectSharedResources(Inlet.SharedResource, Outlet.SharedResource);
             SharedResource = pipeResource;
             adapterOutlet = new AdapterOutlet<TReceive>(new Lazy<IPipe>(() => this), SharedResourceHelpers.CreateAndConnectSharedResource(pipeResource));
             adapterInlet = new AdapterInlet<TSend>(new Lazy<IPipe>(() => this), SharedResourceHelpers.CreateAndConnectSharedResource(pipeResource));
@@ -42,7 +46,7 @@ namespace Pipes.Models.Pipes
             var splittingPipe = PipeBuilder.New.SplittingPipe<TSend>().Build();
             var sendTransformPipe = PipeBuilder.New.TransformPipe<TSend, ReceiveOrSendResult<TReceive, TSend>>().WithMap(m => ReceiveOrSendResult<TReceive, TSend>.CreateSendResult()).Build();
             var receiveTransformPipe = PipeBuilder.New.TransformPipe<TReceive, ReceiveOrSendResult<TReceive, TSend>>().WithMap(ReceiveOrSendResult<TReceive, TSend>.CreateReceiveResult).Build();
-            var eitherInletPipe = PipeBuilder.New.EitherInletPipe<ReceiveOrSendResult<TReceive, TSend>>().WithTieBreaker(tieBreaker).Build();
+            var eitherInletPipe = PipeBuilder.New.EitherInletPipe<ReceiveOrSendResult<TReceive, TSend>>().WithTieBreaker(TieBreaker).Build();
 
             preparationCapacityPipe.Outlet.ConnectTo(flushEitherOutletPipe.Inlet);
             flushEitherOutletPipe.RightOutlet.ConnectTo(splittingPipe.Inlet);
@@ -50,15 +54,15 @@ namespace Pipes.Models.Pipes
             sendTransformPipe.Outlet.ConnectTo(eitherInletPipe.LeftInlet);
             receiveTransformPipe.Outlet.ConnectTo(eitherInletPipe.RightInlet);
 
-            adapterInlet.ConnectTo(splittingPipe.LeftOutlet);
-            adapterOutlet.ConnectTo(receiveTransformPipe.Inlet);
+            // This creates a cycle in the inner pipe system, as "this" pipe is connected to both ends.
+            // However, we know that this pipe will not actually pass messages around in a cycle, so this is safe.
+            // (We also know that no one can ask about the pipe system of any inlet / outlet / pipe of our internal system, as it is all hidden).
+            adapterInlet.ConnectTo(splittingPipe.LeftOutlet, false);
+            adapterOutlet.ConnectTo(receiveTransformPipe.Inlet, false);
 
             Valve = new Valve<TReceive, TSend>(preparationCapacityPipe.Inlet, flushEitherOutletPipe.LeftOutlet, eitherInletPipe.Outlet);
-            Inlet = inlet;
-            Outlet = outlet;
-            TieBreaker = tieBreaker;
         }
-        
+
         public Action<TMessage> FindReceiver<TMessage>(IInlet<TMessage> inletSendingMessage, bool checkInlet = true)
         {
             if (inletSendingMessage == Inlet)
@@ -73,7 +77,11 @@ namespace Pipes.Models.Pipes
                 if (receiver == null) return null;
                 return m => receiver((TSend) (object) m);
             }
-            throw new InvalidOperationException("The outlet receiving the message is not associated to this pipe.");
+            if (checkInlet)
+            {
+                throw new InvalidOperationException("The outlet receiving the message is not associated to this pipe.");
+            }
+            return null;
         }
 
         public Func<TMessage> FindSender<TMessage>(IOutlet<TMessage> outletReceivingMessage, bool checkOutlet = true)
@@ -90,7 +98,11 @@ namespace Pipes.Models.Pipes
                 if (sender == null) return null;
                 return () => (TMessage)(object)sender();
             }
-            throw new InvalidOperationException("The inlet sending the message is not associated to this pipe.");
+            if (checkOutlet)
+            {
+                throw new InvalidOperationException("The inlet sending the message is not associated to this pipe.");
+            }
+            return null;
         }
     }
 }

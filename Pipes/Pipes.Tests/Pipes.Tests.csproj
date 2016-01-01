@@ -85,11 +85,14 @@
     <Compile Include="Helpers\OutletHelpers.cs" />
     <Compile Include="Helpers\InletHelpers.cs" />
     <Compile Include="Helpers\ThreadHelpers.cs" />
+    <Compile Include="IntegrationTests\Examples\BusyManInTheMiddleExample.cs" />
     <Compile Include="IntegrationTests\Examples\BarrierExample.cs" />
     <Compile Include="IntegrationTests\Examples\CargoExample.cs" />
     <Compile Include="IntegrationTests\Examples\DrainCapacityPipeExample.cs" />
     <Compile Include="IntegrationTests\Examples\ReadOrWriteExample.cs" />
     <Compile Include="IntegrationTests\Models\Pipes\ConnectTests.cs" />
+    <Compile Include="UnitTests\Builders\TieBreakingValvedPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\ValvedPipeBuilderTests.cs" />
     <Compile Include="UnitTests\Builders\SinkPipeBuilderTests.cs" />
     <Compile Include="UnitTests\Builders\SourcePipeBuilderTests.cs" />
     <Compile Include="UnitTests\Builders\SourcePipeWithMessageProducerBuilderTests.cs" />
@@ -123,6 +126,7 @@
     <Compile Include="UnitTests\Models\Pipes\EitherInletPipeTests.cs" />
     <Compile Include="UnitTests\Models\Pipes\CapacityPipeTests.cs" />
     <Compile Include="UnitTests\Models\Pipes\BasicPipeTests.cs" />
+    <Compile Include="UnitTests\Models\Pipes\ValvedPipeTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\AlternatingTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\RandomisingTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\PrioritisingTieBreakerTests.cs" />
