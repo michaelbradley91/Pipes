@@ -45,7 +45,7 @@
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="SharedResources, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\StickySharedResources.1.0.1\lib\SharedResources.dll</HintPath>
+      <HintPath>..\packages\StickySharedResources.1.0.2\lib\SharedResources.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
