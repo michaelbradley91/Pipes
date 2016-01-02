@@ -31,7 +31,10 @@ namespace Pipes.Models.Pipes
         /// </summary>
         protected IAdapterInlet<TMessage> CreateAndConnectAdapter<TMessage>(IOutlet<TMessage> internalOutlet, IOutlet<TMessage> externalOutlet)
         {
-            var adapterInlet =  new AdapterInlet<TMessage>(new Lazy<IPipe>(() => this));
+            var promisedPipe = new Promised<IPipe>();
+            promisedPipe.Fulfill(this);
+
+            var adapterInlet =  new AdapterInlet<TMessage>(promisedPipe);
             SharedResource.ConnectTo(adapterInlet.SharedResource);
 
             adapterInlets.Add(adapterInlet);
@@ -52,7 +55,10 @@ namespace Pipes.Models.Pipes
         /// </summary>
         protected IAdapterOutlet<TMessage> CreateAndConnectAdapter<TMessage>(IInlet<TMessage> internalInlet, IInlet<TMessage> externalInlet)
         {
-            var adapterOutlet = new AdapterOutlet<TMessage>(new Lazy<IPipe>(() => this));
+            var promisedPipe = new Promised<IPipe>();
+            promisedPipe.Fulfill(this);
+
+            var adapterOutlet = new AdapterOutlet<TMessage>(promisedPipe);
             SharedResource.ConnectTo(adapterOutlet.SharedResource);
 
             adapterOutlets.Add(adapterOutlet);

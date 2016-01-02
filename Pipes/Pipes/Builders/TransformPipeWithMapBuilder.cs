@@ -1,6 +1,7 @@
 using System;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
+using Pipes.Models.Utilities;
 
 namespace Pipes.Builders
 {
@@ -11,14 +12,14 @@ namespace Pipes.Builders
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, ISimpleInlet<TSourceMessage>> Inlet { get; set; }
+        Func<IPromised<IPipe>, ISimpleInlet<TSourceMessage>> Inlet { get; set; }
 
         /// <summary>
         /// A function that, given the pipe, will produce the outlet to be used by that pipe.
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, ISimpleOutlet<TTargetMessage>> Outlet { get; set; }
+        Func<IPromised<IPipe>, ISimpleOutlet<TTargetMessage>> Outlet { get; set; }
 
         /// <summary>
         /// This function may be run by pipes any number of times while resolving where a message
@@ -34,8 +35,8 @@ namespace Pipes.Builders
 
     public class TransformPipeWithMapBuilder<TSourceMessage, TTargetMessage> : ITransformPipeWithMapBuilder<TSourceMessage, TTargetMessage>
     {
-        public Func<Lazy<IPipe>, ISimpleInlet<TSourceMessage>> Inlet { get; set; }
-        public Func<Lazy<IPipe>, ISimpleOutlet<TTargetMessage>> Outlet { get; set; }
+        public Func<IPromised<IPipe>, ISimpleInlet<TSourceMessage>> Inlet { get; set; }
+        public Func<IPromised<IPipe>, ISimpleOutlet<TTargetMessage>> Outlet { get; set; }
         public Func<TSourceMessage, TTargetMessage> Map { get; set; }
 
         public TransformPipeWithMapBuilder(Func<TSourceMessage, TTargetMessage> map)
@@ -47,15 +48,12 @@ namespace Pipes.Builders
 
         public ITransformPipe<TSourceMessage, TTargetMessage> Build()
         {
-            TransformPipe<TSourceMessage, TTargetMessage>[] pipe = { null };
-            var lazyPipe = new Lazy<IPipe>(() => pipe[0]);
+            var promisedPipe = new Promised<IPipe>();
 
-            var inlet = Inlet(lazyPipe);
-            var outlet = Outlet(lazyPipe);
+            var inlet = Inlet(promisedPipe);
+            var outlet = Outlet(promisedPipe);
 
-            pipe[0] = new TransformPipe<TSourceMessage, TTargetMessage>(inlet, outlet, Map);
-
-            return pipe[0];
+            return promisedPipe.Fulfill(new TransformPipe<TSourceMessage, TTargetMessage>(inlet, outlet, Map));
         }
     }
 }

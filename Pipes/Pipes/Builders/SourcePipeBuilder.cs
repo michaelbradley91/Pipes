@@ -1,6 +1,7 @@
 using System;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
+using Pipes.Models.Utilities;
 
 namespace Pipes.Builders
 {
@@ -11,7 +12,7 @@ namespace Pipes.Builders
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
+        Func<IPromised<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
 
         /// <summary>
         /// The function passed in may be run by pipes any number of times while resolving where a message
@@ -25,7 +26,7 @@ namespace Pipes.Builders
 
     public class SourcePipeBuilder<TMessage> : ISourcePipeBuilder<TMessage>
     {
-        public Func<Lazy<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
+        public Func<IPromised<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
 
         public SourcePipeBuilder()
         {

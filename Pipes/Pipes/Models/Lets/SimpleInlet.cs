@@ -3,24 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Pipes.Models.Pipes;
+using Pipes.Models.Utilities;
 
 namespace Pipes.Models.Lets
 {
     public interface ISimpleInlet<TMessage> : IInlet<TMessage>
     {
         /// <summary>
-        /// Send a message down the pipe. If the pipe system has insufficient capacity to accept the message, this will block until the message can be sent.
+        /// Send a message down the pipe. If the promisedPipe system has insufficient capacity to accept the message, this will block until the message can be sent.
         /// </summary>
         void Send(TMessage message);
 
         /// <summary>
-        /// Send a message down the pipe. If the pipe system has insufficient capacity to accept the message, this will wait for up to approximately the 
+        /// Send a message down the pipe. If the promisedPipe system has insufficient capacity to accept the message, this will wait for up to approximately the 
         /// specified timeout to send the message. If the timeout is exceeded, this will throw a timeout exception.
         /// </summary>
         void Send(TMessage message, TimeSpan timeout);
 
         /// <summary>
-        /// Send a message down the pipe. If the pipe system has insufficient capacity to accept the message, this will throw an invalid operation exception.
+        /// Send a message down the pipe. If the promisedPipe system has insufficient capacity to accept the message, this will throw an invalid operation exception.
         /// </summary>
         void SendImmediately(TMessage message);
     }
@@ -29,7 +30,7 @@ namespace Pipes.Models.Lets
     {
         private readonly IList<WaitingSender<TMessage>> waitingSenders;
 
-        public SimpleInlet(Lazy<IPipe> pipe) : base(pipe)
+        public SimpleInlet(IPromised<IPipe> promisedPipe) : base(promisedPipe)
         {
             waitingSenders = new List<WaitingSender<TMessage>>();
         }

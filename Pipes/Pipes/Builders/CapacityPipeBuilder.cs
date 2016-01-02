@@ -1,6 +1,7 @@
 ﻿using System;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
+using Pipes.Models.Utilities;
 
 namespace Pipes.Builders
 {
@@ -11,14 +12,14 @@ namespace Pipes.Builders
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, ISimpleInlet<TMessage>> Inlet { get; set; }
+        Func<IPromised<IPipe>, ISimpleInlet<TMessage>> Inlet { get; set; }
 
         /// <summary>
         /// A function that, given the pipe, will produce the outlet to be used by that pipe.
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
+        Func<IPromised<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
 
         int Capacity { get; set; }
 
@@ -29,8 +30,8 @@ namespace Pipes.Builders
 
     public class CapacityPipeBuilder<TMessage> : ICapacityPipeBuilder<TMessage>
     {
-        public Func<Lazy<IPipe>, ISimpleInlet<TMessage>> Inlet { get; set; }
-        public Func<Lazy<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
+        public Func<IPromised<IPipe>, ISimpleInlet<TMessage>> Inlet { get; set; }
+        public Func<IPromised<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
         public int Capacity { get; set; }
 
         public CapacityPipeBuilder()
@@ -41,15 +42,12 @@ namespace Pipes.Builders
 
         public ICapacityPipe<TMessage> Build()
         {
-            CapacityPipe<TMessage>[] pipe = { null };
-            var lazyPipe = new Lazy<IPipe>(() => pipe[0]);
+            var promisedPipe = new Promised<IPipe>();
 
-            var inlet = Inlet(lazyPipe);
-            var outlet = Outlet(lazyPipe);
+            var inlet = Inlet(promisedPipe);
+            var outlet = Outlet(promisedPipe);
 
-            pipe[0] = new CapacityPipe<TMessage>(inlet, outlet, Capacity);
-
-            return pipe[0];
+            return promisedPipe.Fulfill(new CapacityPipe<TMessage>(inlet, outlet, Capacity));
         }
 
         public ICapacityPipeBuilder<TMessage> WithCapacity(int capacity)

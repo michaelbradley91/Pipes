@@ -1,6 +1,7 @@
 ﻿using System;
 using Pipes.Extensions;
 using Pipes.Models.Pipes;
+using Pipes.Models.Utilities;
 using SharedResources.SharedResources;
 
 namespace Pipes.Models.Lets
@@ -26,10 +27,10 @@ namespace Pipes.Models.Lets
         private readonly Lazy<IPipe> pipe;
         private SharedResourceGroup activeResourceGroup;
 
-        protected Let(Lazy<IPipe> pipe)
+        protected Let(IPromised<IPipe> promisedPipe)
         {
             SharedResource = SharedResource.Create();
-            this.pipe = pipe;
+            pipe = new Lazy<IPipe>(promisedPipe.GetPromisedObject);
 
             SharedResource.AssociatedObject = this;
             activeResourceGroup = null;

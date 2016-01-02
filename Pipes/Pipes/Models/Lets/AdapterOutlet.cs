@@ -1,5 +1,6 @@
 ﻿using System;
 using Pipes.Models.Pipes;
+using Pipes.Models.Utilities;
 
 namespace Pipes.Models.Lets
 {
@@ -9,7 +10,7 @@ namespace Pipes.Models.Lets
 
     public class AdapterOutlet<TMessage> : Outlet<TMessage>, IAdapterOutlet<TMessage>
     {
-        public AdapterOutlet(Lazy<IPipe> pipe) : base(pipe)
+        public AdapterOutlet(IPromised<IPipe> promisedPipe) : base(promisedPipe)
         {
         }
 

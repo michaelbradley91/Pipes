@@ -1,6 +1,7 @@
 using System;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
+using Pipes.Models.Utilities;
 
 namespace Pipes.Builders
 {
@@ -11,7 +12,7 @@ namespace Pipes.Builders
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
+        Func<IPromised<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
 
         /// <summary>
         /// This function may be run by pipes any number of times while resolving where a message
@@ -27,7 +28,7 @@ namespace Pipes.Builders
 
     public class SourcePipeWithMessageProducerBuilder<TMessage> : ISourcePipeWithMessageProducerBuilder<TMessage>
     {
-        public Func<Lazy<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
+        public Func<IPromised<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
         public Func<TMessage> MessageProducer { get; set; }
 
         public SourcePipeWithMessageProducerBuilder(Func<TMessage> messageProducer)
@@ -38,14 +39,11 @@ namespace Pipes.Builders
 
         public ISourcePipe<TMessage> Build()
         {
-            SourcePipe<TMessage>[] pipe = { null };
-            var lazyPipe = new Lazy<IPipe>(() => pipe[0]);
+            var promisedPipe = new Promised<IPipe>();
 
-            var outlet = Outlet(lazyPipe);
+            var outlet = Outlet(promisedPipe);
 
-            pipe[0] = new SourcePipe<TMessage>(outlet, MessageProducer);
-
-            return pipe[0];
+            return promisedPipe.Fulfill(new SourcePipe<TMessage>(outlet, MessageProducer));
         }
     }
 }

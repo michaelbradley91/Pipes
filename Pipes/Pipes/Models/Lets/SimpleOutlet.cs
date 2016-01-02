@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Pipes.Models.Pipes;
+using Pipes.Models.Utilities;
 
 namespace Pipes.Models.Lets
 {
@@ -29,7 +30,7 @@ namespace Pipes.Models.Lets
     {
         private readonly IList<WaitingReceiver<TMessage>> waitingReceivers;
 
-        public SimpleOutlet(Lazy<IPipe> pipe) : base(pipe)
+        public SimpleOutlet(IPromised<IPipe> promisedPipe) : base(promisedPipe)
         {
             waitingReceivers = new List<WaitingReceiver<TMessage>>();
         }

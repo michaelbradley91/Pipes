@@ -1,6 +1,7 @@
 using System;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
+using Pipes.Models.Utilities;
 
 namespace Pipes.Builders
 {
@@ -11,14 +12,14 @@ namespace Pipes.Builders
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, ISimpleInlet<TMessage>> Inlet { get; set; }
+        Func<IPromised<IPipe>, ISimpleInlet<TMessage>> Inlet { get; set; }
 
         ISinkPipe<TMessage> Build();
     }
     
     public class SinkPipeBuilder<TMessage> : ISinkPipeBuilder<TMessage>
     {
-        public Func<Lazy<IPipe>, ISimpleInlet<TMessage>> Inlet { get; set; }
+        public Func<IPromised<IPipe>, ISimpleInlet<TMessage>> Inlet { get; set; }
 
         public SinkPipeBuilder()
         {
@@ -27,14 +28,11 @@ namespace Pipes.Builders
 
         public ISinkPipe<TMessage> Build()
         {
-            SinkPipe<TMessage>[] pipe = { null };
-            var lazyPipe = new Lazy<IPipe>(() => pipe[0]);
+            var promisedPipe = new Promised<IPipe>();
 
-            var inlet = Inlet(lazyPipe);
+            var inlet = Inlet(promisedPipe);
 
-            pipe[0] = new SinkPipe<TMessage>(inlet);
-
-            return pipe[0];
+            return promisedPipe.Fulfill(new SinkPipe<TMessage>(inlet));
         }
     }
 }

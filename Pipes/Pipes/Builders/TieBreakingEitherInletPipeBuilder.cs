@@ -2,6 +2,7 @@
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
+using Pipes.Models.Utilities;
 
 namespace Pipes.Builders
 {
@@ -12,21 +13,21 @@ namespace Pipes.Builders
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, ISimpleInlet<TMessage>> LeftInlet { get; set; }
+        Func<IPromised<IPipe>, ISimpleInlet<TMessage>> LeftInlet { get; set; }
 
         /// <summary>
         /// A function that, given the pipe, will produce the right inlet to be used by that pipe.
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, ISimpleInlet<TMessage>> RightInlet { get; set; }
+        Func<IPromised<IPipe>, ISimpleInlet<TMessage>> RightInlet { get; set; }
 
         /// <summary>
         /// A function that, given the pipe, will produce the outlet to be used by that pipe.
         /// The pipe is wrapped in a lazy construct as it does not exist at the time this is called, so you cannot access
         /// the pipe in the inlet's constructor.
         /// </summary>
-        Func<Lazy<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
+        Func<IPromised<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
 
         TTieBreaker TieBreaker { get; set; }
 
@@ -35,9 +36,9 @@ namespace Pipes.Builders
 
     public class TieBreakingEitherInletPipeBuilder<TTieBreaker, TMessage> : ITieBreakingEitherInletPipeBuilder<TTieBreaker, TMessage> where TTieBreaker : ITieBreaker
     {
-        public Func<Lazy<IPipe>, ISimpleInlet<TMessage>> LeftInlet { get; set; }
-        public Func<Lazy<IPipe>, ISimpleInlet<TMessage>> RightInlet { get; set; }
-        public Func<Lazy<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
+        public Func<IPromised<IPipe>, ISimpleInlet<TMessage>> LeftInlet { get; set; }
+        public Func<IPromised<IPipe>, ISimpleInlet<TMessage>> RightInlet { get; set; }
+        public Func<IPromised<IPipe>, ISimpleOutlet<TMessage>> Outlet { get; set; }
         public TTieBreaker TieBreaker { get; set; }
 
         public TieBreakingEitherInletPipeBuilder(TTieBreaker tieBreaker)
@@ -50,16 +51,13 @@ namespace Pipes.Builders
 
         public IEitherInletPipe<TTieBreaker, TMessage> Build()
         {
-            EitherInletPipe<TTieBreaker, TMessage>[] pipe = { null };
-            var lazyPipe = new Lazy<IPipe>(() => pipe[0]);
+            var promisedPipe = new Promised<IPipe>();
 
-            var leftInlet = LeftInlet(lazyPipe);
-            var rightInlet = RightInlet(lazyPipe);
-            var outlet = Outlet(lazyPipe);
+            var leftInlet = LeftInlet(promisedPipe);
+            var rightInlet = RightInlet(promisedPipe);
+            var outlet = Outlet(promisedPipe);
 
-            pipe[0] = new EitherInletPipe<TTieBreaker, TMessage>(leftInlet, rightInlet, outlet, TieBreaker);
-
-            return pipe[0];
+            return promisedPipe.Fulfill(new EitherInletPipe<TTieBreaker, TMessage>(leftInlet, rightInlet, outlet, TieBreaker));
         }
     }
 }

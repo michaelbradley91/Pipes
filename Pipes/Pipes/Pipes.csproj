@@ -112,6 +112,7 @@
     <Compile Include="Models\Pipes\CapacityPipe.cs" />
     <Compile Include="Models\Utilities\BiLookup.cs" />
     <Compile Include="Models\Utilities\Either.cs" />
+    <Compile Include="Models\Utilities\Promised.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

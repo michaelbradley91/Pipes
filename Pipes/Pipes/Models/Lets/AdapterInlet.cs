@@ -1,5 +1,6 @@
 ﻿using System;
 using Pipes.Models.Pipes;
+using Pipes.Models.Utilities;
 
 namespace Pipes.Models.Lets
 {
@@ -9,7 +10,7 @@ namespace Pipes.Models.Lets
 
     public class AdapterInlet<TMessage> : Inlet<TMessage>, IAdapterInlet<TMessage>
     {
-        public AdapterInlet(Lazy<IPipe> pipe) : base(pipe)
+        public AdapterInlet(IPromised<IPipe> promisedPipe) : base(promisedPipe)
         {
         }
 

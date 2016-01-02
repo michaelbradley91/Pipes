@@ -1,4 +1,6 @@
-﻿namespace Pipes.Builders
+﻿using Pipes.Models.Pipes;
+
+namespace Pipes.Builders
 {
     public interface IPipeBuilder
     {

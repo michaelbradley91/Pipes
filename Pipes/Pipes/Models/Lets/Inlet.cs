@@ -1,5 +1,6 @@
 using System;
 using Pipes.Models.Pipes;
+using Pipes.Models.Utilities;
 
 namespace Pipes.Models.Lets
 {
@@ -58,7 +59,7 @@ namespace Pipes.Models.Lets
         public IOutlet<TMessage> ConnectedOutlet { get; set; }
         public IOutlet TypelessConnectedOutlet => ConnectedOutlet;
 
-        protected Inlet(Lazy<IPipe> pipe) : base(pipe)
+        protected Inlet(IPromised<IPipe> promisedPipe) : base(promisedPipe)
         {
             ConnectedOutlet = null;
         }
