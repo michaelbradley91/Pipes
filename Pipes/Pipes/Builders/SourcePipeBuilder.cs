@@ -1,7 +1,7 @@
 using System;
-using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
+using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
@@ -30,7 +30,7 @@ namespace Pipes.Builders
 
         public SourcePipeBuilder()
         {
-            Outlet = p => new SimpleOutlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
+            Outlet = p => new SimpleOutlet<TMessage>(p, SharedResource.Create());
         }
 
         public ISourcePipeWithMessageProducerBuilder<TMessage> WithMessageProducer(Func<TMessage> messageProducer)

@@ -1,7 +1,7 @@
 using System;
-using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
+using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
@@ -42,8 +42,8 @@ namespace Pipes.Builders
         public TransformPipeWithMapBuilder(Func<TSourceMessage, TTargetMessage> map)
         {
             Map = map;
-            Inlet = p => new SimpleInlet<TSourceMessage>(p, SharedResourceHelpers.CreateSharedResource());
-            Outlet = p => new SimpleOutlet<TTargetMessage>(p, SharedResourceHelpers.CreateSharedResource());
+            Inlet = p => new SimpleInlet<TSourceMessage>(p, SharedResource.Create());
+            Outlet = p => new SimpleOutlet<TTargetMessage>(p, SharedResource.Create());
         }
 
         public ITransformPipe<TSourceMessage, TTargetMessage> Build()

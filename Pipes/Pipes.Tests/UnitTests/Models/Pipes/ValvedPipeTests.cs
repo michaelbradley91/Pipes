@@ -5,11 +5,11 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Pipes.Constants;
-using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
 using Pipes.Tests.Helpers;
+using SharedResources.SharedResources;
 
 namespace Pipes.Tests.UnitTests.Models.Pipes
 {
@@ -26,11 +26,11 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void SetUp()
         {
             inlet = new Mock<ISimpleInlet<int>>();
-            inlet.SetupGet(i => i.SharedResource).Returns(SharedResourceHelpers.CreateSharedResource());
+            inlet.SetupGet(i => i.SharedResource).Returns(SharedResource.Create());
             inlet.SetupGet(i => i.Pipe).Returns(() => valvedPipe);
 
             outlet = new Mock<ISimpleOutlet<string>>();
-            outlet.SetupGet(o => o.SharedResource).Returns(SharedResourceHelpers.CreateSharedResource());
+            outlet.SetupGet(o => o.SharedResource).Returns(SharedResource.Create());
             outlet.SetupGet(i => i.Pipe).Returns(() => valvedPipe);
 
             tieBreaker = new Mock<ITieBreaker>();

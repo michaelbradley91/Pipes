@@ -1,7 +1,7 @@
 ﻿using System;
-using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
+using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
@@ -36,8 +36,8 @@ namespace Pipes.Builders
 
         public CapacityPipeBuilder()
         {
-            Inlet = p => new SimpleInlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
-            Outlet = p => new SimpleOutlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
+            Inlet = p => new SimpleInlet<TMessage>(p, SharedResource.Create());
+            Outlet = p => new SimpleOutlet<TMessage>(p, SharedResource.Create());
         }   
 
         public ICapacityPipe<TMessage> Build()

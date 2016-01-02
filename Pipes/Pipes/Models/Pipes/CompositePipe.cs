@@ -15,7 +15,7 @@ namespace Pipes.Models.Pipes
         /// </summary>
         protected IAdapterInlet<TMessage> CreateAdapterInlet<TMessage>()
         {
-            return new AdapterInlet<TMessage>(new Lazy<IPipe>(() => this));
+            return new AdapterInlet<TMessage>(new Lazy<IPipe>(() => this), SharedResource.CreateAndConnect());
         }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace Pipes.Models.Pipes
         /// </summary>
         protected IAdapterOutlet<TMessage> CreateAdapterOutlet<TMessage>()
         {
-            return new AdapterOutlet<TMessage>(new Lazy<IPipe>(() => this));
+            return new AdapterOutlet<TMessage>(new Lazy<IPipe>(() => this), SharedResource.CreateAndConnect());
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Pipes.Helpers;
 using Pipes.Models.Lets;
 using SharedResources.SharedResources;
 
@@ -67,7 +66,7 @@ namespace Pipes.Models.Pipes
         protected Pipe(IReadOnlyCollection<IInlet> connectableInlets, IReadOnlyCollection<IOutlet> connectableOutlets)
         {
             var allLetSharedResources = connectableInlets.Select(i => i.SharedResource).Concat(connectableOutlets.Select(o => o.SharedResource)).ToArray();
-            SharedResource = SharedResourceHelpers.CreateAndConnectSharedResources(allLetSharedResources);
+            SharedResource = SharedResource.CreateAndConnect(allLetSharedResources);
             ConnectableInlets = connectableInlets;
             ConnectableOutlets = connectableOutlets;
         }

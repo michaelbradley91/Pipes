@@ -1,8 +1,8 @@
 using System;
-using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
+using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
@@ -38,8 +38,8 @@ namespace Pipes.Builders
 
         public TieBreakingValvedPipeBuilder(TTieBreaker tieBreaker)
         {
-            Inlet = p => new SimpleInlet<TReceive>(p, SharedResourceHelpers.CreateSharedResource());
-            Outlet = p => new SimpleOutlet<TSend>(p, SharedResourceHelpers.CreateSharedResource());
+            Inlet = p => new SimpleInlet<TReceive>(p, SharedResource.Create());
+            Outlet = p => new SimpleOutlet<TSend>(p, SharedResource.Create());
             TieBreaker = tieBreaker;
         }
 

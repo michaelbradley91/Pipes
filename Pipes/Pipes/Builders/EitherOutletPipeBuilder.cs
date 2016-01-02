@@ -1,9 +1,9 @@
 ﻿using System;
 using Pipes.Constants;
-using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
+using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
@@ -45,9 +45,9 @@ namespace Pipes.Builders
 
         public EitherOutletPipeBuilder()
         {
-            Inlet = p => new SimpleInlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
-            LeftOutlet = p => new SimpleOutlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
-            RightOutlet = p => new SimpleOutlet<TMessage>(p, SharedResourceHelpers.CreateSharedResource());
+            Inlet = p => new SimpleInlet<TMessage>(p, SharedResource.Create());
+            LeftOutlet = p => new SimpleOutlet<TMessage>(p, SharedResource.Create());
+            RightOutlet = p => new SimpleOutlet<TMessage>(p, SharedResource.Create());
         }
 
         public IEitherOutletPipe<IPrioritisingTieBreaker, TMessage> Build()

@@ -1,7 +1,7 @@
 ﻿using System;
-using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
+using SharedResources.SharedResources;
 
 namespace Pipes.Tests.Helpers
 {
@@ -9,7 +9,7 @@ namespace Pipes.Tests.Helpers
     {
         public static SimpleInlet<T> CreateInlet<T>(IPipe pipe)
         {
-            var sharedResource = SharedResourceHelpers.CreateSharedResource();
+            var sharedResource = SharedResource.Create();
             return new SimpleInlet<T>(new Lazy<IPipe>(() => pipe), sharedResource);
         }
     }

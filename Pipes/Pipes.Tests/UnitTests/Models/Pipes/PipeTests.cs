@@ -2,9 +2,9 @@
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
+using SharedResources.SharedResources;
 
 namespace Pipes.Tests.UnitTests.Models.Pipes
 {
@@ -19,10 +19,10 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void SetUp()
         {
             inlet = new Mock<ISimpleInlet<int>>();
-            inlet.SetupGet(i => i.SharedResource).Returns(SharedResourceHelpers.CreateSharedResource());
+            inlet.SetupGet(i => i.SharedResource).Returns(SharedResource.Create());
 
             outlet = new Mock<ISimpleOutlet<int>>();
-            outlet.SetupGet(i => i.SharedResource).Returns(SharedResourceHelpers.CreateSharedResource());
+            outlet.SetupGet(i => i.SharedResource).Returns(SharedResource.Create());
 
             dummyPipe = new DummyPipe(inlet.Object, outlet.Object);
         }
