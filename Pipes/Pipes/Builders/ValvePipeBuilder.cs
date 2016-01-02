@@ -24,10 +24,26 @@ namespace Pipes.Builders
         Func<Lazy<IPipe>, ISimpleOutlet<TSend>> Outlet { get; set; }
 
         IValvedPipe<TReceive, TSend, IPrioritisingTieBreaker> Build();
+
+        /// <summary>
+        /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
+        /// </summary>
         ITieBreakingValvedPipeBuilder<TReceive, TSend, TTieBreaker> WithTieBreaker<TTieBreaker>(TTieBreaker tieBreaker) where TTieBreaker : ITieBreaker;
+
+        /// <summary>
+        /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
+        /// </summary>
         ITieBreakingValvedPipeBuilder<TReceive, TSend, IAlternatingTieBreaker> WithAlternatingTieBreaker(Alternated alternated = Alternated.LeftHasPriorityInitially);
+
+        /// <summary>
+        /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
+        /// </summary>
         ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker> WithPrioritisingTieBreaker(Priority priority = Priority.Left);
-        ITieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTieBreaker> WithRandomisingTieBreaker(double leftProbability = 0.5);
+
+        /// <summary>
+        /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
+        /// </summary>
+        ITieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTieBreaker> WithRandomisingTieBreaker(double sendProbability = 0.5);
     }
 
     public class ValvedPipeBuilder<TReceive, TSend> : IValvedPipeBuilder<TReceive, TSend>
@@ -61,10 +77,10 @@ namespace Pipes.Builders
             return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker>(new PrioritisingTieBreaker(priority)));
         }
 
-        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTieBreaker> WithRandomisingTieBreaker(double leftProbability = 0.5)
+        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTieBreaker> WithRandomisingTieBreaker(double sendProbability = 0.5)
         {
-            if (leftProbability < 0 || leftProbability > 1) throw new ArgumentOutOfRangeException(nameof(leftProbability), "The left probability must be between 0 and 1 (inclusive)");
-            return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTieBreaker>(new RandomisingTieBreaker(leftProbability)));
+            if (sendProbability < 0 || sendProbability > 1) throw new ArgumentOutOfRangeException(nameof(sendProbability), "The send probability must be between 0 and 1 (inclusive)");
+            return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTieBreaker>(new RandomisingTieBreaker(sendProbability)));
         }
 
         private ITieBreakingValvedPipeBuilder<TReceive, TSend, TTieBreaker> CopyInletsAndOutletsTo<TTieBreaker>(ITieBreakingValvedPipeBuilder<TReceive, TSend, TTieBreaker> tieBreakingValvedPipeBuilder)

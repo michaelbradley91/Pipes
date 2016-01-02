@@ -13,6 +13,10 @@ namespace Pipes.Models.Pipes
         ISimpleInlet<TReceive> Inlet { get; }
         ISimpleOutlet<TSend> Outlet { get; }
         IValve<TReceive, TSend> Valve { get; }
+
+        /// <summary>
+        /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
+        /// </summary>
         TTieBreaker TieBreaker { get; }
     }
 

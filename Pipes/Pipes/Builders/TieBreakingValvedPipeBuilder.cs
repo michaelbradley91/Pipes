@@ -22,6 +22,9 @@ namespace Pipes.Builders
         /// </summary>
         Func<Lazy<IPipe>, ISimpleOutlet<TSend>> Outlet { get; set; }
 
+        /// <summary>
+        /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
+        /// </summary>
         TTieBreaker TieBreaker { get; set; }
 
         IValvedPipe<TReceive, TSend, TTieBreaker> Build();
