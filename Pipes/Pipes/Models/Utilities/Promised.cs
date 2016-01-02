@@ -8,9 +8,8 @@ namespace Pipes.Models.Utilities
 
         /// <summary>
         /// Sets the promised object with the value given. Also returns the value supplied for convenience.
-        /// TP must be castable to T.
         /// </summary>
-        TP Fulfill<TP>(TP p);
+        TP Fulfill<TP>(TP p) where TP : T;
     }
 
     public class Promised<T> : IPromised<T>
@@ -24,10 +23,10 @@ namespace Pipes.Models.Utilities
             return obj;
         }
        
-        public TP Fulfill<TP>(TP p)
+        public TP Fulfill<TP>(TP p) where TP : T
         {
             promiseFulfilled = true;
-            obj = (T) (object) p;
+            obj = p;
             return p;
         }
     }

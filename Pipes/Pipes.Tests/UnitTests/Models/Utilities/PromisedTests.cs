@@ -49,20 +49,5 @@ namespace Pipes.Tests.UnitTests.Models.Utilities
             // Assert
             result.Should().Be(promise);
         }
-
-        [Test]
-        public void Fulfull_CanCastThePromisedObject()
-        {
-            // Arrange
-            var otherPromised = new Promised<object>();
-            const short promise = 5;
-
-            // Act
-            var result = otherPromised.Fulfill(promise);
-
-            // Assert
-            result.Should().Be(promise);
-            otherPromised.GetPromisedObject().Should().Be(promise);
-        }
     }
 }
