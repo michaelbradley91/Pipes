@@ -130,6 +130,7 @@
     <Compile Include="UnitTests\Models\TieBreakers\AlternatingTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\RandomisingTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\PrioritisingTieBreakerTests.cs" />
+    <Compile Include="UnitTests\Models\Utilities\BiLookupTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

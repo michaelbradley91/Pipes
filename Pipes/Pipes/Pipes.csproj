@@ -110,6 +110,7 @@
     <Compile Include="Models\Pipes\TwoOutletPipe.cs" />
     <Compile Include="Models\Pipes\TwoInletPipe.cs" />
     <Compile Include="Models\Pipes\CapacityPipe.cs" />
+    <Compile Include="Models\Utilities\BiLookup.cs" />
     <Compile Include="Models\Utilities\Either.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

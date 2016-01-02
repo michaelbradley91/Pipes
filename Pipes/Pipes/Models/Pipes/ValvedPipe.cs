@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Pipes.Builders;
+﻿using Pipes.Builders;
 using Pipes.Models.Lets;
 using Pipes.Models.TieBreakers;
 
@@ -20,26 +18,17 @@ namespace Pipes.Models.Pipes
 
     public class ValvedPipe<TReceive, TSend, TTieBreaker> : CompositePipe, IValvedPipe<TReceive, TSend, TTieBreaker> where TTieBreaker : ITieBreaker
     {
-        protected override IReadOnlyCollection<IInlet> PipeInlets => new IInlet[] {Inlet, adapterInlet};
-        protected override IReadOnlyCollection<IOutlet> PipeOutlets => new IOutlet[] {Outlet, adapterOutlet};
-
         public ISimpleInlet<TReceive> Inlet { get; }
         public ISimpleOutlet<TSend> Outlet { get; }
         public IValve<TReceive, TSend> Valve { get; }
         public TTieBreaker TieBreaker { get; }
-
-        private readonly IAdapterInlet<TSend> adapterInlet;
-        private readonly IAdapterOutlet<TReceive> adapterOutlet;
 
         public ValvedPipe(ISimpleInlet<TReceive> inlet, ISimpleOutlet<TSend> outlet, TTieBreaker tieBreaker) : base(new[] {inlet}, new[] {outlet})
         {
             Inlet = inlet;
             Outlet = outlet;
             TieBreaker = tieBreaker;
-
-            adapterOutlet = CreateAdapterOutlet<TReceive>();
-            adapterInlet = CreateAdapterInlet<TSend>();
-
+            
             var preparationCapacityPipe = PipeBuilder.New.CapacityPipe<TSend>().WithCapacity(1).Build();
             var flushEitherOutletPipe = PipeBuilder.New.EitherOutletPipe<TSend>().Build();
             var splittingPipe = PipeBuilder.New.SplittingPipe<TSend>().Build();
@@ -53,20 +42,10 @@ namespace Pipes.Models.Pipes
             sendTransformPipe.Outlet.ConnectTo(eitherInletPipe.LeftInlet);
             receiveTransformPipe.Outlet.ConnectTo(eitherInletPipe.RightInlet);
 
-            adapterInlet.ConnectTo(splittingPipe.LeftOutlet, false);
-            adapterOutlet.ConnectTo(receiveTransformPipe.Inlet, false);
+            CreateAndConnectAdapter(splittingPipe.LeftOutlet, Outlet);
+            CreateAndConnectAdapter(receiveTransformPipe.Inlet, Inlet);
 
             Valve = new Valve<TReceive, TSend>(preparationCapacityPipe.Inlet, flushEitherOutletPipe.LeftOutlet, eitherInletPipe.Outlet);
-        }
-
-        protected override Action<TMessage> FindReceiverFor<TMessage>(IInlet<TMessage> inletSendingMessage)
-        {
-            return inletSendingMessage == Inlet ? adapterOutlet.FindReceiver<TMessage>() : Outlet.FindReceiver<TMessage>();
-        }
-
-        protected override Func<TMessage> FindSenderFor<TMessage>(IOutlet<TMessage> outletReceivingMessage)
-        {
-            return outletReceivingMessage == Outlet ? adapterInlet.FindSender<TMessage>() : Inlet.FindSender<TMessage>();
         }
     }
 }
