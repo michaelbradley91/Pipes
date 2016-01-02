@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Pipes.Models.Pipes;
-using SharedResources.SharedResources;
 
 namespace Pipes.Models.Lets
 {
@@ -30,7 +29,7 @@ namespace Pipes.Models.Lets
     {
         private readonly IList<WaitingSender<TMessage>> waitingSenders;
 
-        public SimpleInlet(Lazy<IPipe> pipe, SharedResource sharedResource) : base(pipe, sharedResource)
+        public SimpleInlet(Lazy<IPipe> pipe) : base(pipe)
         {
             waitingSenders = new List<WaitingSender<TMessage>>();
         }

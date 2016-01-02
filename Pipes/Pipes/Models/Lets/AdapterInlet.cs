@@ -1,6 +1,5 @@
 ﻿using System;
 using Pipes.Models.Pipes;
-using SharedResources.SharedResources;
 
 namespace Pipes.Models.Lets
 {
@@ -10,7 +9,7 @@ namespace Pipes.Models.Lets
 
     public class AdapterInlet<TMessage> : Inlet<TMessage>, IAdapterInlet<TMessage>
     {
-        public AdapterInlet(Lazy<IPipe> pipe, SharedResource sharedResource) : base(pipe, sharedResource)
+        public AdapterInlet(Lazy<IPipe> pipe) : base(pipe)
         {
         }
 

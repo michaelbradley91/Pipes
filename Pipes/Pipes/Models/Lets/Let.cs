@@ -26,12 +26,12 @@ namespace Pipes.Models.Lets
         private readonly Lazy<IPipe> pipe;
         private SharedResourceGroup activeResourceGroup;
 
-        protected Let(Lazy<IPipe> pipe, SharedResource sharedResource)
+        protected Let(Lazy<IPipe> pipe)
         {
-            SharedResource = sharedResource;
+            SharedResource = SharedResource.Create();
             this.pipe = pipe;
 
-            sharedResource.AssociatedObject = this;
+            SharedResource.AssociatedObject = this;
             activeResourceGroup = null;
         }
 

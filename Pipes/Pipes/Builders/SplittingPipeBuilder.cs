@@ -1,7 +1,6 @@
 ﻿using System;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
-using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
@@ -39,9 +38,9 @@ namespace Pipes.Builders
 
         public SplittingPipeBuilder()
         {
-            Inlet = p => new SimpleInlet<TMessage>(p, SharedResource.Create());
-            LeftOutlet = p => new SimpleOutlet<TMessage>(p, SharedResource.Create());
-            RightOutlet = p => new SimpleOutlet<TMessage>(p, SharedResource.Create());
+            Inlet = p => new SimpleInlet<TMessage>(p);
+            LeftOutlet = p => new SimpleOutlet<TMessage>(p);
+            RightOutlet = p => new SimpleOutlet<TMessage>(p);
         }
 
         public ISplittingPipe<TMessage> Build()

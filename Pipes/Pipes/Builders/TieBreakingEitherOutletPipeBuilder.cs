@@ -2,7 +2,6 @@
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
-using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
@@ -43,9 +42,9 @@ namespace Pipes.Builders
 
         public TieBreakingEitherOutletPipeBuilder(TTieBreaker tieBreaker)
         {
-            Inlet = p => new SimpleInlet<TMessage>(p, SharedResource.Create());
-            LeftOutlet = p => new SimpleOutlet<TMessage>(p, SharedResource.Create());
-            RightOutlet = p => new SimpleOutlet<TMessage>(p, SharedResource.Create());
+            Inlet = p => new SimpleInlet<TMessage>(p);
+            LeftOutlet = p => new SimpleOutlet<TMessage>(p);
+            RightOutlet = p => new SimpleOutlet<TMessage>(p);
             TieBreaker = tieBreaker;
         }
 

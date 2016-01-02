@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pipes.Models.Lets;
 using Pipes.Models.Utilities;
+using SharedResources.SharedResources;
 
 namespace Pipes.Models.Pipes
 {
@@ -31,7 +32,8 @@ namespace Pipes.Models.Pipes
         /// </summary>
         protected IAdapterInlet<TMessage> CreateAndConnectAdapter<TMessage>(IOutlet<TMessage> internalOutlet, IOutlet<TMessage> externalOutlet)
         {
-            var adapterInlet =  new AdapterInlet<TMessage>(new Lazy<IPipe>(() => this), SharedResource.CreateAndConnect());
+            var adapterInlet =  new AdapterInlet<TMessage>(new Lazy<IPipe>(() => this));
+            ConnectSharedResource(adapterInlet.SharedResource);
 
             adapterInlets.Add(adapterInlet);
             inletOutletBiLookup.Add(adapterInlet, externalOutlet);
@@ -51,7 +53,8 @@ namespace Pipes.Models.Pipes
         /// </summary>
         protected IAdapterOutlet<TMessage> CreateAndConnectAdapter<TMessage>(IInlet<TMessage> internalInlet, IInlet<TMessage> externalInlet)
         {
-            var adapterOutlet = new AdapterOutlet<TMessage>(new Lazy<IPipe>(() => this), SharedResource.CreateAndConnect());
+            var adapterOutlet = new AdapterOutlet<TMessage>(new Lazy<IPipe>(() => this));
+            ConnectSharedResource(adapterOutlet.SharedResource);
 
             adapterOutlets.Add(adapterOutlet);
             inletOutletBiLookup.Add(externalInlet, adapterOutlet);
@@ -60,6 +63,13 @@ namespace Pipes.Models.Pipes
             // to this pipe. However, messages should never be passed in a cycle or violate the "tree-ness" nevertheless.
             adapterOutlet.ConnectTo(internalInlet, false);
             return adapterOutlet;
+        }
+
+        private void ConnectSharedResource(SharedResource otherSharedResource)
+        {
+            var resourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(SharedResource, otherSharedResource);
+            resourceGroup.ConnectSharedResources(SharedResource, otherSharedResource);
+            resourceGroup.FreeSharedResources();
         }
 
         protected override Action<TMessage> FindReceiverFor<TMessage>(IInlet<TMessage> inletSendingMessage)

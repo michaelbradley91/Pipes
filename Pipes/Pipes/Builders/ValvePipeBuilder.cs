@@ -3,7 +3,6 @@ using Pipes.Constants;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
-using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
@@ -63,8 +62,8 @@ namespace Pipes.Builders
 
         public ValvedPipeBuilder()
         {
-            Inlet = p => new SimpleInlet<TReceive>(p, SharedResource.Create());
-            Outlet = p => new SimpleOutlet<TSend>(p, SharedResource.Create());
+            Inlet = p => new SimpleInlet<TReceive>(p);
+            Outlet = p => new SimpleOutlet<TSend>(p);
         }
 
         public IValvedPipe<TReceive, TSend, IPrioritisingTieBreaker> Build()

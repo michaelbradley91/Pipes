@@ -3,7 +3,6 @@ using Pipes.Constants;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
-using SharedResources.SharedResources;
 
 namespace Pipes.Builders
 {
@@ -45,9 +44,9 @@ namespace Pipes.Builders
 
         public EitherInletPipeBuilder()
         {
-            LeftInlet = p => new SimpleInlet<TMessage>(p, SharedResource.Create());
-            RightInlet = p => new SimpleInlet<TMessage>(p, SharedResource.Create());
-            Outlet = p => new SimpleOutlet<TMessage>(p, SharedResource.Create());
+            LeftInlet = p => new SimpleInlet<TMessage>(p);
+            RightInlet = p => new SimpleInlet<TMessage>(p);
+            Outlet = p => new SimpleOutlet<TMessage>(p);
         }
 
         public IEitherInletPipe<IPrioritisingTieBreaker, TMessage> Build()
