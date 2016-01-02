@@ -42,10 +42,15 @@ namespace Pipes.Builders
 
         public IValvedPipe<TReceive, TSend, TTieBreaker> Build()
         {
-            return new ValvedPipe<TReceive, TSend, TTieBreaker>(
-                p => Inlet(new Lazy<IPipe>(() => p)),
-                p => Outlet(new Lazy<IPipe>(() => p)), 
-                TieBreaker);
+            ValvedPipe<TReceive, TSend, TTieBreaker>[] pipe = {null};
+            var lazyPipe = new Lazy<IPipe>(() => pipe[0]);
+
+            var inlet = Inlet(lazyPipe);
+            var outlet = Outlet(lazyPipe);
+
+            pipe[0] = new ValvedPipe<TReceive, TSend, TTieBreaker>(inlet, outlet, TieBreaker);
+
+            return pipe[0];
         }
     }
 }

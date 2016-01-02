@@ -30,10 +30,10 @@ namespace Pipes.Models.Pipes
         private readonly IAdapterInlet<TSend> adapterInlet;
         private readonly IAdapterOutlet<TReceive> adapterOutlet;
 
-        public ValvedPipe(Func<IValvedPipe<TReceive, TSend, TTieBreaker>, ISimpleInlet<TReceive>> inlet, Func<IValvedPipe<TReceive, TSend, TTieBreaker>, ISimpleOutlet<TSend>> outlet, TTieBreaker tieBreaker)
+        public ValvedPipe(ISimpleInlet<TReceive> inlet, ISimpleOutlet<TSend> outlet, TTieBreaker tieBreaker)
         {
-            Inlet = inlet(this);
-            Outlet = outlet(this);
+            Inlet = inlet;
+            Outlet = outlet;
             TieBreaker = tieBreaker;
 
             var pipeResource = SharedResourceHelpers.CreateAndConnectSharedResources(Inlet.SharedResource, Outlet.SharedResource);
@@ -54,9 +54,8 @@ namespace Pipes.Models.Pipes
             sendTransformPipe.Outlet.ConnectTo(eitherInletPipe.LeftInlet);
             receiveTransformPipe.Outlet.ConnectTo(eitherInletPipe.RightInlet);
 
-            // This creates a cycle in the inner pipe system, as "this" pipe is connected to both ends.
-            // However, we know that this pipe will not actually pass messages around in a cycle, so this is safe.
-            // (We also know that no one can ask about the pipe system of any inlet / outlet / pipe of our internal system, as it is all hidden).
+            // We do not allow the connect methods to check for a non-tree, as this pipe has not been fully constructed yet.
+            // As this is our internal pipe system, we can guarantee it forms a tree.
             adapterInlet.ConnectTo(splittingPipe.LeftOutlet, false);
             adapterOutlet.ConnectTo(receiveTransformPipe.Inlet, false);
 

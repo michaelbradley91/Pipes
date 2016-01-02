@@ -27,22 +27,15 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             inlet = new Mock<ISimpleInlet<int>>();
             inlet.SetupGet(i => i.SharedResource).Returns(SharedResourceHelpers.CreateSharedResource());
+            inlet.SetupGet(i => i.Pipe).Returns(() => valvedPipe);
 
             outlet = new Mock<ISimpleOutlet<string>>();
             outlet.SetupGet(o => o.SharedResource).Returns(SharedResourceHelpers.CreateSharedResource());
+            outlet.SetupGet(i => i.Pipe).Returns(() => valvedPipe);
 
             tieBreaker = new Mock<ITieBreaker>();
 
-            valvedPipe = new ValvedPipe<int, string, ITieBreaker>(
-                p =>
-                {
-                    inlet.SetupGet(i => i.Pipe).Returns(() => p);
-                    return inlet.Object;
-                }, p =>
-                {
-                    outlet.SetupGet(o => o.Pipe).Returns(() => p);
-                    return outlet.Object;
-                }, tieBreaker.Object);
+            valvedPipe = new ValvedPipe<int, string, ITieBreaker>(inlet.Object, outlet.Object, tieBreaker.Object);
         }
 
         [Test]
