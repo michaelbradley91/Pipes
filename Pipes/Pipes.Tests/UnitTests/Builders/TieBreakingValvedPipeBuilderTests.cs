@@ -2,7 +2,6 @@
 using Moq;
 using NUnit.Framework;
 using Pipes.Builders;
-using Pipes.Models.Pipes;
 using Pipes.Models.TieBreakers;
 
 namespace Pipes.Tests.UnitTests.Builders

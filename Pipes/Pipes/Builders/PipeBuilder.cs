@@ -10,6 +10,7 @@
         ITransformPipeBuilder<TSourceMessage, TTargetMessage> TransformPipe<TSourceMessage, TTargetMessage>();
         ISinkPipeBuilder<TMessage> SinkPipe<TMessage>();
         ISourcePipeBuilder<TMessage> SourcePipe<TMessage>();
+        IValvedPipeBuilder<TReceive, TSend> ValvedPipe<TReceive, TSend>();
     }
 
     public class PipeBuilder : IPipeBuilder
@@ -54,6 +55,11 @@
         public ISourcePipeBuilder<TMessage> SourcePipe<TMessage>()
         {
             return new SourcePipeBuilder<TMessage>();
+        }
+
+        public IValvedPipeBuilder<TReceive, TSend> ValvedPipe<TReceive, TSend>()
+        {
+            return new ValvedPipeBuilder<TReceive, TSend>();
         }
     }
 }

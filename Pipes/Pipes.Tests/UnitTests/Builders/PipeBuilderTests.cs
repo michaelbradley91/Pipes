@@ -96,5 +96,15 @@ namespace Pipes.Tests.UnitTests.Builders
             // Assert
             builder.Should().BeAssignableTo<SourcePipeBuilder<int>>();
         }
+
+        [Test]
+        public void ValvedPipe_ReturnsAValvedPipeBuilder()
+        {
+            // Act
+            var builder = PipeBuilder.New.ValvedPipe<string, int>();
+
+            // Assert
+            builder.Should().BeAssignableTo<ValvedPipeBuilder<string, int>>();
+        }
     }
 }
