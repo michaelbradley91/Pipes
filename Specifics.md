@@ -133,3 +133,24 @@ A sink pipe consumes messages and throws them away. This might not seem terribly
 * A "map" function
 
 A transform pipe converts the message arriving on its inlet with the "map" function, and sends the result to its outlet. So x -> Transform Pipe -> f(x). As with the source pipe, this function should be simple. In particular, it should not utilise other pipes.
+
+### Valved Pipe
+* One inlet
+* One outlet
+* One valve
+
+A valved pipe allows you to send or receive a message at the same time through its valve. The syntax is:
+```c#
+var result = valvedPipe.Valve.ReceiveOrSend(messageToSend);
+if (result.MessageReceived)
+{
+    var receivedMessage = result.GetReceivedMessage();
+    // I received a message. Therefore, "messageToSend" was not sent.
+}
+else
+{
+    // I sent a message. Therefore, I sent "messageToSend".
+}
+```
+The valve listens to the pipe's inlet for messages to receive, and it tries to send your message down its outlet.
+Note that by sticking pipes to the inlet / outlet of this pipe, you can try to receive or send from many pipes at once!
