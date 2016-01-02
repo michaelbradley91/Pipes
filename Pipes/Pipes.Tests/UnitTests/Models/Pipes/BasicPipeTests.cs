@@ -25,8 +25,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Assert
             basicPipe.Inlet.Should().NotBeNull();
-            basicPipe.AllInlets.Count.Should().Be(1);
-            basicPipe.AllInlets.Single().Should().Be(basicPipe.Inlet);
+            basicPipe.ConnectableInlets.Count.Should().Be(1);
+            basicPipe.ConnectableInlets.Single().Should().Be(basicPipe.Inlet);
         }
 
         [Test]
@@ -34,8 +34,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Assert
             basicPipe.Outlet.Should().NotBeNull();
-            basicPipe.AllOutlets.Count.Should().Be(1);
-            basicPipe.AllOutlets.Single().Should().Be(basicPipe.Outlet);
+            basicPipe.ConnectableOutlets.Count.Should().Be(1);
+            basicPipe.ConnectableOutlets.Single().Should().Be(basicPipe.Outlet);
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            var mockInlet = (IInlet<int>)mockPipe.Object.AllInlets.Single();
+            var mockInlet = (IInlet<int>)mockPipe.Object.ConnectableInlets.Single();
 
             basicPipe.Outlet.ConnectTo(mockInlet);
 
@@ -124,7 +124,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             
 
             // Assert
-            mockPipe.Verify(p => p.FindReceiver(mockInlet, true));
+            mockPipe.Verify(p => p.FindReceiver(mockInlet));
         }
 
         [Test]
@@ -132,7 +132,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            var mockOutlet = (IOutlet<int>)mockPipe.Object.AllOutlets.Single();
+            var mockOutlet = (IOutlet<int>)mockPipe.Object.ConnectableOutlets.Single();
 
             basicPipe.Inlet.ConnectTo(mockOutlet);
 
@@ -140,7 +140,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             basicPipe.FindSender(basicPipe.Outlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindSender(mockOutlet, true));
+            mockPipe.Verify(p => p.FindSender(mockOutlet));
         }
     }
 }

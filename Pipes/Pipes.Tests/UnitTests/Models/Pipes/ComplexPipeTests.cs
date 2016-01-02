@@ -5,7 +5,6 @@ using NUnit.Framework;
 using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
-using Pipes.Tests.Helpers;
 
 namespace Pipes.Tests.UnitTests.Models.Pipes
 {
@@ -35,7 +34,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             complexPipe.Receiver = null;
 
             // Act
-            var receiver = complexPipe.FindReceiver(complexPipe.Inlet, true);
+            var receiver = complexPipe.FindReceiver(complexPipe.Inlet);
 
             // Assert
             receiver.Should().BeNull();
@@ -49,7 +48,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             complexPipe.Receiver = m => messageReceived = m;
 
             // Act
-            var receiver = complexPipe.FindReceiver(complexPipe.Inlet, true);
+            var receiver = complexPipe.FindReceiver(complexPipe.Inlet);
             const int message = 223;
             receiver(message);
 
@@ -64,7 +63,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             complexPipe.Sender = null;
 
             // Act
-            var sender = complexPipe.FindSender(complexPipe.Outlet, true);
+            var sender = complexPipe.FindSender(complexPipe.Outlet);
 
             // Assert
             sender.Should().BeNull();
@@ -78,7 +77,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             complexPipe.Sender = () => message;
 
             // Act
-            var sender = complexPipe.FindSender(complexPipe.Outlet, true);
+            var sender = complexPipe.FindSender(complexPipe.Outlet);
 
             // Assert
             sender().Should().Be(message);

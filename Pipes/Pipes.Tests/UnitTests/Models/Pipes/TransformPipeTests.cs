@@ -104,7 +104,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<string>();
-            var mockInlet = (IInlet<string>)mockPipe.Object.AllInlets.Single();
+            var mockInlet = (IInlet<string>)mockPipe.Object.ConnectableInlets.Single();
 
             transformPipe.Outlet.ConnectTo(mockInlet);
 
@@ -113,7 +113,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             
 
             // Assert
-            mockPipe.Verify(p => p.FindReceiver(mockInlet, true));
+            mockPipe.Verify(p => p.FindReceiver(mockInlet));
         }
 
         [Test]
@@ -121,7 +121,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Arrange
             var mockPipe = PipeHelpers.CreateMockPipe<int>();
-            var mockOutlet = (IOutlet<int>)mockPipe.Object.AllOutlets.Single();
+            var mockOutlet = (IOutlet<int>)mockPipe.Object.ConnectableOutlets.Single();
 
             transformPipe.Inlet.ConnectTo(mockOutlet);
 
@@ -129,7 +129,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             transformPipe.FindSender(transformPipe.Outlet);
 
             // Assert
-            mockPipe.Verify(p => p.FindSender(mockOutlet, true));
+            mockPipe.Verify(p => p.FindSender(mockOutlet));
         }
     }
 }

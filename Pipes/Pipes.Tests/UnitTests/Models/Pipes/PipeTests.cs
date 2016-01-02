@@ -5,7 +5,6 @@ using NUnit.Framework;
 using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.Pipes;
-using Pipes.Tests.Helpers;
 
 namespace Pipes.Tests.UnitTests.Models.Pipes
 {
@@ -32,7 +31,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         public void FindReceiver_GivenAnInletBelongingToThePipe_DoesNotThrowAnException()
         {
             // Act
-            var receiver = dummyPipe.FindReceiver(inlet.Object, true);
+            var receiver = dummyPipe.FindReceiver(inlet.Object);
 
             // Assert
             receiver.Should().NotBeNull();
@@ -46,27 +45,14 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             var inlet = new Mock<IInlet<int>>();
 
             // Act
-            dummyPipe.FindReceiver(inlet.Object, true);
-        }
-
-        [Test]
-        public void FindReceiver_GivenAnInletThatDoesNotBelongToThePipeButToldNotToCheckTheInlet_DoesNotThrowAnException()
-        {
-            // Arrange
-            var inlet = new Mock<IInlet<int>>();
-
-            // Act
-            var receiver = dummyPipe.FindReceiver(inlet.Object, false);
-
-            // Assert
-            receiver.Should().NotBeNull();
+            dummyPipe.FindReceiver(inlet.Object);
         }
 
         [Test]
         public void FindSender_GivenAnOutletBelongingToThePipe_DoesNotThrowAnException()
         {
             // Act
-            var sender = dummyPipe.FindSender(outlet.Object, true);
+            var sender = dummyPipe.FindSender(outlet.Object);
 
             // Assert
             sender.Should().NotBeNull();
@@ -80,20 +66,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             var outlet = new Mock<IOutlet<int>>();
 
             // Act
-            dummyPipe.FindSender(outlet.Object, true);
-        }
-
-        [Test]
-        public void FindSender_GivenAnOutletThatDoesNotBelongToThePipeButToldNotToCheckTheOutlet_DoesNotThrowAnException()
-        {
-            // Arrange
-            var outlet = new Mock<IOutlet<int>>();
-
-            // Act
-            var sender = dummyPipe.FindSender(outlet.Object, false);
-
-            // Assert
-            sender.Should().NotBeNull();
+            dummyPipe.FindSender(outlet.Object);
         }
 
         private class DummyPipe : Pipe

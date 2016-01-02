@@ -25,15 +25,15 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Assert
             sinkPipe.Inlet.Should().NotBeNull();
-            sinkPipe.AllInlets.Count.Should().Be(1);
-            sinkPipe.AllInlets.Single().Should().Be(sinkPipe.Inlet);
+            sinkPipe.ConnectableInlets.Count.Should().Be(1);
+            sinkPipe.ConnectableInlets.Single().Should().Be(sinkPipe.Inlet);
         }
 
         [Test]
         public void SinkPipe_HasZeroOutlets()
         {
             // Assert
-            sinkPipe.AllOutlets.Should().BeEmpty();
+            sinkPipe.ConnectableOutlets.Should().BeEmpty();
         }
 
         [Test]

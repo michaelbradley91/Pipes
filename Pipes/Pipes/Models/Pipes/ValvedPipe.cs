@@ -4,7 +4,6 @@ using Pipes.Builders;
 using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.TieBreakers;
-using SharedResources.SharedResources;
 
 namespace Pipes.Models.Pipes
 {
@@ -20,11 +19,10 @@ namespace Pipes.Models.Pipes
         TTieBreaker TieBreaker { get; }
     }
 
-    public class ValvedPipe<TReceive, TSend, TTieBreaker> : IValvedPipe<TReceive, TSend, TTieBreaker> where TTieBreaker : ITieBreaker
+    public class ValvedPipe<TReceive, TSend, TTieBreaker> : Pipe, IValvedPipe<TReceive, TSend, TTieBreaker> where TTieBreaker : ITieBreaker
     {
-        public IReadOnlyCollection<IInlet> AllInlets => new[] {Inlet};
-        public IReadOnlyCollection<IOutlet> AllOutlets => new[] {Outlet};
-        public SharedResource SharedResource { get; }
+        protected override IReadOnlyCollection<IInlet> PipeInlets => new IInlet[] {Inlet, adapterInlet};
+        protected override IReadOnlyCollection<IOutlet> PipeOutlets => new IOutlet[] {Outlet, adapterOutlet};
 
         public ISimpleInlet<TReceive> Inlet { get; }
         public ISimpleOutlet<TSend> Outlet { get; }
@@ -34,16 +32,14 @@ namespace Pipes.Models.Pipes
         private readonly IAdapterInlet<TSend> adapterInlet;
         private readonly IAdapterOutlet<TReceive> adapterOutlet;
 
-        public ValvedPipe(ISimpleInlet<TReceive> inlet, ISimpleOutlet<TSend> outlet, TTieBreaker tieBreaker)
+        public ValvedPipe(ISimpleInlet<TReceive> inlet, ISimpleOutlet<TSend> outlet, TTieBreaker tieBreaker) : base(new[] {inlet}, new[] {outlet})
         {
             Inlet = inlet;
             Outlet = outlet;
             TieBreaker = tieBreaker;
 
-            var pipeResource = SharedResourceHelpers.CreateAndConnectSharedResources(Inlet.SharedResource, Outlet.SharedResource);
-            SharedResource = pipeResource;
-            adapterOutlet = new AdapterOutlet<TReceive>(new Lazy<IPipe>(() => this), SharedResourceHelpers.CreateAndConnectSharedResource(pipeResource));
-            adapterInlet = new AdapterInlet<TSend>(new Lazy<IPipe>(() => this), SharedResourceHelpers.CreateAndConnectSharedResource(pipeResource));
+            adapterOutlet = new AdapterOutlet<TReceive>(new Lazy<IPipe>(() => this), SharedResourceHelpers.CreateAndConnectSharedResource(SharedResource));
+            adapterInlet = new AdapterInlet<TSend>(new Lazy<IPipe>(() => this), SharedResourceHelpers.CreateAndConnectSharedResource(SharedResource));
 
             var preparationCapacityPipe = PipeBuilder.New.CapacityPipe<TSend>().WithCapacity(1).Build();
             var flushEitherOutletPipe = PipeBuilder.New.EitherOutletPipe<TSend>().Build();
@@ -66,46 +62,14 @@ namespace Pipes.Models.Pipes
             Valve = new Valve<TReceive, TSend>(preparationCapacityPipe.Inlet, flushEitherOutletPipe.LeftOutlet, eitherInletPipe.Outlet);
         }
 
-        public Action<TMessage> FindReceiver<TMessage>(IInlet<TMessage> inletSendingMessage, bool checkInlet = true)
+        protected override Action<TMessage> FindReceiverFor<TMessage>(IInlet<TMessage> inletSendingMessage)
         {
-            if (inletSendingMessage == Inlet)
-            {
-                var receiver = adapterOutlet.FindReceiver();
-                if (receiver == null) return null;
-                return m => receiver((TReceive) (object) m);
-            }
-            if (inletSendingMessage == adapterInlet)
-            {
-                var receiver = Outlet.FindReceiver();
-                if (receiver == null) return null;
-                return m => receiver((TSend) (object) m);
-            }
-            if (checkInlet)
-            {
-                throw new InvalidOperationException("The outlet receiving the message is not associated to this pipe.");
-            }
-            return null;
+            return inletSendingMessage == Inlet ? adapterOutlet.FindReceiver<TMessage>() : Outlet.FindReceiver<TMessage>();
         }
 
-        public Func<TMessage> FindSender<TMessage>(IOutlet<TMessage> outletReceivingMessage, bool checkOutlet = true)
+        protected override Func<TMessage> FindSenderFor<TMessage>(IOutlet<TMessage> outletReceivingMessage)
         {
-            if (outletReceivingMessage == Outlet)
-            {
-                var sender = adapterInlet.FindSender();
-                if (sender == null) return null;
-                return () => (TMessage)(object)sender();
-            }
-            if (outletReceivingMessage == adapterOutlet)
-            {
-                var sender = Inlet.FindSender();
-                if (sender == null) return null;
-                return () => (TMessage)(object)sender();
-            }
-            if (checkOutlet)
-            {
-                throw new InvalidOperationException("The inlet sending the message is not associated to this pipe.");
-            }
-            return null;
+            return outletReceivingMessage == Outlet ? adapterInlet.FindSender<TMessage>() : Inlet.FindSender<TMessage>();
         }
     }
 }

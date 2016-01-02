@@ -23,8 +23,8 @@ namespace Pipes.Tests.Helpers
                 outlets.Add(OutletHelpers.CreateOutlet<T>(pipe.Object));
             }
             
-            pipe.Setup(p => p.AllInlets).Returns(inlets);
-            pipe.Setup(p => p.AllOutlets).Returns(outlets);
+            pipe.Setup(p => p.ConnectableInlets).Returns(inlets);
+            pipe.Setup(p => p.ConnectableOutlets).Returns(outlets);
 
             return pipe;
         }

@@ -32,6 +32,11 @@ namespace Pipes.Models.Lets
         Action<TMessage> FindReceiver();
 
         /// <summary>
+        /// Provides a receiver casting TMessage to TTarget for convenience.
+        /// </summary>
+        Action<TTarget> FindReceiver<TTarget>();
+
+        /// <summary>
         /// Connect this outlet to an inlet. This helps you to build up a pipe system!
         /// By default, this will also check to see if the pipe system would no longer be a tree after this. If so, it will refuse to connect to the given inlet and throw
         /// an InvalidOperationException. This is quite an expensive check for large pipe systems however, so if you're confident you are not creating cycles, you
@@ -77,5 +82,12 @@ namespace Pipes.Models.Lets
         public abstract bool CanConnect();
 
         public abstract Action<TMessage> FindReceiver();
+
+        public Action<TTarget> FindReceiver<TTarget>()
+        {
+            var receiver = FindReceiver();
+            if (receiver == null) return null;
+            return m => receiver((TMessage)(object)m);
+        }
     }
 }

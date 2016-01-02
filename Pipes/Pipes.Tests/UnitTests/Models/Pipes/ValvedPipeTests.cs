@@ -41,17 +41,17 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         [Test]
         public void ValvedPipe_HasOneInlet()
         {
-            valvedPipe.AllInlets.Should().HaveCount(1);
+            valvedPipe.ConnectableInlets.Should().HaveCount(1);
             valvedPipe.Inlet.Should().NotBeNull();
-            valvedPipe.Inlet.Should().Be(valvedPipe.AllInlets.Single());
+            valvedPipe.Inlet.Should().Be(valvedPipe.ConnectableInlets.Single());
         }
 
         [Test]
         public void ValvedPipe_HasOneOutlet()
         {
-            valvedPipe.AllOutlets.Should().HaveCount(1);
+            valvedPipe.ConnectableOutlets.Should().HaveCount(1);
             valvedPipe.Outlet.Should().NotBeNull();
-            valvedPipe.Outlet.Should().Be(valvedPipe.AllOutlets.Single());
+            valvedPipe.Outlet.Should().Be(valvedPipe.ConnectableOutlets.Single());
         }
 
         [Test]
@@ -71,19 +71,6 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             valvedPipe.FindSender(dummyOutlet);
         }
 
-        [Test]
-        public void FindSender_GivenAnOutletThatDoesNotBelongToThePipeButToldNotToCheckIt_ReturnsNull()
-        {
-            // Arrange
-            var dummyOutlet = new Mock<IOutlet<int>>().Object;
-
-            // Act
-            var sender = valvedPipe.FindSender(dummyOutlet, false);
-
-            // Assert
-            sender.Should().BeNull();
-        }
-
         [ExpectedException(typeof(InvalidOperationException))]
         [Test]
         public void FindReceiver_GivenAnInletThatDoesNotBelongToThePipe_ThrowsAnException()
@@ -94,20 +81,7 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             // Act
             valvedPipe.FindReceiver(dummyInlet);
         }
-
-        [Test]
-        public void FindReceiver_GivenAnInletThatDoesNotBelongToThePipeButToldNotToCheckIt_ReturnsNull()
-        {
-            // Arrange
-            var dummyInlet = new Mock<IInlet<int>>().Object;
-
-            // Act
-            var receiver = valvedPipe.FindReceiver(dummyInlet, false);
-
-            // Assert
-            receiver.Should().BeNull();
-        }
-
+        
         [Test]
         public void ReceiveOrSend_GivenThereIsNeitherASenderNorAReceiver_BlocksIndefinitely()
         {

@@ -23,8 +23,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
         {
             // Assert
             splittingPipe.Inlet.Should().NotBeNull();
-            splittingPipe.AllInlets.Count.Should().Be(1);
-            splittingPipe.AllInlets.Single().Should().Be(splittingPipe.Inlet);
+            splittingPipe.ConnectableInlets.Count.Should().Be(1);
+            splittingPipe.ConnectableInlets.Single().Should().Be(splittingPipe.Inlet);
         }
 
         [Test]
@@ -33,8 +33,8 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             // Assert
             splittingPipe.LeftOutlet.Should().NotBeNull();
             splittingPipe.RightOutlet.Should().NotBeNull();
-            splittingPipe.AllOutlets.Count.Should().Be(2);
-            splittingPipe.AllOutlets.Should().BeEquivalentTo(splittingPipe.LeftOutlet, splittingPipe.RightOutlet);
+            splittingPipe.ConnectableOutlets.Count.Should().Be(2);
+            splittingPipe.ConnectableOutlets.Should().BeEquivalentTo(splittingPipe.LeftOutlet, splittingPipe.RightOutlet);
         }
 
         [Test]

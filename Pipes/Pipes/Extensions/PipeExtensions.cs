@@ -58,7 +58,7 @@ namespace Pipes.Extensions
             if (vertex.IsPipe)
             {
                 var pipe = vertex.GetPipe();
-                return pipe.AllOutlets.Select(PipeGraphVertex.Create).ToList();
+                return pipe.ConnectableOutlets.Select(PipeGraphVertex.Create).ToList();
             }
 
             if (vertex.IsInlet)
@@ -78,7 +78,7 @@ namespace Pipes.Extensions
             if (vertex.IsPipe)
             {
                 var pipe = vertex.GetPipe();
-                return pipe.AllInlets.Select(PipeGraphVertex.Create).ToList();
+                return pipe.ConnectableInlets.Select(PipeGraphVertex.Create).ToList();
             }
 
             if (vertex.IsOutlet)

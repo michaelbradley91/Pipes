@@ -6,7 +6,7 @@ namespace Pipes.Models.Pipes
 {
     public abstract class SimplePipe<TMessage> : Pipe
     {
-        protected SimplePipe(IReadOnlyCollection<IInlet> allInlets, IReadOnlyCollection<IOutlet> allOutlets) : base(allInlets, allOutlets)
+        protected SimplePipe(IReadOnlyCollection<IInlet> connectableInlets, IReadOnlyCollection<IOutlet> connectableOutlets) : base(connectableInlets, connectableOutlets)
         {
         }
 
