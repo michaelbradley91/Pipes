@@ -44,8 +44,9 @@
     <Reference Include="QuickGraph.Serialization">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="SharedResources">
-      <HintPath>..\packages\StickySharedResources.1.0.0\lib\SharedResources.dll</HintPath>
+    <Reference Include="SharedResources, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StickySharedResources.1.0.1\lib\SharedResources.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -77,7 +78,6 @@
     <Compile Include="Extensions\GraphExtensions.cs" />
     <Compile Include="Extensions\PipeExtensions.cs" />
     <Compile Include="Builders\PipeBuilder.cs" />
-    <Compile Include="Helpers\SharedResourceHelpers.cs" />
     <Compile Include="Models\Graphs\PipeGraphVertex.cs" />
     <Compile Include="Models\Lets\AdapterOutlet.cs" />
     <Compile Include="Models\Lets\AdapterInlet.cs" />
@@ -92,6 +92,7 @@
     <Compile Include="Models\Lets\SimpleOutlet.cs" />
     <Compile Include="Models\Pipes\BasicPipe.cs" />
     <Compile Include="Models\Pipes\ComplexPipe.cs" />
+    <Compile Include="Models\Pipes\CompositePipe.cs" />
     <Compile Include="Models\Pipes\SimplePipe.cs" />
     <Compile Include="Models\Pipes\SourcePipe.cs" />
     <Compile Include="Models\Pipes\SplittingPipe.cs" />

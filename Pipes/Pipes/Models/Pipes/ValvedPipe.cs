@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Pipes.Builders;
-using Pipes.Helpers;
 using Pipes.Models.Lets;
 using Pipes.Models.TieBreakers;
 
@@ -19,7 +18,7 @@ namespace Pipes.Models.Pipes
         TTieBreaker TieBreaker { get; }
     }
 
-    public class ValvedPipe<TReceive, TSend, TTieBreaker> : Pipe, IValvedPipe<TReceive, TSend, TTieBreaker> where TTieBreaker : ITieBreaker
+    public class ValvedPipe<TReceive, TSend, TTieBreaker> : CompositePipe, IValvedPipe<TReceive, TSend, TTieBreaker> where TTieBreaker : ITieBreaker
     {
         protected override IReadOnlyCollection<IInlet> PipeInlets => new IInlet[] {Inlet, adapterInlet};
         protected override IReadOnlyCollection<IOutlet> PipeOutlets => new IOutlet[] {Outlet, adapterOutlet};
@@ -38,8 +37,8 @@ namespace Pipes.Models.Pipes
             Outlet = outlet;
             TieBreaker = tieBreaker;
 
-            adapterOutlet = new AdapterOutlet<TReceive>(new Lazy<IPipe>(() => this), SharedResourceHelpers.CreateAndConnectSharedResource(SharedResource));
-            adapterInlet = new AdapterInlet<TSend>(new Lazy<IPipe>(() => this), SharedResourceHelpers.CreateAndConnectSharedResource(SharedResource));
+            adapterOutlet = CreateAdapterOutlet<TReceive>();
+            adapterInlet = CreateAdapterInlet<TSend>();
 
             var preparationCapacityPipe = PipeBuilder.New.CapacityPipe<TSend>().WithCapacity(1).Build();
             var flushEitherOutletPipe = PipeBuilder.New.EitherOutletPipe<TSend>().Build();
@@ -54,8 +53,6 @@ namespace Pipes.Models.Pipes
             sendTransformPipe.Outlet.ConnectTo(eitherInletPipe.LeftInlet);
             receiveTransformPipe.Outlet.ConnectTo(eitherInletPipe.RightInlet);
 
-            // We do not allow the connect methods to check for a non-tree, as this pipe has not been fully constructed yet.
-            // As this is our internal pipe system, we can guarantee it forms a tree.
             adapterInlet.ConnectTo(splittingPipe.LeftOutlet, false);
             adapterOutlet.ConnectTo(receiveTransformPipe.Inlet, false);
 
