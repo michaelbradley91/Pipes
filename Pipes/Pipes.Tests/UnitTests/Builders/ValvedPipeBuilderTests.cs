@@ -88,6 +88,26 @@ namespace Pipes.Tests.UnitTests.Builders
             pipe.TieBreaker.Priority.Should().Be(Priority.Right);
         }
 
+        [Test]
+        public void WithSendPriority_ReturnsAPipeWithLeftPriority()
+        {
+            // Act
+            var pipe = valvedPipeBuilder.WithSendPriority().Build();
+
+            // Assert
+            pipe.TieBreaker.Priority.Should().Be(Priority.Left);
+        }
+
+        [Test]
+        public void WithReceivePriority_ReturnsAPipeWithRightPriority()
+        {
+            // Act
+            var pipe = valvedPipeBuilder.WithReceivePriority().Build();
+
+            // Assert
+            pipe.TieBreaker.Priority.Should().Be(Priority.Right);
+        }
+
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         [Test]
         public void WithRandomisingTieBreaker_GivenANegativeProbability_ThrowsAnArgumentOutOfRangeException()

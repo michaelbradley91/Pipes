@@ -43,6 +43,16 @@ namespace Pipes.Builders
         /// <summary>
         /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
         /// </summary>
+        ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker> WithSendPriority();
+
+        /// <summary>
+        /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
+        /// </summary>
+        ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker> WithReceivePriority();
+
+        /// <summary>
+        /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
+        /// </summary>
         ITieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTieBreaker> WithRandomisingTieBreaker(double sendProbability = 0.5);
     }
 
@@ -75,6 +85,16 @@ namespace Pipes.Builders
         public ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker> WithPrioritisingTieBreaker(Priority priority = Priority.Left)
         {
             return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker>(new PrioritisingTieBreaker(priority)));
+        }
+
+        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker> WithSendPriority()
+        {
+            return WithPrioritisingTieBreaker(Priority.Left);
+        }
+
+        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker> WithReceivePriority()
+        {
+            return WithPrioritisingTieBreaker(Priority.Right);
         }
 
         public ITieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTieBreaker> WithRandomisingTieBreaker(double sendProbability = 0.5)

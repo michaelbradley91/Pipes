@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using SharedResources.SharedResources;
+﻿using SharedResources.SharedResources;
 
 namespace Pipes.Helpers
 {
@@ -36,17 +35,6 @@ namespace Pipes.Helpers
             resourceGroup.FreeSharedResources();
 
             return parentResource;
-        }
-
-        public static void ConnectSharedResources(SharedResource parentSharedResource, SharedResource childSharedResource, params SharedResource[] otherChildSharedResources)
-        {
-            var resourceGroup = SharedResourceGroup.CreateAcquiringSharedResources(new [] {parentSharedResource, childSharedResource}.Concat(otherChildSharedResources).ToArray());
-            resourceGroup.ConnectSharedResources(parentSharedResource, childSharedResource);
-            foreach (var otherChildSharedResource in otherChildSharedResources)
-            {
-                resourceGroup.ConnectSharedResources(parentSharedResource, otherChildSharedResource);
-            }
-            resourceGroup.FreeSharedResources();
         }
     }
 }
