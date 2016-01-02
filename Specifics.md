@@ -3,9 +3,13 @@ Specifics
 [Click to return to Pipes](README.md)
 Inlet and Outlet Behaviour
 --------------------------
-This package comes with one default inlet and one default outlet (called "simple" inlet and outlet), and it's expected you'll typically use these without thinking about them. They expose the following:
+This package comes with with two types of inlets and outlets:
 
-### Inlets:
+### Simple Inlets and Outlets:
+
+These are the inlets and outlets you'll use most often. Inlets let your thread send messages down them, while outlets let your thread wait to receive a message from them.
+
+The Simple Inlet exposes:
 ```c#
 // Try to send a message, and wait indefinitely for the pipe system to accept the message
 // (the thread can still be interrupted safely)
@@ -21,7 +25,7 @@ basicPipe.Inlet.ConnectTo(anotherPipe.Outlet);
 basicPipe.Inlet.Disconnect();
 ```
 
-### Outlets:
+The Simple Outlet exposes:
 ```c#
 // Try to receive a message, and wait indefinitely for the pipe system to provide one.
 // (the thread can still be safely interrupted)
@@ -36,6 +40,12 @@ basicPipe.Outlet.ReceiveImmediately();
 basicPipe.Outlet.ConnectTo(anotherPipe.Inlet);
 basicPipe.Outlet.Disconnect();
 ```
+
+### Adapter Inlets and Outlets:
+
+These are exactly like simple inlets and outlets, but they do not allow threads to send or receive messages with them. They can be connected to other pipes however.
+
+These are used when building composite pipes - pipes that are really made up of many "internal" pipes and do not want to directly expose certain inlets and outlets. However, their use is entirely optional.
 
 ### More Stuff about Inlets and Outlets:
 When you connect an inlet to an outlet, any possible sends and receives in the resulting pipe system are processed **immediately**. Normally, you will create your pipe system and then never change it, but you can exploit this behaviour. (Disconnecting and connecting is also thread safe).
