@@ -10,6 +10,9 @@ Know what you're looking for? Try one of the links below:
 * [Technicalities](Technicalities.md) - Various implementation specific details. If you think you've found a bug, it might help to look here.
 * [Disclaimer](Disclaimer.md) - I warn you that I am not perfect so things can go wrong...
 
+Worked Examples:
+* [Custom Composite Pipe](SimpleExample.md) - an example of creating a new pipe from existing pipes.
+
 Below is a quick summary of why I believe Pipes are fun!
 
 Summary
