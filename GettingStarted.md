@@ -59,7 +59,7 @@ That's essentially all there is to it! Pipes, their inlets and their outlets are
 
 ### Worked Examples
 To continue to learn pipes, I'd recommend you check out some of the worked examples:
-* [Simple Example](SimpleExample.md) - most of what you need to know. Includes:
+* [Composite Pipe Example](SimpleExample.md) - most of what you need to know. Includes:
 	* Creating a pipe system.
 	* Creating a new pipe.
 	* Extending the build syntax.
