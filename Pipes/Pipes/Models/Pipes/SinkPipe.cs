@@ -12,7 +12,7 @@ namespace Pipes.Models.Pipes
     {
         public ISimpleInlet<TMessage> Inlet { get; }
 
-        public SinkPipe(ISimpleInlet<TMessage> inlet) : base(new[] {inlet}, new IOutlet[] {})
+        public SinkPipe(ISimpleInlet<TMessage> inlet) : base(new[] {inlet}, new IOutlet<TMessage>[] {})
         {
             Inlet = inlet;
         }

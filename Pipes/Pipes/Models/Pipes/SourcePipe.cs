@@ -14,7 +14,7 @@ namespace Pipes.Models.Pipes
         public ISimpleOutlet<TMessage> Outlet { get; }
         public Func<TMessage> MessageProducer { get; }
 
-        public SourcePipe(ISimpleOutlet<TMessage> outlet, Func<TMessage> messageProducer) : base(new IInlet[] {}, new[] {outlet})
+        public SourcePipe(ISimpleOutlet<TMessage> outlet, Func<TMessage> messageProducer) : base(new IInlet<TMessage>[] {}, new[] {outlet})
         {
             Outlet = outlet;
             MessageProducer = messageProducer;
