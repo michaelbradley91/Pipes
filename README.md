@@ -10,7 +10,10 @@ Know what you're looking for? Try one of the links below:
 * [Technicalities](Technicalities.md) - Various implementation specific details. If you think you've found a bug, it might help to look here.
 * [Disclaimer](Disclaimer.md) - I warn you that I am not perfect so things can go wrong...
 
-Below is a quick summary of why I believe Pipes are fun!
+Examples:
+* [Custom Composite Pipe](SimpleExample.md) - an example of creating a new pipe from existing pipes.
+
+Pipes are, in my opinion, fun and easy to use. Their focus is on extensibility and ease of use, and could even be an educational tool. However, they are pretty fast too and should make your code much more maintainable!
 
 Summary
 -------
