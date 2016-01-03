@@ -22,7 +22,7 @@ namespace Pipes.Models.Pipes
 
         protected override Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMessage)
         {
-            return null;
+            throw new InvalidOperationException("A source pipe cannot receive a message.");
         }
 
         protected override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage)

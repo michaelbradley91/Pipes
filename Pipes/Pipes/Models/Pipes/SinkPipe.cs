@@ -24,7 +24,7 @@ namespace Pipes.Models.Pipes
 
         protected override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMessage)
         {
-            return null;
+            throw new InvalidOperationException("A sink pipe cannot send a message.");
         }
     }
 }
