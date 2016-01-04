@@ -2,7 +2,7 @@ New Pipe Example
 ==============
 [Click to return to Pipes](README.md)
 
-This assumes a little that you have read the [Composite Pipe Example](SimpleExample.md).
+This assumes that you have read the [Composite Pipe Example](SimpleExample.md).
 In particular, this example will not cover extending the fluent build syntax.
 
 ### Our Goals
