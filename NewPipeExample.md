@@ -161,7 +161,7 @@ protected override Func<TMessage> FindSender(IOutlet<TMessage> outletReceivingMe
 
     // Check if the inlet has a message it can send.
     var sender = Inlet.FindSender();
-    if (sender == null) return null; //it did not
+    if (sender == null) return null; // it did not
 
     // The inlet does have a message it can send.
     return () =>
