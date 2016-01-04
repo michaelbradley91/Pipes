@@ -12,6 +12,7 @@ Know what you're looking for? Try one of the links below:
 
 Examples:
 * [Custom Composite Pipe](SimpleExample.md) - an example of creating a new pipe from existing pipes.
+* [Custom New Pipe](NewPipeExample.md) - an example of creating a pipe that cannot be created from existing pipes.
 
 Pipes are, in my opinion, fun and easy to use. Their focus is on extensibility and ease of use, and could even be an educational tool. However, they are pretty fast too and should make your code much more maintainable!
 
