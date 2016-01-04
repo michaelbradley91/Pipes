@@ -274,4 +274,6 @@ This is where the assumption that our **pipe system forms a tree** really comes 
 
 Therefore, since the capacity pipe already has messages stored in it, our outlet could not receive a message previously.
 
-As nothing has changed, this means it still cannot receive a message. This allows the capacity pipe to know Outlet.FindReceiver() will return null without calling it. If the pipe system is large, avoiding this call can **save a lot of time**.
+As nothing has changed, this means it still cannot receive a message. This allows the capacity pipe to know `Outlet.FindReceiver()` will return `null` without calling it. If the pipe system is large, avoiding this call can **save a lot of time**.
+
+<sup>**Note:** You can draw some cool diagrams of pipe systems and how FindReceiver / FindSender calls propagate around the system. Critically, calls will never back track on each other due to the Golden Advice and the fact that the pipe system is a tree.</sup>
