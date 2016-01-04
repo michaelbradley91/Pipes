@@ -191,9 +191,9 @@ That's a little complicated, but implements exactly and only what is necessary t
 
 You may wonder why we don't need to check our inlet for yet another message. We can rely on the outlet receiving the message (parameter of the function) to ask us for *another* message if it is capable of receiving a second message, as it too will try to resolve the pipe system.
 
-If you don't believe me, connect this to other pipes and run some tests against it until you are satisfied. All pipes will work in this way.
+If you don't believe me, connect this to other pipes and run some tests against it until you are satisfied. All pipes work in this way.
 
-That's all there is to it. You can extend the fluent build syntax to make creating the pipe much easier, and use the test at the start of this example if you like. For convenience, here's the code. (Explanation in the [Composite Pipe Example](SimpleExample.md))
+That's **all there is to it**! You can extend the fluent build syntax to make creating the pipe much easier, and use the test at the start of this example if you like. For convenience, here's the code. (Explanation in the [Composite Pipe Example](SimpleExample.md))
 
 ```c#
 public static class PipeExtensions
@@ -247,7 +247,7 @@ protected override Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMe
 }
 ```
 
-#### Efficiency Bonus
+### Efficiency Bonus
 Consider the following implementation of the Capacity Pipe's FindReceiver:
 
 ```c#
@@ -270,8 +270,8 @@ protected override Action<TMessage> FindReceiver(IInlet<TMessage> inletSendingMe
 ```
 The commented line might surprise you. Given the capacity pipe is holding messages, why doesn't it check if its outlet can receive any of them?
 
-This is where the assumption that our pipe system forms a tree really comes to our rescue. The capacity pipe's outlet has not been touched by this method. As the pipe system is a tree, we know that the pipe system off of this outlet has not been modified at all, meaning it is already resolved.
+This is where the assumption that our **pipe system forms a tree** really comes to our rescue. The capacity pipe's outlet has not been touched by this method. As the pipe system is a tree, we know that the pipe system off of this outlet has not been modified at all, meaning it is **already resolved**.
 
-Therefore, since the capacity pipe already has messages stored in it, our outlet could not receive a message previously
+Therefore, since the capacity pipe already has messages stored in it, our outlet could not receive a message previously.
 
-As nothing has changed, this means it still cannot receive a message. This allows the capacity pipe to know Outlet.FindReceiver() will return null without calling it. If the pipe system is large, avoiding this call can save a lot of time.
+As nothing has changed, this means it still cannot receive a message. This allows the capacity pipe to know Outlet.FindReceiver() will return null without calling it. If the pipe system is large, avoiding this call can **save a lot of time**.
