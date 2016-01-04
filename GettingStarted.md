@@ -63,3 +63,6 @@ To continue to learn pipes, I'd recommend you check out some of the worked examp
 	* Creating a pipe system.
 	* Creating a new pipe.
 	* Extending the build syntax.
+* [New Pipe Example](NewPipeExample.md) - more advanced. Includes:
+	* How to create a pipe not made up of other pipes (unique behaviour)
+	* Some explanation of how pipe systems work internally.
