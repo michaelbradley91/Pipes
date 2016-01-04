@@ -100,9 +100,9 @@ Both methods require you to return a function. This function must:
 * Return null if you could not find a receiver / sender.
 * Aim to **Resolve the Pipe System**
 
-A pipe system is called **resolved** if it is impossible for any sender's message to move closer to a receiver. Therefore, all messages should be pushed down the pipe system as far as possible.
+A pipe system is called **resolved** if it is impossible for any sender's message to move closer to a receiver. All messages should be pushed down the pipe system as far as possible.
 
-**Note:** You can rely on the FindSender / FindReceiver function only being run by one thread at a time. In fact, only one thread can run within an entire pipe system at any one time.
+**Note:** You can rely on the FindSender / FindReceiver function to only be run by one thread at a time. In fact, only one thread can run within an entire pipe system at any one time.
 
 ### Implementing FindReceiver
 
