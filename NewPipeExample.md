@@ -96,7 +96,7 @@ Therefore, the method `FindSender` is asking you to find someone who could send 
 
 Both methods require you to return a function. This function must:
 * Never throw an exception.
-* Only modify the pipe system if executed. The act of calling the FindSender or FindReceiver method should not itself modify the pipe system at all.
+* Only modify the pipe system if executed. The act of calling the FindSender or FindReceiver method itself should not modify the pipe system at all.
 * Return null if you could not find a receiver / sender.
 * Aim to **Resolve the Pipe System**
 
