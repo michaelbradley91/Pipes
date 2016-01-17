@@ -58,8 +58,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\BigEitherInletPipeBuilder.cs" />
+    <Compile Include="Builders\BigEitherOutletPipeBuilder.cs" />
+    <Compile Include="Builders\BigSplittingPipeBuilder.cs" />
+    <Compile Include="Builders\BigValvedPipeBuilder.cs" />
+    <Compile Include="Builders\SizedBigEitherInletPipeBuilder.cs" />
+    <Compile Include="Builders\SizedBigEitherOutletPipeBuilder.cs" />
+    <Compile Include="Builders\SizedBigSplittingPipeBuilder.cs" />
+    <Compile Include="Builders\SizedBigValvedPipeBuilder.cs" />
+    <Compile Include="Builders\TieBreakingSizedBigEitherInletPipeBuilder.cs" />
+    <Compile Include="Builders\TieBreakingSizedBigEitherOutletPipeBuilder.cs" />
+    <Compile Include="Builders\TieBreakingSizedBigValvedPipeBuilder.cs" />
     <Compile Include="Builders\TieBreakingValvedPipeBuilder.cs" />
-    <Compile Include="Builders\ValvePipeBuilder.cs" />
+    <Compile Include="Builders\ValvedPipeBuilder.cs" />
     <Compile Include="Builders\EitherOutletPipeBuilder.cs" />
     <Compile Include="Builders\SinkPipeBuilder.cs" />
     <Compile Include="Builders\SourcePipeWithMessageProducerBuilder.cs" />
@@ -91,18 +102,24 @@
     <Compile Include="Models\Lets\WaitingSender.cs" />
     <Compile Include="Models\Lets\SimpleOutlet.cs" />
     <Compile Include="Models\Pipes\BasicPipe.cs" />
+    <Compile Include="Models\Pipes\BigEitherOutletPipe.cs" />
+    <Compile Include="Models\Pipes\BigEitherInletPipe.cs" />
     <Compile Include="Models\Pipes\ComplexPipe.cs" />
     <Compile Include="Models\Pipes\CompositePipe.cs" />
     <Compile Include="Models\Pipes\SimplePipe.cs" />
     <Compile Include="Models\Pipes\SourcePipe.cs" />
+    <Compile Include="Models\Pipes\BigSplittingPipe.cs" />
     <Compile Include="Models\Pipes\SplittingPipe.cs" />
     <Compile Include="Models\Pipes\EitherOutletPipe.cs" />
     <Compile Include="Models\Pipes\Pipe.cs" />
     <Compile Include="Models\Pipes\SinkPipe.cs" />
     <Compile Include="Models\Pipes\StraightPipe.cs" />
     <Compile Include="Models\Pipes\EitherInletPipe.cs" />
+    <Compile Include="Models\Pipes\BigValvedPipe.cs" />
     <Compile Include="Models\Pipes\ValvedPipe.cs" />
     <Compile Include="Models\Pipes\TransformPipe.cs" />
+    <Compile Include="Models\TieBreakers\UniformRandomisingTieBreaker.cs" />
+    <Compile Include="Models\TieBreakers\MinPrioritisingTieBreaker.cs" />
     <Compile Include="Models\TieBreakers\TieBreaker.cs" />
     <Compile Include="Models\TieBreakers\TwoWayTieBreaker.cs" />
     <Compile Include="Models\TieBreakers\AlternatingTwoWayTieBreaker.cs" />

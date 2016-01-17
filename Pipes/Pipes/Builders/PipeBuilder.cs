@@ -13,6 +13,10 @@ namespace Pipes.Builders
         ISinkPipeBuilder<TMessage> SinkPipe<TMessage>();
         ISourcePipeBuilder<TMessage> SourcePipe<TMessage>();
         IValvedPipeBuilder<TReceive, TSend> ValvedPipe<TReceive, TSend>();
+        IBigEitherInletPipeBuilder<TMessage> BigEitherInletPipe<TMessage>();
+        IBigEitherOutletPipeBuilder<TMessage> BigEitherOutletPipe<TMessage>();
+        IBigSplittingPipeBuilder<TMessage> BigSplittingPipe<TMessage>();
+        IBigValvedPipeBuilder<TReceive, TSend> BigValvedPipe<TReceive, TSend>();
     }
 
     public class PipeBuilder : IPipeBuilder
@@ -62,6 +66,26 @@ namespace Pipes.Builders
         public IValvedPipeBuilder<TReceive, TSend> ValvedPipe<TReceive, TSend>()
         {
             return new ValvedPipeBuilder<TReceive, TSend>();
+        }
+
+        public IBigEitherInletPipeBuilder<TMessage> BigEitherInletPipe<TMessage>()
+        {
+            return new BigEitherInletPipeBuilder<TMessage>();
+        }
+
+        public IBigEitherOutletPipeBuilder<TMessage> BigEitherOutletPipe<TMessage>()
+        {
+            return new BigEitherOutletPipeBuilder<TMessage>();
+        }
+
+        public IBigSplittingPipeBuilder<TMessage> BigSplittingPipe<TMessage>()
+        {
+            return new BigSplittingPipeBuilder<TMessage>();
+        }
+
+        public IBigValvedPipeBuilder<TReceive, TSend> BigValvedPipe<TReceive, TSend>()
+        {
+            return new BigValvedPipeBuilder<TReceive, TSend>();
         }
     }
 }

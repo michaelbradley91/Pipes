@@ -106,5 +106,45 @@ namespace Pipes.Tests.UnitTests.Builders
             // Assert
             builder.Should().BeAssignableTo<ValvedPipeBuilder<string, int>>();
         }
+
+        [Test]
+        public void BigEitherInletPipe_ReturnsABigEitherInletPipeBuilder()
+        {
+            // Act
+            var builder = PipeBuilder.New.BigEitherInletPipe<int>();
+
+            // Assert
+            builder.Should().BeAssignableTo<BigEitherInletPipeBuilder<int>>();
+        }
+
+        [Test]
+        public void BigEitherOutletPipe_ReturnsABigEitherOutletPipeBuilder()
+        {
+            // Act
+            var builder = PipeBuilder.New.BigEitherOutletPipe<int>();
+
+            // Assert
+            builder.Should().BeAssignableTo<BigEitherOutletPipeBuilder<int>>();
+        }
+
+        [Test]
+        public void BigSplittingPipe_ReturnsABigSplittingPipeBuilder()
+        {
+            // Act
+            var builder = PipeBuilder.New.BigSplittingPipe<int>();
+
+            // Assert
+            builder.Should().BeAssignableTo<BigSplittingPipeBuilder<int>>();
+        }
+
+        [Test]
+        public void BigValvedPipe_ReturnsABigValvedPipeBuilder()
+        {
+            // Act
+            var builder = PipeBuilder.New.BigValvedPipe<string, int>();
+
+            // Assert
+            builder.Should().BeAssignableTo<BigValvedPipeBuilder<string, int>>();
+        }
     }
 }
