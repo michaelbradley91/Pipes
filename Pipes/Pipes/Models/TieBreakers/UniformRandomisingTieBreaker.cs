@@ -8,7 +8,7 @@ namespace Pipes.Models.TieBreakers
     {
     }
 
-    public class UniformRandomisingTieBreaker : IMinPrioritisingTieBreaker
+    public class UniformRandomisingTieBreaker : IUniformRandomisingTieBreaker
     {
         private readonly Random randomNumberGenerator;
 

@@ -91,6 +91,17 @@
     <Compile Include="IntegrationTests\Examples\DrainCapacityPipeExample.cs" />
     <Compile Include="IntegrationTests\Examples\ReadOrWriteExample.cs" />
     <Compile Include="IntegrationTests\Models\Pipes\ConnectTests.cs" />
+    <Compile Include="UnitTests\Builders\BigValvedPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\BigSplittingPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\BigEitherOutletPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\BigEitherInletPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\SizedBigValvedPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\SizedBigSplittingPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\SizedBigEitherOutletPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\SizedBigEitherInletPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\TieBreakingSizedBigValvedPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\TieBreakingSizedBigEitherOutletPipeBuilderTests.cs" />
+    <Compile Include="UnitTests\Builders\TieBreakingSizedBigEitherInletPipeBuilderTests.cs" />
     <Compile Include="UnitTests\Builders\TieBreakingValvedPipeBuilderTests.cs" />
     <Compile Include="UnitTests\Builders\ValvedPipeBuilderTests.cs" />
     <Compile Include="UnitTests\Builders\SinkPipeBuilderTests.cs" />
