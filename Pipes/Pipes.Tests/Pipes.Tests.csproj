@@ -130,6 +130,8 @@
     <Compile Include="UnitTests\Models\TieBreakers\AlternatingTwoWayTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\RandomisingTwoWayTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\PrioritisingTwoWayTieBreakerTests.cs" />
+    <Compile Include="UnitTests\Models\TieBreakers\TwoWayTieBreakerTests.cs" />
+    <Compile Include="UnitTests\Models\TieBreakers\TieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\Utilities\BiLookupTests.cs" />
     <Compile Include="UnitTests\Models\Utilities\PromisedTests.cs" />
   </ItemGroup>
