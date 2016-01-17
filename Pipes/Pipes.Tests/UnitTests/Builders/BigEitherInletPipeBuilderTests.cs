@@ -2,7 +2,6 @@
 using FluentAssertions;
 using NUnit.Framework;
 using Pipes.Builders;
-using Pipes.Models.Pipes;
 
 namespace Pipes.Tests.UnitTests.Builders
 {

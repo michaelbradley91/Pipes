@@ -139,6 +139,8 @@
     <Compile Include="UnitTests\Models\Pipes\BasicPipeTests.cs" />
     <Compile Include="UnitTests\Models\Pipes\ValvedPipeTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\AlternatingTwoWayTieBreakerTests.cs" />
+    <Compile Include="UnitTests\Models\TieBreakers\MinPrioritisingTieBreakerTests.cs" />
+    <Compile Include="UnitTests\Models\TieBreakers\UniformRandomisingTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\RandomisingTwoWayTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\PrioritisingTwoWayTieBreakerTests.cs" />
     <Compile Include="UnitTests\Models\TieBreakers\TwoWayTieBreakerTests.cs" />

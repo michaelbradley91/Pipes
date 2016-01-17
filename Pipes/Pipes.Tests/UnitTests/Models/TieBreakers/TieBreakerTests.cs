@@ -16,7 +16,7 @@ namespace Pipes.Tests.UnitTests.Models.TieBreakers
             tieBreaker = new DummyTieBreaker();
         }
 
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(ArgumentException))]
         [Test]
         public void ResolveTie_GivenZeroCompetitors_ThrowsAnException()
         {
@@ -49,7 +49,7 @@ namespace Pipes.Tests.UnitTests.Models.TieBreakers
             result.Should().Be(competitor);
         }
 
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(ArgumentException))]
         [Test]
         public void ResolveTie_GivenDuplicateCompetitors_ThrowsAnException()
         {

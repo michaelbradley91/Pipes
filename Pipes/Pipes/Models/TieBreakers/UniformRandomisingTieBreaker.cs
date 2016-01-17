@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Pipes.Models.TieBreakers
 {
@@ -8,7 +6,7 @@ namespace Pipes.Models.TieBreakers
     {
     }
 
-    public class UniformRandomisingTieBreaker : IUniformRandomisingTieBreaker
+    public class UniformRandomisingTieBreaker : TieBreaker, IUniformRandomisingTieBreaker
     {
         private readonly Random randomNumberGenerator;
 
@@ -17,11 +15,10 @@ namespace Pipes.Models.TieBreakers
             randomNumberGenerator = new Random();
         }
 
-        public int ResolveTie(IEnumerable<int> tiedCompetitors)
+        protected override int ResolveTie(int[] tiedCompetitors)
         {
-            var tiedCompetitorsList = tiedCompetitors.ToList();
-            var resultIndex = randomNumberGenerator.Next(0, tiedCompetitorsList.Count - 1);
-            return tiedCompetitorsList[resultIndex];
+            var resultIndex = randomNumberGenerator.Next(0, tiedCompetitors.Length);
+            return tiedCompetitors[resultIndex];
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Pipes.Models.TieBreakers
 {
@@ -7,9 +6,9 @@ namespace Pipes.Models.TieBreakers
     {
     }
 
-    public class MinPrioritisingTieBreaker : IMinPrioritisingTieBreaker
+    public class MinPrioritisingTieBreaker : TieBreaker, IMinPrioritisingTieBreaker
     {
-        public int ResolveTie(IEnumerable<int> tiedCompetitors)
+        protected override int ResolveTie(int[] tiedCompetitors)
         {
             return tiedCompetitors.Min();
         }

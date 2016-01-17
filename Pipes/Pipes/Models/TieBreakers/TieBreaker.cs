@@ -22,9 +22,9 @@ namespace Pipes.Models.TieBreakers
         public int ResolveTie(IEnumerable<int> tiedCompetitors)
         {
             var tiedCompetitorsList = tiedCompetitors.ToArray();
-            if (tiedCompetitorsList.Length == 0) throw new InvalidOperationException("There must be at least one competitor to resolve a tie.");
+            if (tiedCompetitorsList.Length == 0) throw new ArgumentException("There must be at least one competitor to resolve a tie.", nameof(tiedCompetitors));
             if (tiedCompetitorsList.Length == 1) return tiedCompetitorsList[0];
-            if (tiedCompetitorsList.Distinct().Count() != tiedCompetitorsList.Length) throw new InvalidOperationException("All competitors in a tie should be unique.");
+            if (tiedCompetitorsList.Distinct().Count() != tiedCompetitorsList.Length) throw new ArgumentException("All competitors in a tie should be unique.", nameof(tiedCompetitors));
             
             return ResolveTie(tiedCompetitorsList);
         }
