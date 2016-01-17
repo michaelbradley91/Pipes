@@ -34,6 +34,7 @@ namespace Pipes.Models.Pipes
             Outlets = outlets;
             TieBreaker = tieBreaker;
             
+            // Construct all necessary pipes
             var preparationCapacityPipe = PipeBuilder.New.CapacityPipe<TSend>().WithCapacity(1).Build();
             var flushEitherOutletPipe = PipeBuilder.New.BigEitherOutletPipe<TSend>().WithSize(Outlets.Count + 1).Build();
 
@@ -51,19 +52,22 @@ namespace Pipes.Models.Pipes
 
             var resultPipe = PipeBuilder.New.BigEitherInletPipe<ReceiveOrSendResult<TReceive, TSend>>().WithSize(inlets.Count + outlets.Count).WithTieBreaker(TieBreaker).Build();
 
-            preparationCapacityPipe.Outlet.ConnectTo(flushEitherOutletPipe.Inlet);
+            // Form the pipe system. Note that this DOES form a non-tree, but its correctness is guaranteed
+            // by the fact the individual receivers of the splitting pipes are distinct.
+            preparationCapacityPipe.Outlet.ConnectTo(flushEitherOutletPipe.Inlet, false);
+
             for (var i = 0; i < Outlets.Count; i++)
             {
-                flushEitherOutletPipe.Outlets[i].ConnectTo(splittingPipes[i].Inlet);
-                splittingPipes[i].RightOutlet.ConnectTo(sendTransformPipes[i].Inlet);
-                sendTransformPipes[i].Outlet.ConnectTo(resultPipe.Inlets[Inlets.Count + i]);
+                flushEitherOutletPipe.Outlets[i].ConnectTo(splittingPipes[i].Inlet, false);
+                splittingPipes[i].RightOutlet.ConnectTo(sendTransformPipes[i].Inlet, false);
+                sendTransformPipes[i].Outlet.ConnectTo(resultPipe.Inlets[Inlets.Count + i], false);
 
                 CreateAndConnectAdapter(splittingPipes[i].LeftOutlet, Outlets[i]);
             }
 
             for (var i = 0; i < Inlets.Count; i++)
             {
-                receiveTransformPipes[i].Outlet.ConnectTo(resultPipe.Inlets[i]);
+                receiveTransformPipes[i].Outlet.ConnectTo(resultPipe.Inlets[i], false);
 
                 CreateAndConnectAdapter(receiveTransformPipes[i].Inlet, Inlets[i]);
             }
