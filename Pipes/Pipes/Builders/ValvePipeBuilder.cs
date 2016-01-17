@@ -23,37 +23,37 @@ namespace Pipes.Builders
         /// </summary>
         Func<IPromised<IPipe>, ISimpleOutlet<TSend>> Outlet { get; set; }
 
-        IValvedPipe<TReceive, TSend, IPrioritisingTieBreaker> Build();
+        IValvedPipe<TReceive, TSend, IPrioritisingTwoWayTieBreaker> Build();
 
         /// <summary>
         /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
         /// </summary>
-        ITieBreakingValvedPipeBuilder<TReceive, TSend, TTieBreaker> WithTieBreaker<TTieBreaker>(TTieBreaker tieBreaker) where TTieBreaker : ITieBreaker;
+        ITieBreakingValvedPipeBuilder<TReceive, TSend, TTieBreaker> WithTieBreaker<TTieBreaker>(TTieBreaker tieBreaker) where TTieBreaker : ITwoWayTieBreaker;
 
         /// <summary>
         /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
         /// </summary>
-        ITieBreakingValvedPipeBuilder<TReceive, TSend, IAlternatingTieBreaker> WithAlternatingTieBreaker(Alternated alternated = Alternated.LeftHasPriorityInitially);
+        ITieBreakingValvedPipeBuilder<TReceive, TSend, IAlternatingTwoWayTieBreaker> WithAlternatingTieBreaker(Alternated alternated = Alternated.LeftHasPriorityInitially);
 
         /// <summary>
         /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
         /// </summary>
-        ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker> WithPrioritisingTieBreaker(Priority priority = Priority.Left);
+        ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTwoWayTieBreaker> WithPrioritisingTieBreaker(Priority priority = Priority.Left);
 
         /// <summary>
         /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
         /// </summary>
-        ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker> WithSendPriority();
+        ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTwoWayTieBreaker> WithSendPriority();
 
         /// <summary>
         /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
         /// </summary>
-        ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker> WithReceivePriority();
+        ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTwoWayTieBreaker> WithReceivePriority();
 
         /// <summary>
         /// If "left" is the resolution of a tie, a message will be sent through the valve. If "right" is the resolution of a tie, a message will be received through the valve.
         /// </summary>
-        ITieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTieBreaker> WithRandomisingTieBreaker(double sendProbability = 0.5);
+        ITieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTwoWayTieBreaker> WithRandomisingTieBreaker(double sendProbability = 0.5);
     }
 
     public class ValvedPipeBuilder<TReceive, TSend> : IValvedPipeBuilder<TReceive, TSend>
@@ -67,44 +67,44 @@ namespace Pipes.Builders
             Outlet = p => new SimpleOutlet<TSend>(p);
         }
 
-        public IValvedPipe<TReceive, TSend, IPrioritisingTieBreaker> Build()
+        public IValvedPipe<TReceive, TSend, IPrioritisingTwoWayTieBreaker> Build()
         {
-            return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker>(new PrioritisingTieBreaker(Priority.Left))).Build();
+            return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTwoWayTieBreaker>(new PrioritisingTwoWayTieBreaker(Priority.Left))).Build();
         }
 
-        public ITieBreakingValvedPipeBuilder<TReceive, TSend, TTieBreaker> WithTieBreaker<TTieBreaker>(TTieBreaker tieBreaker) where TTieBreaker : ITieBreaker
+        public ITieBreakingValvedPipeBuilder<TReceive, TSend, TTieBreaker> WithTieBreaker<TTieBreaker>(TTieBreaker tieBreaker) where TTieBreaker : ITwoWayTieBreaker
         {
             return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, TTieBreaker>(tieBreaker));
         }
 
-        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IAlternatingTieBreaker> WithAlternatingTieBreaker(Alternated alternated = Alternated.LeftHasPriorityInitially)
+        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IAlternatingTwoWayTieBreaker> WithAlternatingTieBreaker(Alternated alternated = Alternated.LeftHasPriorityInitially)
         {
-            return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, IAlternatingTieBreaker>(new AlternatingTieBreaker(alternated)));
+            return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, IAlternatingTwoWayTieBreaker>(new AlternatingTwoWayTieBreaker(alternated)));
         }
 
-        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker> WithPrioritisingTieBreaker(Priority priority = Priority.Left)
+        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTwoWayTieBreaker> WithPrioritisingTieBreaker(Priority priority = Priority.Left)
         {
-            return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker>(new PrioritisingTieBreaker(priority)));
+            return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTwoWayTieBreaker>(new PrioritisingTwoWayTieBreaker(priority)));
         }
 
-        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker> WithSendPriority()
+        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTwoWayTieBreaker> WithSendPriority()
         {
             return WithPrioritisingTieBreaker(Priority.Left);
         }
 
-        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTieBreaker> WithReceivePriority()
+        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IPrioritisingTwoWayTieBreaker> WithReceivePriority()
         {
             return WithPrioritisingTieBreaker(Priority.Right);
         }
 
-        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTieBreaker> WithRandomisingTieBreaker(double sendProbability = 0.5)
+        public ITieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTwoWayTieBreaker> WithRandomisingTieBreaker(double sendProbability = 0.5)
         {
             if (sendProbability < 0 || sendProbability > 1) throw new ArgumentOutOfRangeException(nameof(sendProbability), "The send probability must be between 0 and 1 (inclusive)");
-            return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTieBreaker>(new RandomisingTieBreaker(sendProbability)));
+            return CopyInletsAndOutletsTo(new TieBreakingValvedPipeBuilder<TReceive, TSend, IRandomisingTwoWayTieBreaker>(new RandomisingTwoWayTieBreaker(sendProbability)));
         }
 
         private ITieBreakingValvedPipeBuilder<TReceive, TSend, TTieBreaker> CopyInletsAndOutletsTo<TTieBreaker>(ITieBreakingValvedPipeBuilder<TReceive, TSend, TTieBreaker> tieBreakingValvedPipeBuilder)
-            where TTieBreaker : ITieBreaker
+            where TTieBreaker : ITwoWayTieBreaker
         {
             tieBreakingValvedPipeBuilder.Inlet = Inlet;
             tieBreakingValvedPipeBuilder.Outlet = Outlet;

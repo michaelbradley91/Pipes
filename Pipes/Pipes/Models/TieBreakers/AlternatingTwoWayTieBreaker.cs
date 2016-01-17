@@ -3,18 +3,18 @@ using Pipes.Constants;
 
 namespace Pipes.Models.TieBreakers
 {
-    public interface IAlternatingTieBreaker : ITieBreaker
+    public interface IAlternatingTwoWayTieBreaker : ITwoWayTieBreaker
     {
         Priority InitialPriority { get; }
         Priority NextPriority { get; }
     }
 
-    public class AlternatingTieBreaker : IAlternatingTieBreaker
+    public class AlternatingTwoWayTieBreaker : TwoWayTieBreaker, IAlternatingTwoWayTieBreaker
     {
         public Priority InitialPriority { get; }
         public Priority NextPriority { get; private set; }
 
-        public AlternatingTieBreaker(Alternated alternated)
+        public AlternatingTwoWayTieBreaker(Alternated alternated)
         {
             switch (alternated)
             {
@@ -25,12 +25,12 @@ namespace Pipes.Models.TieBreakers
                     InitialPriority = Priority.Right;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("alternated");
+                    throw new ArgumentOutOfRangeException(nameof(alternated));
             }
             NextPriority = InitialPriority;
         }
 
-        public TieResult ResolveTie()
+        public override TieResult ResolveTie()
         {
             switch (NextPriority)
             {

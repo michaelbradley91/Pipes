@@ -3,21 +3,21 @@ using Pipes.Constants;
 
 namespace Pipes.Models.TieBreakers
 {
-    public interface IPrioritisingTieBreaker : ITieBreaker
+    public interface IPrioritisingTwoWayTieBreaker : ITwoWayTieBreaker
     {
         Priority Priority { get; }
     }
 
-    public class PrioritisingTieBreaker : IPrioritisingTieBreaker
+    public class PrioritisingTwoWayTieBreaker : TwoWayTieBreaker, IPrioritisingTwoWayTieBreaker
     {
         public Priority Priority { get; }
 
-        public PrioritisingTieBreaker(Priority priority)
+        public PrioritisingTwoWayTieBreaker(Priority priority)
         {
             Priority = priority;
         }
 
-        public TieResult ResolveTie()
+        public override TieResult ResolveTie()
         {
             switch (Priority)
             {

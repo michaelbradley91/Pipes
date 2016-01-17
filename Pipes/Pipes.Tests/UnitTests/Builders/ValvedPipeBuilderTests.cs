@@ -33,7 +33,7 @@ namespace Pipes.Tests.UnitTests.Builders
         public void WithTieBreaker_GivenASpecificTieBreaker_ReturnsAPipeWithThatTieBreaker()
         {
             // Arrange
-            var tieBreaker = new Mock<ITieBreaker>();
+            var tieBreaker = new Mock<ITwoWayTieBreaker>();
 
             // Act
             var pipe = valvedPipeBuilder.WithTieBreaker(tieBreaker.Object).Build();

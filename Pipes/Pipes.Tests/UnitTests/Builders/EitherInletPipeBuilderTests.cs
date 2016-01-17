@@ -27,7 +27,7 @@ namespace Pipes.Tests.UnitTests.Builders
             var pipe = eitherInletPipeBuilder.Build();
 
             // Assert
-            pipe.GetType().Should().BeAssignableTo<IEitherInletPipe<IPrioritisingTieBreaker, int>>();
+            pipe.GetType().Should().BeAssignableTo<IEitherInletPipe<IPrioritisingTwoWayTieBreaker, int>>();
             pipe.TieBreaker.Priority.Should().Be(Priority.Left);
         }
 
@@ -35,7 +35,7 @@ namespace Pipes.Tests.UnitTests.Builders
         public void WithTieBreaker_GivenASpecificTieBreaker_ReturnsAPipeWithThatTieBreaker()
         {
             // Arrange
-            var tieBreaker = new Mock<ITieBreaker>();
+            var tieBreaker = new Mock<ITwoWayTieBreaker>();
 
             // Act
             var pipe = eitherInletPipeBuilder.WithTieBreaker(tieBreaker.Object).Build();

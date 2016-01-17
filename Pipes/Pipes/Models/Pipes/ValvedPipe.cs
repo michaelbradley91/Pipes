@@ -4,7 +4,7 @@ using Pipes.Models.TieBreakers;
 
 namespace Pipes.Models.Pipes
 {
-    public interface IValvedPipe<TReceive, TSend, out TTieBreaker> : IPipe where TTieBreaker : ITieBreaker
+    public interface IValvedPipe<TReceive, TSend, out TTieBreaker> : IPipe where TTieBreaker : ITwoWayTieBreaker
     {
         ISimpleInlet<TReceive> Inlet { get; }
         ISimpleOutlet<TSend> Outlet { get; }
@@ -16,7 +16,7 @@ namespace Pipes.Models.Pipes
         TTieBreaker TieBreaker { get; }
     }
 
-    public class ValvedPipe<TReceive, TSend, TTieBreaker> : CompositePipe, IValvedPipe<TReceive, TSend, TTieBreaker> where TTieBreaker : ITieBreaker
+    public class ValvedPipe<TReceive, TSend, TTieBreaker> : CompositePipe, IValvedPipe<TReceive, TSend, TTieBreaker> where TTieBreaker : ITwoWayTieBreaker
     {
         public ISimpleInlet<TReceive> Inlet { get; }
         public ISimpleOutlet<TSend> Outlet { get; }

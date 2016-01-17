@@ -16,13 +16,13 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
     [TestFixture]
     public class EitherInletPipeTests
     {
-        private Mock<ITieBreaker> tieBreaker;
-        private IEitherInletPipe<ITieBreaker, int> eitherInletPipe;
+        private Mock<ITwoWayTieBreaker> tieBreaker;
+        private IEitherInletPipe<ITwoWayTieBreaker, int> eitherInletPipe;
         
         [SetUp]
         public void SetUp()
         {
-            tieBreaker = new Mock<ITieBreaker>();
+            tieBreaker = new Mock<ITwoWayTieBreaker>();
             eitherInletPipe = PipeBuilder.New.EitherInletPipe<int>().WithTieBreaker(tieBreaker.Object).Build();
         }
 

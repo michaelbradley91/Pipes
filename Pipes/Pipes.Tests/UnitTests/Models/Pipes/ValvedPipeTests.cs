@@ -18,9 +18,9 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
     {
         private Mock<ISimpleInlet<int>> inlet;
         private Mock<ISimpleOutlet<string>> outlet;
-        private Mock<ITieBreaker> tieBreaker;
+        private Mock<ITwoWayTieBreaker> tieBreaker;
 
-        private ValvedPipe<int, string, ITieBreaker> valvedPipe;
+        private ValvedPipe<int, string, ITwoWayTieBreaker> valvedPipe;
 
         [SetUp]
         public void SetUp()
@@ -33,9 +33,9 @@ namespace Pipes.Tests.UnitTests.Models.Pipes
             outlet.SetupGet(o => o.SharedResource).Returns(SharedResource.Create());
             outlet.SetupGet(i => i.Pipe).Returns(() => valvedPipe);
 
-            tieBreaker = new Mock<ITieBreaker>();
+            tieBreaker = new Mock<ITwoWayTieBreaker>();
 
-            valvedPipe = new ValvedPipe<int, string, ITieBreaker>(inlet.Object, outlet.Object, tieBreaker.Object);
+            valvedPipe = new ValvedPipe<int, string, ITwoWayTieBreaker>(inlet.Object, outlet.Object, tieBreaker.Object);
         }
 
         [Test]

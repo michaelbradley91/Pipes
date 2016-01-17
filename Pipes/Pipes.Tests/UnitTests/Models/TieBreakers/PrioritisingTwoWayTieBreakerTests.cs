@@ -6,13 +6,13 @@ using Pipes.Models.TieBreakers;
 namespace Pipes.Tests.UnitTests.Models.TieBreakers
 {
     [TestFixture]
-    public class PrioritisingTieBreakerTests
+    public class PrioritisingTwoWayTieBreakerTests
     {
         [Test]
         public void GivenPriorityLeft_CreatesATieBreakerWithLeftPriority()
         {
             // Act
-            var tieBreaker = new PrioritisingTieBreaker(Priority.Left);
+            var tieBreaker = new PrioritisingTwoWayTieBreaker(Priority.Left);
 
             // Assert
             tieBreaker.Priority.Should().Be(Priority.Left);
@@ -22,7 +22,7 @@ namespace Pipes.Tests.UnitTests.Models.TieBreakers
         public void GivenPriorityRight_CreatesATieBreakerWithRightPriority()
         {
             // Act
-            var tieBreaker = new PrioritisingTieBreaker(Priority.Right);
+            var tieBreaker = new PrioritisingTwoWayTieBreaker(Priority.Right);
 
             // Assert
             tieBreaker.Priority.Should().Be(Priority.Right);
@@ -32,7 +32,7 @@ namespace Pipes.Tests.UnitTests.Models.TieBreakers
         public void ResolveTie_AlwaysResolvesToThePrioritisedSide()
         {
             // Arrange
-            var tieBreaker = new PrioritisingTieBreaker(Priority.Right);
+            var tieBreaker = new PrioritisingTwoWayTieBreaker(Priority.Right);
 
             // Act
             var firstResult = tieBreaker.ResolveTie();

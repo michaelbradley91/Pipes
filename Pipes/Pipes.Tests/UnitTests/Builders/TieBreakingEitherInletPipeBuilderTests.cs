@@ -14,13 +14,13 @@ namespace Pipes.Tests.UnitTests.Builders
         public void Build_ReturnsAPipeWithTheTieBreakerPassedIntoTheBuildersConstructor()
         {
             // Arrange
-            var tieBreaker = new Mock<ITieBreaker>().Object;
+            var tieBreaker = new Mock<ITwoWayTieBreaker>().Object;
 
             // Act
-            var pipe = new TieBreakingEitherInletPipeBuilder<ITieBreaker, int>(tieBreaker).Build();
+            var pipe = new TieBreakingEitherInletPipeBuilder<ITwoWayTieBreaker, int>(tieBreaker).Build();
 
             // Assert
-            pipe.GetType().Should().BeAssignableTo<IEitherInletPipe<ITieBreaker, int>>();
+            pipe.GetType().Should().BeAssignableTo<IEitherInletPipe<ITwoWayTieBreaker, int>>();
             pipe.TieBreaker.Should().Be(tieBreaker);
         }
     }

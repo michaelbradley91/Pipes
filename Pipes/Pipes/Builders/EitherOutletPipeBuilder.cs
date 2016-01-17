@@ -30,11 +30,11 @@ namespace Pipes.Builders
         /// </summary>
         Func<IPromised<IPipe>, ISimpleOutlet<TMessage>> RightOutlet { get; set; }
 
-        IEitherOutletPipe<IPrioritisingTieBreaker, TMessage> Build();
-        ITieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> WithTieBreaker<TTieBreaker>(TTieBreaker tieBreaker) where TTieBreaker : ITieBreaker;
-        ITieBreakingEitherOutletPipeBuilder<IAlternatingTieBreaker, TMessage> WithAlternatingTieBreaker(Alternated alternated = Alternated.LeftHasPriorityInitially);
-        ITieBreakingEitherOutletPipeBuilder<IPrioritisingTieBreaker, TMessage> WithPrioritisingTieBreaker(Priority priority = Priority.Left);
-        ITieBreakingEitherOutletPipeBuilder<IRandomisingTieBreaker, TMessage> WithRandomisingTieBreaker(double leftProbability = 0.5);
+        IEitherOutletPipe<IPrioritisingTwoWayTieBreaker, TMessage> Build();
+        ITieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> WithTieBreaker<TTieBreaker>(TTieBreaker tieBreaker) where TTieBreaker : ITwoWayTieBreaker;
+        ITieBreakingEitherOutletPipeBuilder<IAlternatingTwoWayTieBreaker, TMessage> WithAlternatingTieBreaker(Alternated alternated = Alternated.LeftHasPriorityInitially);
+        ITieBreakingEitherOutletPipeBuilder<IPrioritisingTwoWayTieBreaker, TMessage> WithPrioritisingTieBreaker(Priority priority = Priority.Left);
+        ITieBreakingEitherOutletPipeBuilder<IRandomisingTwoWayTieBreaker, TMessage> WithRandomisingTieBreaker(double leftProbability = 0.5);
     }
 
     public class EitherOutletPipeBuilder<TMessage> : IEitherOutletPipeBuilder<TMessage>
@@ -50,34 +50,34 @@ namespace Pipes.Builders
             RightOutlet = p => new SimpleOutlet<TMessage>(p);
         }
 
-        public IEitherOutletPipe<IPrioritisingTieBreaker, TMessage> Build()
+        public IEitherOutletPipe<IPrioritisingTwoWayTieBreaker, TMessage> Build()
         {
-            return CopyInletsAndOutletsTo(new TieBreakingEitherOutletPipeBuilder<IPrioritisingTieBreaker, TMessage>(new PrioritisingTieBreaker(Priority.Left))).Build();
+            return CopyInletsAndOutletsTo(new TieBreakingEitherOutletPipeBuilder<IPrioritisingTwoWayTieBreaker, TMessage>(new PrioritisingTwoWayTieBreaker(Priority.Left))).Build();
         }
 
-        public ITieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> WithTieBreaker<TTieBreaker>(TTieBreaker tieBreaker) where TTieBreaker : ITieBreaker
+        public ITieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> WithTieBreaker<TTieBreaker>(TTieBreaker tieBreaker) where TTieBreaker : ITwoWayTieBreaker
         {
             return CopyInletsAndOutletsTo(new TieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage>(tieBreaker));
         }
 
-        public ITieBreakingEitherOutletPipeBuilder<IAlternatingTieBreaker, TMessage> WithAlternatingTieBreaker(Alternated alternated = Alternated.LeftHasPriorityInitially)
+        public ITieBreakingEitherOutletPipeBuilder<IAlternatingTwoWayTieBreaker, TMessage> WithAlternatingTieBreaker(Alternated alternated = Alternated.LeftHasPriorityInitially)
         {
-            return CopyInletsAndOutletsTo(new TieBreakingEitherOutletPipeBuilder<IAlternatingTieBreaker, TMessage>(new AlternatingTieBreaker(alternated)));
+            return CopyInletsAndOutletsTo(new TieBreakingEitherOutletPipeBuilder<IAlternatingTwoWayTieBreaker, TMessage>(new AlternatingTwoWayTieBreaker(alternated)));
         }
 
-        public ITieBreakingEitherOutletPipeBuilder<IPrioritisingTieBreaker, TMessage> WithPrioritisingTieBreaker(Priority priority = Priority.Left)
+        public ITieBreakingEitherOutletPipeBuilder<IPrioritisingTwoWayTieBreaker, TMessage> WithPrioritisingTieBreaker(Priority priority = Priority.Left)
         {
-            return CopyInletsAndOutletsTo(new TieBreakingEitherOutletPipeBuilder<IPrioritisingTieBreaker, TMessage>(new PrioritisingTieBreaker(priority)));
+            return CopyInletsAndOutletsTo(new TieBreakingEitherOutletPipeBuilder<IPrioritisingTwoWayTieBreaker, TMessage>(new PrioritisingTwoWayTieBreaker(priority)));
         }
 
-        public ITieBreakingEitherOutletPipeBuilder<IRandomisingTieBreaker, TMessage> WithRandomisingTieBreaker(double leftProbability = 0.5)
+        public ITieBreakingEitherOutletPipeBuilder<IRandomisingTwoWayTieBreaker, TMessage> WithRandomisingTieBreaker(double leftProbability = 0.5)
         {
             if (leftProbability < 0 || leftProbability > 1) throw new ArgumentOutOfRangeException(nameof(leftProbability), "The left probability must be between 0 and 1 (inclusive)");
-            return CopyInletsAndOutletsTo(new TieBreakingEitherOutletPipeBuilder<IRandomisingTieBreaker, TMessage>(new RandomisingTieBreaker(leftProbability)));
+            return CopyInletsAndOutletsTo(new TieBreakingEitherOutletPipeBuilder<IRandomisingTwoWayTieBreaker, TMessage>(new RandomisingTwoWayTieBreaker(leftProbability)));
         }
 
         private ITieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> CopyInletsAndOutletsTo<TTieBreaker>(ITieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> tieBreakingEitherOutletPipeBuilder)
-            where TTieBreaker : ITieBreaker
+            where TTieBreaker : ITwoWayTieBreaker
         {
             tieBreakingEitherOutletPipeBuilder.Inlet = Inlet;
             tieBreakingEitherOutletPipeBuilder.LeftOutlet = LeftOutlet;

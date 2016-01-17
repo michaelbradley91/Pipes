@@ -104,9 +104,10 @@
     <Compile Include="Models\Pipes\ValvedPipe.cs" />
     <Compile Include="Models\Pipes\TransformPipe.cs" />
     <Compile Include="Models\TieBreakers\TieBreaker.cs" />
-    <Compile Include="Models\TieBreakers\AlternatingTieBreaker.cs" />
-    <Compile Include="Models\TieBreakers\PrioritisingTieBreaker.cs" />
-    <Compile Include="Models\TieBreakers\RandomisingTieBreaker.cs" />
+    <Compile Include="Models\TieBreakers\TwoWayTieBreaker.cs" />
+    <Compile Include="Models\TieBreakers\AlternatingTwoWayTieBreaker.cs" />
+    <Compile Include="Models\TieBreakers\PrioritisingTwoWayTieBreaker.cs" />
+    <Compile Include="Models\TieBreakers\RandomisingTwoWayTieBreaker.cs" />
     <Compile Include="Models\Pipes\TwoOutletPipe.cs" />
     <Compile Include="Models\Pipes\TwoInletPipe.cs" />
     <Compile Include="Models\Pipes\CapacityPipe.cs" />

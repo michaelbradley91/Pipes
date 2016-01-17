@@ -5,12 +5,12 @@ using Pipes.Models.TieBreakers;
 
 namespace Pipes.Models.Pipes
 {
-    public interface IEitherOutletPipe<out TTieBreaker, TMessage> : ITwoOutletPipe<TMessage> where TTieBreaker : ITieBreaker
+    public interface IEitherOutletPipe<out TTieBreaker, TMessage> : ITwoOutletPipe<TMessage> where TTieBreaker : ITwoWayTieBreaker
     {
         TTieBreaker TieBreaker { get; }
     }
 
-    public class EitherOutletPipe<TTieBreaker, TMessage> : TwoOutletPipe<TMessage>, IEitherOutletPipe<TTieBreaker, TMessage> where TTieBreaker : ITieBreaker
+    public class EitherOutletPipe<TTieBreaker, TMessage> : TwoOutletPipe<TMessage>, IEitherOutletPipe<TTieBreaker, TMessage> where TTieBreaker : ITwoWayTieBreaker
     {
         public TTieBreaker TieBreaker { get; }
 

@@ -7,14 +7,14 @@ using Pipes.Models.TieBreakers;
 namespace Pipes.Tests.UnitTests.Models.TieBreakers
 {
     [TestFixture]
-    public class RandomisingTieBreakerTests
+    public class RandomisingTwoWayTieBreakerTests
     {
         [Test]
         public void GivenLeftProbability_CreatesATieBreakerWithThatLeftProbability()
         {
             // Act
             const double leftProbability = 0.643;
-            var tieBreaker = new RandomisingTieBreaker(leftProbability);
+            var tieBreaker = new RandomisingTwoWayTieBreaker(leftProbability);
 
             // Assert
             tieBreaker.LeftProbability.Should().Be(leftProbability);
@@ -26,7 +26,7 @@ namespace Pipes.Tests.UnitTests.Models.TieBreakers
         public void ResolveTie_SplitsTheResultsApproximatelyByExpectation()
         {
             // Arrange
-            var tieBreaker = new RandomisingTieBreaker(0.3);
+            var tieBreaker = new RandomisingTwoWayTieBreaker(0.3);
 
             // Act
             var leftResultCount = 0;

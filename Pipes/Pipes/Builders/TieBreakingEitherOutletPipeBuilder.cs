@@ -6,7 +6,7 @@ using Pipes.Models.Utilities;
 
 namespace Pipes.Builders
 {
-    public interface ITieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> where TTieBreaker : ITieBreaker
+    public interface ITieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> where TTieBreaker : ITwoWayTieBreaker
     {
         /// <summary>
         /// A function that, given the pipe, will produce the inlet to be used by that pipe.
@@ -34,7 +34,7 @@ namespace Pipes.Builders
         IEitherOutletPipe<TTieBreaker, TMessage> Build();
     }
 
-    public class TieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> : ITieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> where TTieBreaker : ITieBreaker
+    public class TieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> : ITieBreakingEitherOutletPipeBuilder<TTieBreaker, TMessage> where TTieBreaker : ITwoWayTieBreaker
     {
         public Func<IPromised<IPipe>, ISimpleInlet<TMessage>> Inlet { get; set; }
         public Func<IPromised<IPipe>, ISimpleOutlet<TMessage>> LeftOutlet { get; set; }
