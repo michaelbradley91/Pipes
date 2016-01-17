@@ -9,17 +9,17 @@ namespace Pipes.Models.Pipes
     public interface IBigEitherOutletPipe<TMessage, out TTieBreaker> : IPipe where TTieBreaker : ITieBreaker
     {
         ISimpleInlet<TMessage> Inlet { get; }
-        IReadOnlyCollection<ISimpleOutlet<TMessage>> Outlets { get; }
+        IReadOnlyList<ISimpleOutlet<TMessage>> Outlets { get; }
         TTieBreaker TieBreaker { get; }
     }
 
     public class BigEitherOutletPipe<TMessage, TTieBreaker> : SimplePipe<TMessage>, IBigEitherOutletPipe<TMessage, TTieBreaker> where TTieBreaker : ITieBreaker
     {
         public ISimpleInlet<TMessage> Inlet { get; }
-        public IReadOnlyCollection<ISimpleOutlet<TMessage>> Outlets { get; }
+        public IReadOnlyList<ISimpleOutlet<TMessage>> Outlets { get; }
         public TTieBreaker TieBreaker { get; }
 
-        public BigEitherOutletPipe(ISimpleInlet<TMessage> inlet, IReadOnlyCollection<ISimpleOutlet<TMessage>> outlets, TTieBreaker tieBreaker)
+        public BigEitherOutletPipe(ISimpleInlet<TMessage> inlet, IReadOnlyList<ISimpleOutlet<TMessage>> outlets, TTieBreaker tieBreaker)
             : base(new[] {inlet}, outlets)
         {
             Inlet = inlet;

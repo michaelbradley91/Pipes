@@ -8,18 +8,18 @@ namespace Pipes.Models.Pipes
 {
     public interface IBigEitherInletPipe<TMessage, out TTieBreaker> : IPipe where TTieBreaker : ITieBreaker
     {
-        IReadOnlyCollection<ISimpleInlet<TMessage>> Inlets { get; }
+        IReadOnlyList<ISimpleInlet<TMessage>> Inlets { get; }
         ISimpleOutlet<TMessage> Outlet { get; }
         TTieBreaker TieBreaker { get; }
     }
 
     public class BigEitherInletPipe<TMessage, TTieBreaker> : SimplePipe<TMessage>, IBigEitherInletPipe<TMessage, TTieBreaker> where TTieBreaker : ITieBreaker
     {
-        public IReadOnlyCollection<ISimpleInlet<TMessage>> Inlets { get; }
+        public IReadOnlyList<ISimpleInlet<TMessage>> Inlets { get; }
         public ISimpleOutlet<TMessage> Outlet { get; }
         public TTieBreaker TieBreaker { get; }
 
-        public BigEitherInletPipe(IReadOnlyCollection<ISimpleInlet<TMessage>> inlets, ISimpleOutlet<TMessage> outlet, TTieBreaker tieBreaker)
+        public BigEitherInletPipe(IReadOnlyList<ISimpleInlet<TMessage>> inlets, ISimpleOutlet<TMessage> outlet, TTieBreaker tieBreaker)
             : base(inlets, new[] { outlet })
         {
             Inlets = inlets;

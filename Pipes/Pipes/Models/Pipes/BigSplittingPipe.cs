@@ -8,15 +8,15 @@ namespace Pipes.Models.Pipes
     public interface IBigSplittingPipe<TMessage> : IPipe
     {
         ISimpleInlet<TMessage> Inlet { get; }
-        IReadOnlyCollection<ISimpleOutlet<TMessage>> Outlets { get; }
+        IReadOnlyList<ISimpleOutlet<TMessage>> Outlets { get; }
     }
 
     public class BigSplittingPipe<TMessage> : SimplePipe<TMessage>, IBigSplittingPipe<TMessage>
     {
         public ISimpleInlet<TMessage> Inlet { get; }
-        public IReadOnlyCollection<ISimpleOutlet<TMessage>> Outlets { get; }
+        public IReadOnlyList<ISimpleOutlet<TMessage>> Outlets { get; }
 
-        public BigSplittingPipe(ISimpleInlet<TMessage> inlet, IReadOnlyCollection<ISimpleOutlet<TMessage>> outlets)
+        public BigSplittingPipe(ISimpleInlet<TMessage> inlet, IReadOnlyList<ISimpleOutlet<TMessage>> outlets)
             : base(new[] {inlet}, outlets)
         {
             Inlet = inlet;

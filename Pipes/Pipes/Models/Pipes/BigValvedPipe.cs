@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Pipes.Builders;
 using Pipes.Models.Lets;
 using Pipes.Models.TieBreakers;
@@ -7,8 +9,8 @@ namespace Pipes.Models.Pipes
 {
     public interface IBigValvedPipe<TReceive, TSend, out TTieBreaker> : IPipe where TTieBreaker : ITieBreaker
     {
-        IReadOnlyCollection<ISimpleInlet<TReceive>> Inlets { get; }
-        IReadOnlyCollection<ISimpleOutlet<TSend>> Outlets { get; }
+        IReadOnlyList<ISimpleInlet<TReceive>> Inlets { get; }
+        IReadOnlyList<ISimpleOutlet<TSend>> Outlets { get; }
         IValve<TReceive, TSend> Valve { get; }
 
         /// <summary>
@@ -20,12 +22,12 @@ namespace Pipes.Models.Pipes
 
     public class BigValvedPipe<TReceive, TSend, TTieBreaker> : CompositePipe, IBigValvedPipe<TReceive, TSend, TTieBreaker> where TTieBreaker : ITieBreaker
     {
-        public IReadOnlyCollection<ISimpleInlet<TReceive>> Inlets { get; }
-        public IReadOnlyCollection<ISimpleOutlet<TSend>> Outlets { get; }
+        public IReadOnlyList<ISimpleInlet<TReceive>> Inlets { get; }
+        public IReadOnlyList<ISimpleOutlet<TSend>> Outlets { get; }
         public IValve<TReceive, TSend> Valve { get; }
         public TTieBreaker TieBreaker { get; }
 
-        public BigValvedPipe(IReadOnlyCollection<ISimpleInlet<TReceive>> inlets, IReadOnlyCollection<ISimpleOutlet<TSend>> outlets, TTieBreaker tieBreaker)
+        public BigValvedPipe(IReadOnlyList<ISimpleInlet<TReceive>> inlets, IReadOnlyList<ISimpleOutlet<TSend>> outlets, TTieBreaker tieBreaker)
             : base(inlets, outlets)
         {
             Inlets = inlets;
@@ -33,22 +35,40 @@ namespace Pipes.Models.Pipes
             TieBreaker = tieBreaker;
             
             var preparationCapacityPipe = PipeBuilder.New.CapacityPipe<TSend>().WithCapacity(1).Build();
-            var flushEitherOutletPipe = PipeBuilder.New.EitherOutletPipe<TSend>().Build();
-            var splittingPipe = PipeBuilder.New.SplittingPipe<TSend>().Build();
-            var sendTransformPipe = PipeBuilder.New.TransformPipe<TSend, ReceiveOrSendResult<TReceive, TSend>>().WithMap(m => ReceiveOrSendResult<TReceive, TSend>.CreateSendResult()).Build();
-            var receiveTransformPipe = PipeBuilder.New.TransformPipe<TReceive, ReceiveOrSendResult<TReceive, TSend>>().WithMap(ReceiveOrSendResult<TReceive, TSend>.CreateReceiveResult).Build();
-            var eitherInletPipe = PipeBuilder.New.EitherInletPipe<ReceiveOrSendResult<TReceive, TSend>>().WithTieBreaker(TieBreaker).Build();
+            var flushEitherOutletPipe = PipeBuilder.New.BigEitherOutletPipe<TSend>().WithSize(Outlets.Count + 1).Build();
+
+            var splittingPipes = Enumerable.Repeat<Func<ISplittingPipe<TSend>>>(() =>
+                PipeBuilder.New.SplittingPipe<TSend>().Build(), Outlets.Count)
+                .Select(f => f()).ToList();
+
+            var sendTransformPipes = Enumerable.Repeat<Func<ITransformPipe<TSend, ReceiveOrSendResult<TReceive, TSend>>>>(() =>
+                PipeBuilder.New.TransformPipe<TSend, ReceiveOrSendResult<TReceive, TSend>>().WithMap(m => ReceiveOrSendResult<TReceive, TSend>.CreateSendResult()).Build(), Outlets.Count)
+                .Select(f => f()).ToList();
+
+            var receiveTransformPipes = Enumerable.Repeat<Func<ITransformPipe<TReceive, ReceiveOrSendResult<TReceive, TSend>>>>(() =>
+                PipeBuilder.New.TransformPipe<TReceive, ReceiveOrSendResult<TReceive, TSend>>().WithMap(ReceiveOrSendResult<TReceive, TSend>.CreateReceiveResult).Build(), Inlets.Count)
+                .Select(f => f()).ToList();
+
+            var resultPipe = PipeBuilder.New.BigEitherInletPipe<ReceiveOrSendResult<TReceive, TSend>>().WithSize(inlets.Count + outlets.Count).WithTieBreaker(TieBreaker).Build();
 
             preparationCapacityPipe.Outlet.ConnectTo(flushEitherOutletPipe.Inlet);
-            flushEitherOutletPipe.RightOutlet.ConnectTo(splittingPipe.Inlet);
-            splittingPipe.RightOutlet.ConnectTo(sendTransformPipe.Inlet);
-            sendTransformPipe.Outlet.ConnectTo(eitherInletPipe.LeftInlet);
-            receiveTransformPipe.Outlet.ConnectTo(eitherInletPipe.RightInlet);
+            for (var i = 0; i < Outlets.Count; i++)
+            {
+                flushEitherOutletPipe.Outlets[i].ConnectTo(splittingPipes[i].Inlet);
+                splittingPipes[i].RightOutlet.ConnectTo(sendTransformPipes[i].Inlet);
+                sendTransformPipes[i].Outlet.ConnectTo(resultPipe.Inlets[Inlets.Count + i]);
 
-            CreateAndConnectAdapter(splittingPipe.LeftOutlet, Outlet);
-            CreateAndConnectAdapter(receiveTransformPipe.Inlet, Inlet);
+                CreateAndConnectAdapter(splittingPipes[i].LeftOutlet, Outlets[i]);
+            }
 
-            Valve = new Valve<TReceive, TSend>(preparationCapacityPipe.Inlet, flushEitherOutletPipe.LeftOutlet, eitherInletPipe.Outlet);
+            for (var i = 0; i < Inlets.Count; i++)
+            {
+                receiveTransformPipes[i].Outlet.ConnectTo(resultPipe.Inlets[i]);
+
+                CreateAndConnectAdapter(receiveTransformPipes[i].Inlet, Inlets[i]);
+            }
+
+            Valve = new Valve<TReceive, TSend>(preparationCapacityPipe.Inlet, flushEitherOutletPipe.Outlets[outlets.Count], resultPipe.Outlet);
         }
     }
 }
